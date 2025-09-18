@@ -5,12 +5,12 @@
     <artifactId>vSrok</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>InTime Maven Webapp</name>
+    <name>vSrok Maven Webapp</name>
     <url>http://maven.apache.org</url>
 
     <properties>
-        <maven.compiler.target>25</maven.compiler.target>
-        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
