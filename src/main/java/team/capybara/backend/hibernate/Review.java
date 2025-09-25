@@ -58,4 +58,13 @@ public class Review {
 
     public int getStars() {return stars;}
 
+    public void setUser(User user) {this.user = user;}
+
+    public void setShop(Shop shop) {this.shop = shop;}
+
+    public void setProductType(ProductType productType) {this.productType = productType;}
+
+    public void setText(String text) {this.text = text;}
+
+    public void setStars(int stars) {this.stars = stars;}
 }

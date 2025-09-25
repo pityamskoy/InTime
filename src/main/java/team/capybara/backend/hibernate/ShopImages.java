@@ -28,8 +28,12 @@ public class ShopImages {
 
     public String getId() {return id;}
 
-    public Shop getProduct() {return shop;}
+    public Shop getShop() {return shop;}
 
     public ArrayList<String> getImagePaths() {return imagePaths;}
+
+    public void setShop(Shop shop) {this.shop = shop;}
+
+    public void setImagePaths(ArrayList<String> imagePaths) {this.imagePaths = imagePaths;}
 
 }

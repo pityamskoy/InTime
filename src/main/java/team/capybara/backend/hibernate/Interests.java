@@ -39,4 +39,9 @@ public class Interests {
 
     public Date getTime() {return time;}
 
+    public void setUser(User user) {this.user = user;}
+
+    public void setProduct(Product product) {this.product = product;}
+
+    public void setTime(Date time) {this.time = time;}
 }

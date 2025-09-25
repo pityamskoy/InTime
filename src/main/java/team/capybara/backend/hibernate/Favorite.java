@@ -32,4 +32,7 @@ public class Favorite {
 
     public ProductType getProduct() {return productType;}
 
+    public void setUser(User user) {this.user = user;}
+
+    public void setProductType(ProductType productType) {this.productType = productType;}
 }

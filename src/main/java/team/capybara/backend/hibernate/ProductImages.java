@@ -28,8 +28,11 @@ public class ProductImages {
 
     public String getId() {return id;}
 
-    public ProductType getProduct() {return productType;}
+    public ProductType getProductType() {return productType;}
 
     public ArrayList<String> getImagePaths() {return imagePaths;}
 
+    public void setProductType(ProductType productType) {this.productType = productType;}
+
+    public void setImagePaths(ArrayList<String> imagePaths) {this.imagePaths = imagePaths;}
 }

@@ -47,4 +47,13 @@ public class ProductType {
 
     public Category getCategory(){return category;}
 
+    public void setName(String name) {this.name = name;}
+
+    public void setDescription(String description) {this.description = description;}
+
+    public void setMainImagePath(String mainImagePath) {this.mainImagePath = mainImagePath;}
+
+    public void setShop(Shop shop) {this.shop = shop;}
+
+    public void setCategory(Category category) {this.category = category;}
 }

@@ -36,4 +36,10 @@ public class Category {
     public String getDescription(){return description;}
 
     public ArrayList<ProductType> getProductTypes() {return productTypes;}
+
+    public void setName(String name) {this.name = name;}
+
+    public void setDescription(String description) {this.description = description;}
+
+    public void setProductTypes(ArrayList<ProductType> productTypes) {this.productTypes = productTypes;}
 }

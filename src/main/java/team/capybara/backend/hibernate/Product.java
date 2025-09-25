@@ -50,4 +50,13 @@ public class Product {
 
     public int getIsSold(){return isSold;}
 
+    public void setProductType(ProductType productType) {this.productType = productType;}
+
+    public void setShelfLife(Date shelfLife) {this.shelfLife = shelfLife;}
+
+    public void setPrice(int price) {this.price = price;}
+
+    public void setDiscount(int discount) {this.discount = discount;}
+
+    public void setIsSold(int isSold) {this.isSold = isSold;}
 }

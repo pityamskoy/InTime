@@ -64,4 +64,17 @@ public class Shop {
 
     public Double getLon() {return lon;}
 
+    public void setName(String name) {this.name = name;}
+
+    public void setDescription(String description) {this.description = description;}
+
+    public void setIsVerifide(int isVerifide) {this.isVerifide = isVerifide;}
+
+    public void setMainImagePath(String mainImagePath) {this.mainImagePath = mainImagePath;}
+
+    public void setAddress(String address) {this.address = address;}
+
+    public void setLat(Double lat) {this.lat = lat;}
+
+    public void setLon(Double lon) {this.lon = lon;}
 }

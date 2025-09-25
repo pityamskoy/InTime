@@ -55,4 +55,16 @@ public class User {
     public ArrayList<Interests> getInterests() {return interests;}
 
     public ArrayList<Favorite> getFavorite(){return favorite;}
+
+    public void setName(String name) {this.name = name;}
+
+    public void setEmail(String email) {this.email = email;}
+
+    public void setPassword(String password) {this.password = password;}
+
+    public void setReviews(ArrayList<Review> reviews) {this.reviews = reviews;}
+
+    public void setInterests(ArrayList<Interests> interests) {this.interests = interests;}
+
+    public void setFavorite(ArrayList<Favorite> favorite) {this.favorite = favorite;}
 }

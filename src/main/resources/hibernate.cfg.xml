@@ -23,7 +23,7 @@
 
         <!-- Annotated entity classes -->
         <!-- Возможно, сюда нужно добавлять ORM-классы -->
-        <mapping class="tutorial.hibernate.postgresql.Student"/>
+        <!--<mapping class="tutorial.hibernate.postgresql.Student"/>-->
 
     </session-factory>
 </hibernate-configuration>
