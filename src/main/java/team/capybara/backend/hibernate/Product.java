@@ -29,7 +29,11 @@ public class Product {
     @Column(name="is_sold", nullable = false)
     private int isSold; //0 - false; 1 - true
 
-    Product(ProductType productType,Date shelfLife,int price,int discount,int isSold){
+    public Product() {
+
+    }
+
+    public Product(ProductType productType,Date shelfLife,int price,int discount,int isSold){
         this.id = (UUID.randomUUID()).toString();
         this.productType = productType;
         this.shelfLife = shelfLife;

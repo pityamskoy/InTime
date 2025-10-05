@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: vSrok
+  datasource:
+    url: jdbc:postgresql://localhost:5432/my-postgres
+    name: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver

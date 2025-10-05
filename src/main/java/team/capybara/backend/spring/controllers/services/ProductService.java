@@ -10,14 +10,38 @@ import java.util.Optional;
 
 @Service
 public class ProductService {
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
-    public List<Product> allProducts() {
+    @Autowired
+    ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
-    public Optional<Product> product(String id) {
+    public Optional<Product> getProduct(String id) {
         return productRepository.findById(id);
+    }
+    
+    public Product createProduct(Product product) {
+        Product newProduct = new Product(
+                product.getProductType(),
+                product.getShelfLife(),
+                product.getPrice(),
+                product.getDiscount(),
+                product.getIsSold()
+        );
+
+        return productRepository.save(newProduct);
+    }
+
+    public Product updateProduct(String id, Product productToUpdate) {
+        return null;
+    }
+
+    public void deleteProduct(String id) {
+        return;
     }
 }
