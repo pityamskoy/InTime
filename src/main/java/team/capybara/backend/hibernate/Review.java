@@ -12,14 +12,15 @@ public class Review {
     private String id;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
-    @OneToOne
-    @JoinColumn(name = "product_type_id")
+    @ManyToOne
+    @JoinColumn(name = "product_id")
     private ProductType productType;
 
     @Column(name="text", nullable = false)
@@ -28,7 +29,7 @@ public class Review {
     @Column(name="stars", nullable = false)
     private int stars; // 1-5
 
-    Review(User user, Shop shop, ProductType productType, String text, int stars){
+    public Review(User user, Shop shop, ProductType productType, String text, int stars){
         this.id = (UUID.randomUUID()).toString();
         this.user = user;
         this.shop = shop;
