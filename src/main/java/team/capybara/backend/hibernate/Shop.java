@@ -48,6 +48,10 @@ public class Shop {
         this.lon = lon;
     }
 
+    public Shop() {
+
+    }
+
     public String getId() {return id;}
 
     public String getName() {return name;}

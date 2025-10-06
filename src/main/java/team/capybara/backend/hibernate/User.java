@@ -23,23 +23,27 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user")
+    /*@OneToMany(mappedBy = "user")
     private ArrayList<Review> reviews;
 
     @OneToMany(mappedBy = "user")
     private ArrayList<Interests> interests;
 
     @OneToMany(mappedBy = "user")
-    private ArrayList<Favorite> favorite;
+    private ArrayList<Favorite> favorite;*/
 
     User(String name, String email, String password,ArrayList<Review> reviews, ArrayList<Interests> interests, ArrayList<Favorite> favorite){
         this.id = (UUID.randomUUID()).toString();
         this.name = name;
         this.email = email;
         this.password = Hashing.sha256().hashString(password, StandardCharsets.UTF_8).toString();
-        this.reviews = reviews;
+        /*this.reviews = reviews;
         this.interests = interests;
-        this.favorite = favorite;
+        this.favorite = favorite;*/
+    }
+
+    public User() {
+
     }
 
     public String getId() {return id;}
@@ -50,11 +54,11 @@ public class User {
 
     public String getPassword() {return password;}
 
-    public ArrayList<Review> getReviews() {return reviews;}
+    /*public ArrayList<Review> getReviews() {return reviews;}
 
     public ArrayList<Interests> getInterests() {return interests;}
 
-    public ArrayList<Favorite> getFavorite(){return favorite;}
+    public ArrayList<Favorite> getFavorite(){return favorite;}*/
 
     public void setName(String name) {this.name = name;}
 
@@ -62,9 +66,9 @@ public class User {
 
     public void setPassword(String password) {this.password = password;}
 
-    public void setReviews(ArrayList<Review> reviews) {this.reviews = reviews;}
+    /*public void setReviews(ArrayList<Review> reviews) {this.reviews = reviews;}
 
     public void setInterests(ArrayList<Interests> interests) {this.interests = interests;}
 
-    public void setFavorite(ArrayList<Favorite> favorite) {this.favorite = favorite;}
+    public void setFavorite(ArrayList<Favorite> favorite) {this.favorite = favorite;}*/
 }

@@ -46,6 +46,10 @@ public class Review {
         this.stars = stars;
     }
 
+    public Review() {
+
+    }
+
     public String getId() {return id;}
 
     public User getUser() {return user;}

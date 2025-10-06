@@ -35,6 +35,10 @@ public class ProductType {
         this.category = category;
     }
 
+    public ProductType() {
+
+    }
+
     public String getId(){return id;}
 
     public String getName(){return name;}

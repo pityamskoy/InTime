@@ -13,9 +13,9 @@ public class Interests {
     @Column(name="id", nullable = false, unique = true)
     private String id;
 
-    @ManyToOne
+    /*@ManyToOne
     @Column(name="user_id", nullable = false)
-    private User user;
+    private User user;*/
 
     @OneToOne
     @JoinColumn(name = "product_id")
@@ -26,20 +26,24 @@ public class Interests {
 
     Interests(User user, Product product, Date time){
         this.id = (UUID.randomUUID()).toString();
-        this.user = user;
+//        this.user = user;
         this.product = product;
         this.time = time;
     }
 
+    public Interests() {
+
+    }
+
     public String getId() {return id;}
 
-    public User getUser() {return user;}
+//    public User getUser() {return user;}
 
     public Product getProduct() {return product;}
 
     public Date getTime() {return time;}
 
-    public void setUser(User user) {this.user = user;}
+//    public void setUser(User user) {this.user = user;}
 
     public void setProduct(Product product) {this.product = product;}
 

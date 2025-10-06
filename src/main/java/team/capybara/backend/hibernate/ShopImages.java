@@ -17,23 +17,27 @@ public class ShopImages {
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
-    @Column(name="imagePaths", nullable = false)
-    private ArrayList<String>imagePaths;
+    /*@Column(name="imagePaths", nullable = false)
+    private ArrayList<String>imagePaths;*/
 
     ShopImages(Product product, ArrayList<String> imagePaths){
         this.id = (UUID.randomUUID()).toString();
         this.shop = shop;
-        this.imagePaths = imagePaths;
+//        this.imagePaths = imagePaths;
+    }
+
+    public ShopImages() {
+
     }
 
     public String getId() {return id;}
 
     public Shop getShop() {return shop;}
 
-    public ArrayList<String> getImagePaths() {return imagePaths;}
+//    public ArrayList<String> getImagePaths() {return imagePaths;}
 
     public void setShop(Shop shop) {this.shop = shop;}
 
-    public void setImagePaths(ArrayList<String> imagePaths) {this.imagePaths = imagePaths;}
+//    public void setImagePaths(ArrayList<String> imagePaths) {this.imagePaths = imagePaths;}
 
 }

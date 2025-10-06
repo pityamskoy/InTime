@@ -19,7 +19,7 @@ public class Category {
     @Column(name="description", nullable = false, unique = true)
     private String description;
 
-    @OneToMany(mappedBy = "catrgory")
+    @OneToMany(mappedBy = "category")
     private ArrayList<ProductType> productTypes;
 
     Category(String name, String description, ArrayList<ProductType> productTypes){
@@ -27,6 +27,10 @@ public class Category {
         this.name = name;
         this.description = description;
         this.productTypes = productTypes;
+    }
+
+    public Category() {
+
     }
 
     public String getId(){return id;}
