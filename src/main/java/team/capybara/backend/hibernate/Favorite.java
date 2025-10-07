@@ -13,14 +13,14 @@ public class Favorite {
     private String id;
 
     @ManyToOne
-    @Column(name="user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_type_id")
     private ProductType productType;
 
-    Favorite(User user, ProductType productType){
+    public Favorite(User user, ProductType productType){
         this.id = (UUID.randomUUID()).toString();
         this.user = user;
         this.productType = productType;

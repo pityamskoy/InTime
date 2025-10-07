@@ -14,17 +14,17 @@ public class Interests {
     private String id;
 
     @ManyToOne
-    @Column(name="user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 
     @Column(name="time", nullable = false)
     private Date time;
 
-    Interests(User user, Product product, Date time){
+    public Interests(User user, Product product, Date time){
         this.id = (UUID.randomUUID()).toString();
         this.user = user;
         this.product = product;

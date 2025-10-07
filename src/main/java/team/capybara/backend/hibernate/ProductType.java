@@ -1,5 +1,7 @@
 package team.capybara.backend.hibernate;
 import jakarta.persistence.*;
+
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -19,20 +21,20 @@ public class ProductType {
     @Column(name="main_image_path", nullable = false)
     private String mainImagePath;
 
-    @OneToOne
+    @OneToMany
+    private List<Image> images;
+
+    @ManyToOne
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
-    @ManyToOne
-    private Category category;
-
-    ProductType(String name, String description, String mainImagePath, Shop shop, Category category){
+    public ProductType(String name, String description, String mainImagePath, List<Image> images,Shop shop){
         this.id = (UUID.randomUUID()).toString();
         this.name = name;
         this.description = description;
         this.mainImagePath = mainImagePath;
+        this.images = images;
         this.shop = shop;
-        this.category = category;
     }
 
     public String getId(){return id;}
@@ -43,9 +45,9 @@ public class ProductType {
 
     public String getMainImagePath(){return mainImagePath;}
 
-    public Shop getShop(){return shop;}
+    public List<Image> getImages() {return images;}
 
-    public Category getCategory(){return category;}
+    public Shop getShop(){return shop;}
 
     public void setName(String name) {this.name = name;}
 
@@ -53,7 +55,9 @@ public class ProductType {
 
     public void setMainImagePath(String mainImagePath) {this.mainImagePath = mainImagePath;}
 
+    public void setImages(List<Image> images) {this.images = images;}
+
     public void setShop(Shop shop) {this.shop = shop;}
 
-    public void setCategory(Category category) {this.category = category;}
+    public void addImagePath(Image image){images.add(image);}
 }

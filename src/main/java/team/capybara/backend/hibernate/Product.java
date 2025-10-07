@@ -13,7 +13,7 @@ public class Product {
     @Column(name="id", nullable = false, unique = true)
     private String id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_type_id")
     private ProductType productType;
 
@@ -27,13 +27,9 @@ public class Product {
     private int discount; // discount amount in monetary units
 
     @Column(name="is_sold", nullable = false)
-    private int isSold; //0 - false; 1 - true
+    private boolean isSold; //0 - false; 1 - true
 
-    public Product() {
-
-    }
-
-    public Product(ProductType productType,Date shelfLife,int price,int discount,int isSold){
+    public Product(ProductType productType,Date shelfLife,int price,int discount,boolean isSold){
         this.id = (UUID.randomUUID()).toString();
         this.productType = productType;
         this.shelfLife = shelfLife;
@@ -52,7 +48,7 @@ public class Product {
 
     public int getDiscount(){return discount;}
 
-    public int getIsSold(){return isSold;}
+    public boolean getIsSold(){return isSold;}
 
     public void setProductType(ProductType productType) {this.productType = productType;}
 
@@ -62,5 +58,5 @@ public class Product {
 
     public void setDiscount(int discount) {this.discount = discount;}
 
-    public void setIsSold(int isSold) {this.isSold = isSold;}
+    public void setIsSold(boolean isSold) {this.isSold = isSold;}
 }
