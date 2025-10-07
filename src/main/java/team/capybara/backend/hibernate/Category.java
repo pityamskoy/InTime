@@ -3,7 +3,6 @@ package team.capybara.backend.hibernate;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -20,14 +19,18 @@ public class Category {
     @Column(name="description", nullable = false, unique = true)
     private String description;
 
-    @OneToMany
-    private List<ProductType> productTypes;
+    @OneToMany(mappedBy = "category")
+    private ArrayList<ProductType> productTypes;
 
-    public Category(String name, String description, ArrayList<ProductType> productTypes){
+    Category(String name, String description, ArrayList<ProductType> productTypes){
         this.id = (UUID.randomUUID()).toString();
         this.name = name;
         this.description = description;
         this.productTypes = productTypes;
+    }
+
+    public Category() {
+
     }
 
     public String getId(){return id;}
@@ -36,11 +39,11 @@ public class Category {
 
     public String getDescription(){return description;}
 
-    public List<ProductType> getProductTypes() {return productTypes;}
+    public ArrayList<ProductType> getProductTypes() {return productTypes;}
 
     public void setName(String name) {this.name = name;}
 
     public void setDescription(String description) {this.description = description;}
 
-    public void setProductTypes(List<ProductType> productTypes) {this.productTypes = productTypes;}
+    public void setProductTypes(ArrayList<ProductType> productTypes) {this.productTypes = productTypes;}
 }
