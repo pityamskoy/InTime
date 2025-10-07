@@ -19,14 +19,15 @@ public class Category {
     @Column(name="description", nullable = false, unique = true)
     private String description;
 
+    /*
     @OneToMany(mappedBy = "category")
-    private ArrayList<ProductType> productTypes;
+    private ArrayList<ProductType> productTypes;*/
 
     Category(String name, String description, ArrayList<ProductType> productTypes){
         this.id = (UUID.randomUUID()).toString();
         this.name = name;
         this.description = description;
-        this.productTypes = productTypes;
+        //this.productTypes = productTypes;
     }
 
     public Category() {
@@ -39,11 +40,11 @@ public class Category {
 
     public String getDescription(){return description;}
 
-    public ArrayList<ProductType> getProductTypes() {return productTypes;}
+    //public ArrayList<ProductType> getProductTypes() {return productTypes;}
 
     public void setName(String name) {this.name = name;}
 
     public void setDescription(String description) {this.description = description;}
 
-    public void setProductTypes(ArrayList<ProductType> productTypes) {this.productTypes = productTypes;}
+    //public void setProductTypes(ArrayList<ProductType> productTypes) {this.productTypes = productTypes;}
 }
