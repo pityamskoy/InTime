@@ -6,7 +6,6 @@ import java.util.UUID;
 @Entity
 @Table(name="Reviews")
 public class Review {
-
     @Id
     @Column(name="id", nullable = false, unique = true)
     private String id;
@@ -47,9 +46,7 @@ public class Review {
         this.stars = stars;
     }
 
-    public Review() {
-
-    }
+    public Review() {}
 
     public String getId() {return id;}
 

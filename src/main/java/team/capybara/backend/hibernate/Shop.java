@@ -8,7 +8,6 @@ import java.util.UUID;
 @Entity
 @Table(name="Shops")
 public class Shop {
-
     @Id
     @Column(name="id", nullable = false, unique = true)
     private String id;
@@ -49,9 +48,7 @@ public class Shop {
         this.lon = lon;
     }
 
-    public Shop() {
-
-    }
+    public Shop() {}
 
     public String getId() {return id;}
 
