@@ -18,13 +18,13 @@ public class UserService {
     }
 
     public User createUser(User userToCreate) {
-        User user = new User(
+        User newUser = new User(
                 userToCreate.getName(),
                 userToCreate.getEmail(),
                 userToCreate.getPassword()
         );
 
-        return userRepository.save(user);
+        return userRepository.save(newUser);
     }
 
     public List<User> getAllUsers() {

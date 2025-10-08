@@ -26,7 +26,7 @@ public class ProductService {
     }
     
     public Product createProduct(Product productToCreate) {
-        Product product = new Product(
+        Product newProduct = new Product(
                 productToCreate.getProductType(),
                 productToCreate.getShelfLife(),
                 productToCreate.getDiscount(),
@@ -34,7 +34,7 @@ public class ProductService {
                 productToCreate.getIsSold()
         );
 
-        return productRepository.save(product);
+        return productRepository.save(newProduct);
     }
 
     public Product updateProduct(String id, Product productToUpdate) {

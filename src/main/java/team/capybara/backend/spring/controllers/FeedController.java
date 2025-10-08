@@ -21,12 +21,10 @@ public class FeedController{
     private static final Logger log = LoggerFactory.getLogger(FeedController.class);
 
     ProductService productService;
-    UserService userService;
 
     @Autowired
-    FeedController(ProductService productService, UserService userService) {
+    FeedController(ProductService productService) {
         this.productService = productService;
-        this.userService = userService;
     }
 
     @GetMapping
@@ -38,36 +36,19 @@ public class FeedController{
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Product>> getProduct(@PathVariable String id) {
-        log.info("Called getProduct");
+        log.info("Called getProduct id={}", id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(productService.getProduct(id));
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers() {
-        log.info("Called getAllUsers");
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(userService.getAllUsers());
-    }
-
-    @PostMapping("/users")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        log.info("Called createUser");
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(userService.createUser(user));
-    }
-
-    // define url to create products
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Product> createProduct(@RequestBody Product productToCreate) {
-        log.info("Called createProduct");
-        //return ResponseEntity.status(HttpStatus.CREATED).build();
+        log.info("Called createProduct product={}", productToCreate);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(productService.createProduct(productToCreate));
     }
 
-    //define url to update products
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(
             @PathVariable("id") String id,
             @RequestBody Product productToUpdate
@@ -78,7 +59,15 @@ public class FeedController{
                 .body(updated);
     }
 
-    @DeleteMapping("/feed/{id}")
+    //fix
+    @PatchMapping("/{id}")
+    public ResponseEntity<Product> partiallyUpdateProduct() {
+        log.info("Called partiallyUpdateProduct");
+        return null;
+    }
+
+    //fix
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
         log.info("Called deleteProduct id={}", id);
 
