@@ -25,16 +25,16 @@ public class ProductService {
         return productRepository.findById(id);
     }
     
-    public Product createProduct(Product product) {
-        Product newProduct = new Product(
-                product.getProductType(),
-                product.getShelfLife(),
-                product.getPrice(),
-                product.getDiscount(),
-                product.getIsSold()
+    public Product createProduct(Product productToCreate) {
+        Product product = new Product(
+                productToCreate.getProductType(),
+                productToCreate.getShelfLife(),
+                productToCreate.getDiscount(),
+                productToCreate.getPrice(),
+                productToCreate.getIsSold()
         );
 
-        return productRepository.save(newProduct);
+        return productRepository.save(product);
     }
 
     public Product updateProduct(String id, Product productToUpdate) {

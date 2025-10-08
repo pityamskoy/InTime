@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.hibernate.Product;
+import team.capybara.backend.hibernate.User;
 import team.capybara.backend.spring.controllers.services.ProductService;
+import team.capybara.backend.spring.controllers.services.UserService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -16,33 +18,49 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/feed")
 public class FeedController{
-    private static final Logger logger = LoggerFactory.getLogger(FeedController.class);
+    private static final Logger log = LoggerFactory.getLogger(FeedController.class);
 
     ProductService productService;
+    UserService userService;
 
     @Autowired
-    FeedController(ProductService productService) {
+    FeedController(ProductService productService, UserService userService) {
         this.productService = productService;
+        this.userService = userService;
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
-        logger.info("Called getAllProducts");
+        log.info("Called getAllProducts");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(productService.getAllProducts());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Product>> getProduct(@PathVariable String id) {
-        logger.info("Called getProduct");
+        log.info("Called getProduct");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(productService.getProduct(id));
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getAllUsers() {
+        log.info("Called getAllUsers");
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userService.getAllUsers());
+    }
+
+    @PostMapping("/users")
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        log.info("Called createUser");
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userService.createUser(user));
+    }
+
     // define url to create products
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product productToCreate) {
-        logger.info("Called createProduct");
+        log.info("Called createProduct");
         //return ResponseEntity.status(HttpStatus.CREATED).build();
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(productService.createProduct(productToCreate));
@@ -54,7 +72,7 @@ public class FeedController{
             @PathVariable("id") String id,
             @RequestBody Product productToUpdate
         ) {
-        logger.info("Called updateProduct id={}, productToUpdate={}", id, productToUpdate);
+        log.info("Called updateProduct id={}, productToUpdate={}", id, productToUpdate);
         Product updated = productService.updateProduct(id, productToUpdate);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(updated);
@@ -62,7 +80,7 @@ public class FeedController{
 
     @DeleteMapping("/feed/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
-        logger.info("Called deleteProduct id={}", id);
+        log.info("Called deleteProduct id={}", id);
 
         try {
             productService.deleteProduct(id);
