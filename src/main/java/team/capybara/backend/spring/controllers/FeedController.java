@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.hibernate.Product;
+import team.capybara.backend.hibernate.User;
 import team.capybara.backend.spring.controllers.services.ProductService;
+import team.capybara.backend.spring.controllers.services.UserService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -16,7 +18,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/feed")
 public class FeedController{
-    private static final Logger logger = LoggerFactory.getLogger(FeedController.class);
+    private static final Logger log = LoggerFactory.getLogger(FeedController.class);
 
     ProductService productService;
 
@@ -25,44 +27,49 @@ public class FeedController{
         this.productService = productService;
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
-        logger.info("Called getAllProducts");
+        log.info("Called getAllProducts");
         return ResponseEntity.status(HttpStatus.OK)
                 .body(productService.getAllProducts());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Product>> getProduct(@PathVariable String id) {
-        logger.info("Called getProduct");
+        log.info("Called getProduct id={}", id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(productService.getProduct(id));
     }
 
-    // define url to create products
-    @PostMapping()
+    @PostMapping("/create")
     public ResponseEntity<Product> createProduct(@RequestBody Product productToCreate) {
-        logger.info("Called createProduct");
-        //return ResponseEntity.status(HttpStatus.CREATED).build();
+        log.info("Called createProduct product={}", productToCreate);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(productService.createProduct(productToCreate));
     }
 
-    //define url to update products
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(
             @PathVariable("id") String id,
             @RequestBody Product productToUpdate
         ) {
-        logger.info("Called updateProduct id={}, productToUpdate={}", id, productToUpdate);
+        log.info("Called updateProduct id={}, productToUpdate={}", id, productToUpdate);
         Product updated = productService.updateProduct(id, productToUpdate);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(updated);
     }
 
-    @DeleteMapping("/feed/{id}")
+    //fix
+    @PatchMapping("/{id}")
+    public ResponseEntity<Product> partiallyUpdateProduct() {
+        log.info("Called partiallyUpdateProduct");
+        return null;
+    }
+
+    //fix
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
-        logger.info("Called deleteProduct id={}", id);
+        log.info("Called deleteProduct id={}", id);
 
         try {
             productService.deleteProduct(id);

@@ -25,13 +25,13 @@ public class ProductService {
         return productRepository.findById(id);
     }
     
-    public Product createProduct(Product product) {
+    public Product createProduct(Product productToCreate) {
         Product newProduct = new Product(
-                product.getProductType(),
-                product.getShelfLife(),
-                product.getPrice(),
-                product.getDiscount(),
-                product.getIsSold()
+                productToCreate.getProductType(),
+                productToCreate.getShelfLife(),
+                productToCreate.getDiscount(),
+                productToCreate.getPrice(),
+                productToCreate.getIsSold()
         );
 
         return productRepository.save(newProduct);
