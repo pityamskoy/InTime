@@ -1,47 +1,71 @@
 package team.capybara.backend.spring.controllers.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.hibernate.Product;
+import team.capybara.backend.spring.controllers.dto.product.ProductDto;
+import team.capybara.backend.spring.controllers.mapping.ProductMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
 
     @Autowired
-    ProductService(ProductRepository productRepository) {
+    ProductService(
+            ProductRepository productRepository,
+            ProductMapper productMapper
+    ) {
         this.productRepository = productRepository;
+        this.productMapper = productMapper;
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductDto> getAllProducts() {
+        List<Product> products = productRepository.findAll();
+
+        return products.stream().map(productMapper::toDto).toList();
     }
 
-    public Optional<Product> getProduct(String id) {
-        return productRepository.findById(id);
+    public Optional<ProductDto> getProductById(String id) {
+        Optional<Product> product = productRepository.findById(id);
+
+        if (product.isEmpty()) {
+            throw new EntityNotFoundException(MessageFormat.format("Not found product by id={0}", id));
+        }
+
+        return Optional.ofNullable(productMapper.toDto(product.get()));
     }
     
-    public Product createProduct(Product productToCreate) {
-        Product newProduct = new Product(
-                productToCreate.getProductType(),
-                productToCreate.getShelfLife(),
-                productToCreate.getDiscount(),
-                productToCreate.getPrice(),
-                productToCreate.getIsSold()
-        );
+    public Product createProduct(ProductDto productToCreate) throws EntityNotFoundException {
+        Product productToSave = productMapper.toEntity(productToCreate);
 
-        return productRepository.save(newProduct);
+        return productRepository.save(productToSave);
     }
 
-    public Product updateProduct(String id, Product productToUpdate) {
-        return null;
+    public Product updateProduct(
+            ProductDto productToUpdate
+    ) throws EntityNotFoundException {
+        Product productToSave = productMapper.toEntity(productToUpdate);
+
+        productToSave.setShelfLife(productToUpdate.shelfLife());
+        productToSave.setPrice(productToUpdate.price());
+        productToSave.setDiscount(productToUpdate.discount());
+        productToSave.setIsSold(productToUpdate.isSold());
+
+        return productRepository.save(productToSave);
     }
 
     public void deleteProduct(String id) {
-        return;
+        if (!productRepository.existsById(id)) {
+            throw new EntityNotFoundException("Not found product by id=" + id);
+        }
+
+        productRepository.deleteById(id);
     }
 }
