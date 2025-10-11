@@ -7,7 +7,6 @@ import java.util.UUID;
 @Entity
 @Table(name="Images")
 public class Image {
-
     @Id
     @Column(name="id", nullable = false, unique = true)
     private String id;
@@ -19,6 +18,8 @@ public class Image {
         this.id = (UUID.randomUUID()).toString();
         this.path = path;
     }
+
+    public Image() {}
 
     public String getId() {return id;}
 

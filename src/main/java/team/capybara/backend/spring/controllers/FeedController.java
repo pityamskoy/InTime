@@ -1,5 +1,6 @@
 package team.capybara.backend.spring.controllers;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.hibernate.Product;
+import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.services.ProductService;
 
 import java.util.List;
@@ -16,53 +18,72 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/feed")
 public class FeedController{
-    private static final Logger logger = LoggerFactory.getLogger(FeedController.class);
+    private static final Logger log = LoggerFactory.getLogger(FeedController.class);
 
     ProductService productService;
 
     @Autowired
-    FeedController(ProductService productService) {
+    public FeedController(ProductService productService) {
         this.productService = productService;
     }
 
-    @GetMapping()
-    public ResponseEntity<List<Product>> getAllProducts() {
-        logger.info("Called getAllProducts");
+    @GetMapping
+    public ResponseEntity<List<ProductDto>> getAllProducts() {
+        log.info("Called getAllProducts");
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(productService.getAllProducts());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Product>> getProduct(@PathVariable String id) {
-        logger.info("Called getProduct");
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(productService.getProduct(id));
+    public ResponseEntity<Optional<ProductDto>> getProductById(@PathVariable String id) {
+        log.info("Called getProduct id={}", id);
+
+        try {
+            Optional<ProductDto> productDto = productService.getProductById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(productDto);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
-    // define url to create products
-    @PostMapping()
-    public ResponseEntity<Product> createProduct(@RequestBody Product productToCreate) {
-        logger.info("Called createProduct");
-        //return ResponseEntity.status(HttpStatus.CREATED).build();
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(productService.createProduct(productToCreate));
+    @PostMapping("/create")
+    public ResponseEntity<Product> createProduct(@RequestBody ProductDto productToCreate) {
+        log.info("Called createProduct product={}", productToCreate);
+
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(productService.createProduct(productToCreate));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
-    //define url to update products
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(
-            @PathVariable("id") String id,
-            @RequestBody Product productToUpdate
+            @RequestBody ProductDto productToUpdate
         ) {
-        logger.info("Called updateProduct id={}, productToUpdate={}", id, productToUpdate);
-        Product updated = productService.updateProduct(id, productToUpdate);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(updated);
+        log.info("Called updateProduct id={}, productToUpdate={}", productToUpdate.id(), productToUpdate);
+
+        try {
+            Product updated = productService.updateProduct(productToUpdate);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(updated);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
-    @DeleteMapping("/feed/{id}")
+    //fix
+    @PatchMapping("/{id}")
+    public ResponseEntity<Product> partiallyUpdateProduct() {
+        log.info("Called partiallyUpdateProduct");
+        return null;
+    }
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
-        logger.info("Called deleteProduct id={}", id);
+        log.info("Called deleteProduct id={}", id);
 
         try {
             productService.deleteProduct(id);

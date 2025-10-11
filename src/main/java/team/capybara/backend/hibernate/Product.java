@@ -8,7 +8,6 @@ import java.util.UUID;
 @Entity
 @Table(name="Products")
 public class Product {
-
     @Id
     @Column(name="id", nullable = false, unique = true)
     private String id;
@@ -37,6 +36,8 @@ public class Product {
         this.discount = discount;
         this.isSold = isSold;
     }
+
+    public Product() {}
 
     public String getId(){return id;}
 
