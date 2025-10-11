@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan(basePackages = {"team.capybara.backend.hibernate"})
 @EnableJpaRepositories(basePackages = {"team.capybara.backend.spring.controllers.repositories"})
 public class Main {
-    public static void main(String[] args) {
+    static void main(String[] args) {
         SpringApplication.run(Main.class, args);
     }
 }

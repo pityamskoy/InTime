@@ -1,5 +1,6 @@
 package team.capybara.backend.spring.controllers;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.hibernate.Product;
-import team.capybara.backend.hibernate.User;
+import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.services.ProductService;
-import team.capybara.backend.spring.controllers.services.UserService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -23,40 +23,55 @@ public class FeedController{
     ProductService productService;
 
     @Autowired
-    FeedController(ProductService productService) {
+    public FeedController(ProductService productService) {
         this.productService = productService;
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
+    public ResponseEntity<List<ProductDto>> getAllProducts() {
         log.info("Called getAllProducts");
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(productService.getAllProducts());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Product>> getProduct(@PathVariable String id) {
+    public ResponseEntity<Optional<ProductDto>> getProductById(@PathVariable String id) {
         log.info("Called getProduct id={}", id);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(productService.getProduct(id));
+
+        try {
+            Optional<ProductDto> productDto = productService.getProductById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(productDto);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Product> createProduct(@RequestBody Product productToCreate) {
+    public ResponseEntity<Product> createProduct(@RequestBody ProductDto productToCreate) {
         log.info("Called createProduct product={}", productToCreate);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(productService.createProduct(productToCreate));
+
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(productService.createProduct(productToCreate));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(
-            @PathVariable("id") String id,
-            @RequestBody Product productToUpdate
+            @RequestBody ProductDto productToUpdate
         ) {
-        log.info("Called updateProduct id={}, productToUpdate={}", id, productToUpdate);
-        Product updated = productService.updateProduct(id, productToUpdate);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(updated);
+        log.info("Called updateProduct id={}, productToUpdate={}", productToUpdate.id(), productToUpdate);
+
+        try {
+            Product updated = productService.updateProduct(productToUpdate);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(updated);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     //fix
@@ -66,7 +81,6 @@ public class FeedController{
         return null;
     }
 
-    //fix
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
         log.info("Called deleteProduct id={}", id);
