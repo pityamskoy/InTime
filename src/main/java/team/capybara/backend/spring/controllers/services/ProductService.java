@@ -51,14 +51,20 @@ public class ProductService {
     public Product updateProduct(
             ProductDto productToUpdate
     ) throws EntityNotFoundException {
-        Product productToSave = productMapper.toEntity(productToUpdate);
+        Optional<Product> optionalProduct = productRepository.findById(productToUpdate.id());
 
-        productToSave.setShelfLife(productToUpdate.shelfLife());
-        productToSave.setPrice(productToUpdate.price());
-        productToSave.setDiscount(productToUpdate.discount());
-        productToSave.setIsSold(productToUpdate.isSold());
+        if (optionalProduct.isEmpty()) {
+            throw new EntityNotFoundException("Not found product by id=" + productToUpdate.id());
+        } else {
+            Product product = optionalProduct.get();
 
-        return productRepository.save(productToSave);
+            product.setShelfLife(productToUpdate.shelfLife());
+            product.setPrice(productToUpdate.price());
+            product.setDiscount(productToUpdate.discount());
+            product.setIsSold(productToUpdate.isSold());
+
+            return productRepository.save(product);
+        }
     }
 
     public void deleteProduct(String id) {
