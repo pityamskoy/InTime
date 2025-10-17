@@ -31,11 +31,7 @@ public class ProductMapper implements Mapper<Product, ProductDto> {
     @Override
     public ProductDto toDto(Product product) {
         ProductType productType = product.getProductType();
-        List<ImageDto> images = new LinkedList<>();
-
-        for (Image image : productType.getImages()) {
-            images.add(this.imageMapper.toDto(image));
-        }
+        List<ImageDto> images = imageMapper.toDtoList(productType.getImages());
 
         return new ProductDto(
                 product.getId(),

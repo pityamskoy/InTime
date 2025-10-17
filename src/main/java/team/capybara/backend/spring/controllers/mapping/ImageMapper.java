@@ -4,6 +4,9 @@ import org.springframework.stereotype.Component;
 import team.capybara.backend.hibernate.Image;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 
+import java.util.LinkedList;
+import java.util.List;
+
 @Component
 public class ImageMapper implements Mapper<Image, ImageDto> {
 
@@ -20,5 +23,25 @@ public class ImageMapper implements Mapper<Image, ImageDto> {
         return new Image(
                 imageDto.path()
         );
+    }
+
+    public List<ImageDto> toDtoList(List<Image> images) {
+        List<ImageDto> dtoImages = new LinkedList<>();
+
+        for (Image image : images) {
+            dtoImages.add(this.toDto(image));
+        }
+
+        return dtoImages;
+    }
+
+    public List<Image> toEntityList(List<ImageDto> DtoImages) {
+        List<Image> images = new LinkedList<>();
+
+        for (ImageDto imageDto : DtoImages) {
+            images.add(this.toEntity(imageDto));
+        }
+
+        return images;
     }
 }

@@ -1,6 +1,6 @@
 package team.capybara.backend.spring.controllers.dto.shop;
 
-import team.capybara.backend.hibernate.Image;
+import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ public record ShopDto(
         String description,
         boolean isVerified,
         String mainImagePath,
-        List<Image> images,
+        List<ImageDto> images,
         String address,
         Double lat,
         Double lon

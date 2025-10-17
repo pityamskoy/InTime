@@ -27,11 +27,7 @@ public class ProductTypeMapper implements Mapper<ProductType, ProductTypeDto>{
 
     @Override
     public ProductTypeDto toDto(ProductType productType) {
-        List<ImageDto> images = new LinkedList<>();
-
-        for (Image image : productType.getImages()) {
-            images.add(this.imageMapper.toDto(image));
-        }
+        List<ImageDto> images = imageMapper.toDtoList(productType.getImages());
 
         return new ProductTypeDto(
                 productType.getId(),
@@ -46,15 +42,11 @@ public class ProductTypeMapper implements Mapper<ProductType, ProductTypeDto>{
     @Override
     public ProductType toEntity(ProductTypeDto productTypeDto) {
         String shopId = productTypeDto.shopId();
+        List<Image> images = imageMapper.toEntityList(productTypeDto.imagesDto());
         Optional<Shop> optionalShop = this.shopRepository.findById(shopId);
 
         if (optionalShop.isEmpty()) {
             throw new EntityNotFoundException("Not found shop with id: " + shopId);
-        }
-
-        List<Image> images = new LinkedList<>();
-        for (ImageDto imageDto : productTypeDto.imagesDto()) {
-            images.add(this.imageMapper.toEntity(imageDto));
         }
 
         return new ProductType(
