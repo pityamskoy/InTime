@@ -15,7 +15,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+
 @RestController
+@CrossOrigin(value = {"http://localhost:3000"})
 @RequestMapping("/feed")
 public class FeedController{
     private static final Logger log = LoggerFactory.getLogger(FeedController.class);
