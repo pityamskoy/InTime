@@ -10,7 +10,6 @@ import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 import team.capybara.backend.spring.controllers.dto.producttype.ProductTypeDto;
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +39,7 @@ public class ProductTypeMapper implements Mapper<ProductType, ProductTypeDto>{
     }
 
     @Override
-    public ProductType toEntity(ProductTypeDto productTypeDto) {
+    public ProductType postEntity(ProductTypeDto productTypeDto) {
         String shopId = productTypeDto.shopId();
         List<Image> images = imageMapper.toEntityList(productTypeDto.imagesDto());
         Optional<Shop> optionalShop = this.shopRepository.findById(shopId);

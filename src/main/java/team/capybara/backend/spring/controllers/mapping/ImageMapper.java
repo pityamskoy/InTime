@@ -19,7 +19,7 @@ public class ImageMapper implements Mapper<Image, ImageDto> {
     }
 
     @Override
-    public Image toEntity(ImageDto imageDto) {
+    public Image postEntity(ImageDto imageDto) {
         return new Image(
                 imageDto.path()
         );
@@ -39,7 +39,7 @@ public class ImageMapper implements Mapper<Image, ImageDto> {
         List<Image> images = new LinkedList<>();
 
         for (ImageDto imageDto : DtoImages) {
-            images.add(this.toEntity(imageDto));
+            images.add(this.postEntity(imageDto));
         }
 
         return images;
