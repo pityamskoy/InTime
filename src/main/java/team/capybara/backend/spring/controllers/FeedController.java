@@ -7,20 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.hibernate.Product;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.services.ProductService;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
 @RestController
 @CrossOrigin(value = {"http://localhost:3000"})
 @RequestMapping("/feed")
-public class FeedController{
+@SuppressWarnings(value = {"unused"})
+public class FeedController {
     private static final Logger log = LoggerFactory.getLogger(FeedController.class);
+
 
     ProductService productService;
 
@@ -45,52 +45,6 @@ public class FeedController{
             Optional<ProductDto> productDto = productService.getProductById(id);
             return ResponseEntity.status(HttpStatus.OK).body(productDto);
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
-
-    @PostMapping("/create")
-    public ResponseEntity<Product> createProduct(@RequestBody ProductDto productToCreate) {
-        log.info("Called createProduct product={}", productToCreate);
-
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(productService.createProduct(productToCreate));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(
-            @RequestBody ProductDto productToUpdate
-        ) {
-        log.info("Called updateProduct id={}, productToUpdate={}", productToUpdate.id(), productToUpdate);
-
-        try {
-            Product updated = productService.updateProduct(productToUpdate);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(updated);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
-
-    //fix
-    @PatchMapping("/{id}")
-    public ResponseEntity<Product> partiallyUpdateProduct() {
-        log.info("Called partiallyUpdateProduct");
-        return null;
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
-        log.info("Called deleteProduct id={}", id);
-
-        try {
-            productService.deleteProduct(id);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch(NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }

@@ -36,42 +36,9 @@ public class ProductService {
         Optional<Product> product = productRepository.findById(id);
 
         if (product.isEmpty()) {
-            throw new EntityNotFoundException(MessageFormat.format("Not found product by id={0}", id));
+            throw new ServiceException(new EntityNotFoundException(MessageFormat.format("Not found product by id={0}", id)));
         }
 
         return Optional.ofNullable(productMapper.toDto(product.get()));
-    }
-    
-    public Product createProduct(ProductDto productToCreate) throws EntityNotFoundException {
-        Product productToSave = productMapper.toEntity(productToCreate);
-
-        return productRepository.save(productToSave);
-    }
-
-    public Product updateProduct(
-            ProductDto productToUpdate
-    ) throws EntityNotFoundException {
-        Optional<Product> optionalProduct = productRepository.findById(productToUpdate.id());
-
-        if (optionalProduct.isEmpty()) {
-            throw new EntityNotFoundException("Not found product by id=" + productToUpdate.id());
-        } else {
-            Product product = optionalProduct.get();
-
-            product.setShelfLife(productToUpdate.shelfLife());
-            product.setPrice(productToUpdate.price());
-            product.setDiscount(productToUpdate.discount());
-            product.setIsSold(productToUpdate.isSold());
-
-            return productRepository.save(product);
-        }
-    }
-
-    public void deleteProduct(String id) {
-        if (!productRepository.existsById(id)) {
-            throw new EntityNotFoundException("Not found product by id=" + id);
-        }
-
-        productRepository.deleteById(id);
     }
 }
