@@ -6,6 +6,7 @@ import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class ImageMapper implements Mapper<Image, ImageDto> {
@@ -21,6 +22,7 @@ public class ImageMapper implements Mapper<Image, ImageDto> {
     @Override
     public Image toEntity(ImageDto imageDto) {
         return new Image(
+                UUID.randomUUID(),
                 imageDto.path()
         );
     }
