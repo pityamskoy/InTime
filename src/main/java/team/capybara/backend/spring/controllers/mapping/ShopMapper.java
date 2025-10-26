@@ -31,7 +31,7 @@ public class ShopMapper implements Mapper<Shop, ShopDto> {
     }
 
     @Override
-    public Shop toEntity(ShopDto shopDto) {
+    public Shop postEntity(ShopDto shopDto) {
         List<Image> images = imageMapper.toEntityList(shopDto.images());
 
         return new Shop(

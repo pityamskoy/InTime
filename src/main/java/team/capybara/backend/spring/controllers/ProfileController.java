@@ -10,8 +10,10 @@ import team.capybara.backend.spring.controllers.services.UserService;
 
 import java.util.List;
 
-@RestController()
+@RestController
+@CrossOrigin(value = {"http://localhost:3000"})
 @RequestMapping("/users")
+@SuppressWarnings(value = {"unused"})
 public class ProfileController {
     private static final Logger log = LoggerFactory.getLogger(ProfileController.class);
 
