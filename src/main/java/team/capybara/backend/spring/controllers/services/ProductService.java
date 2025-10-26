@@ -3,7 +3,7 @@ package team.capybara.backend.spring.controllers.services;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.hibernate.Product;
+import team.capybara.backend.spring.entitys.Product;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.mapping.ProductMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
@@ -11,6 +11,7 @@ import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ProductService {
@@ -33,10 +34,10 @@ public class ProductService {
     }
 
     public Optional<ProductDto> getProductById(String id) {
-        Optional<Product> product = productRepository.findById(id);
+        Optional<Product> product = productRepository.findById(UUID.fromString(id));
 
         if (product.isEmpty()) {
-            throw new EntityNotFoundException(MessageFormat.format("Not found product by id={0}", id));
+            throw new EntityNotFoundException(MessageFormat.format("Not found product by id={0}", UUID.fromString(id)));
         }
 
         return Optional.ofNullable(productMapper.toDto(product.get()));
@@ -61,17 +62,17 @@ public class ProductService {
             product.setShelfLife(productToUpdate.shelfLife());
             product.setPrice(productToUpdate.price());
             product.setDiscount(productToUpdate.discount());
-            product.setIsSold(productToUpdate.isSold());
+            product.setSold(productToUpdate.isSold());
 
             return productRepository.save(product);
         }
     }
 
     public void deleteProduct(String id) {
-        if (!productRepository.existsById(id)) {
+        if (!productRepository.existsById(UUID.fromString(id))) {
             throw new EntityNotFoundException("Not found product by id=" + id);
         }
 
-        productRepository.deleteById(id);
+        productRepository.deleteById(UUID.fromString(id));
     }
 }

@@ -3,16 +3,16 @@ package team.capybara.backend.spring.controllers.mapping;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import team.capybara.backend.hibernate.Image;
-import team.capybara.backend.hibernate.ProductType;
-import team.capybara.backend.hibernate.Shop;
+import team.capybara.backend.spring.entitys.Image;
+import team.capybara.backend.spring.entitys.ProductType;
+import team.capybara.backend.spring.entitys.Shop;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 import team.capybara.backend.spring.controllers.dto.producttype.ProductTypeDto;
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class ProductTypeMapper implements Mapper<ProductType, ProductTypeDto>{
@@ -41,7 +41,7 @@ public class ProductTypeMapper implements Mapper<ProductType, ProductTypeDto>{
 
     @Override
     public ProductType toEntity(ProductTypeDto productTypeDto) {
-        String shopId = productTypeDto.shopId();
+        UUID shopId = productTypeDto.shopId();
         List<Image> images = imageMapper.toEntityList(productTypeDto.imagesDto());
         Optional<Shop> optionalShop = this.shopRepository.findById(shopId);
 
@@ -50,6 +50,7 @@ public class ProductTypeMapper implements Mapper<ProductType, ProductTypeDto>{
         }
 
         return new ProductType(
+                UUID.randomUUID(),
                 productTypeDto.name(),
                 productTypeDto.description(),
                 productTypeDto.mainImagePath(),

@@ -3,17 +3,16 @@ package team.capybara.backend.spring.controllers.mapping;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import team.capybara.backend.hibernate.Image;
-import team.capybara.backend.hibernate.Product;
-import team.capybara.backend.hibernate.ProductType;
+import team.capybara.backend.spring.entitys.Product;
+import team.capybara.backend.spring.entitys.ProductType;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
 
 import java.text.MessageFormat;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Component
@@ -43,13 +42,13 @@ public class ProductMapper implements Mapper<Product, ProductDto> {
                 product.getShelfLife(),
                 product.getPrice(),
                 product.getDiscount(),
-                product.getIsSold()
+                product.isSold()
         );
     }
 
     @Override
     public Product toEntity(ProductDto productDto) {
-        String productTypeId = productDto.productTypeId();
+        UUID productTypeId = productDto.productTypeId();
         Optional<ProductType> productType = productTypeRepository.findById(productTypeId);
 
         if (productType.isEmpty()) {
@@ -57,6 +56,7 @@ public class ProductMapper implements Mapper<Product, ProductDto> {
         }
 
         return new Product(
+                UUID.randomUUID(),
                 productType.get(),
                 productDto.shelfLife(),
                 productDto.price(),

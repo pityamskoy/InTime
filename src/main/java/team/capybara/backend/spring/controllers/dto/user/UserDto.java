@@ -1,7 +1,9 @@
 package team.capybara.backend.spring.controllers.dto.user;
 
+import java.util.UUID;
+
 public record UserDto(
-        String id,
+        UUID id,
         String name,
         String email
 ) {

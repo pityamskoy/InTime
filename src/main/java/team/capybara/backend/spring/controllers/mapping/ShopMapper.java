@@ -1,12 +1,13 @@
 package team.capybara.backend.spring.controllers.mapping;
 
 import org.springframework.stereotype.Component;
-import team.capybara.backend.hibernate.Image;
-import team.capybara.backend.hibernate.Shop;
+import team.capybara.backend.spring.entitys.Image;
+import team.capybara.backend.spring.entitys.Shop;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class ShopMapper implements Mapper<Shop, ShopDto> {
@@ -20,7 +21,7 @@ public class ShopMapper implements Mapper<Shop, ShopDto> {
                 shop.getId(),
                 shop.getName(),
                 shop.getDescription(),
-                shop.getIsVerifide(),
+                shop.isVerifide(),
                 shop.getMainImagePath(),
                 images,
                 shop.getAddress(),
@@ -34,6 +35,7 @@ public class ShopMapper implements Mapper<Shop, ShopDto> {
         List<Image> images = imageMapper.toEntityList(shopDto.images());
 
         return new Shop(
+                UUID.randomUUID(),
                 shopDto.name(),
                 shopDto.description(),
                 shopDto.isVerified(),

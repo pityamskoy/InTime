@@ -4,9 +4,10 @@ import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.dto.user.UserDto;
 
 import java.util.Date;
+import java.util.UUID;
 
 public record InterestsDto(
-        String id,
+        UUID id,
         UserDto userDto,
         ProductDto productDto,
         Date time

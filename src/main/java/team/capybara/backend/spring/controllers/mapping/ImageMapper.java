@@ -1,7 +1,7 @@
 package team.capybara.backend.spring.controllers.mapping;
 
 import org.springframework.stereotype.Component;
-import team.capybara.backend.hibernate.Image;
+import team.capybara.backend.spring.entitys.Image;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 
 import java.util.LinkedList;
