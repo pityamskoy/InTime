@@ -1,52 +1,28 @@
 package team.capybara.backend.spring.controllers;
 
+
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.spring.entitys.Product;
+import team.capybara.backend.hibernate.Product;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
-import team.capybara.backend.spring.controllers.services.ProductService;
+import team.capybara.backend.spring.controllers.services.ShopService;
 
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/feed")
-public class FeedController{
-    private static final Logger log = LoggerFactory.getLogger(FeedController.class);
+@CrossOrigin(value = {"http://localhost:3000"})
+@RequestMapping("/shops")
+@SuppressWarnings(value = {"unused"})
+public class ShopController {
+    private static final Logger log = LoggerFactory.getLogger(ShopController.class);
+    ShopService shopService;
 
-    ProductService productService;
-
-    @Autowired
-    public FeedController(ProductService productService) {
-        this.productService = productService;
-    }
-
-    @GetMapping
-    public ResponseEntity<List<ProductDto>> getAllProducts() {
-        log.info("Called getAllProducts");
-
-        //productService.createProduct()
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(productService.getAllProducts());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Optional<ProductDto>> getProductById(@PathVariable String id) {
-        log.info("Called getProduct id={}", id);
-
-        try {
-            Optional<ProductDto> productDto = productService.getProductById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(productDto);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+    ShopController(ShopService shopService) {
+        this.shopService = shopService;
     }
 
     @PostMapping("/create")
@@ -55,20 +31,20 @@ public class FeedController{
 
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(productService.createProduct(productToCreate));
+                    .body(shopService.createProduct(productToCreate));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/product/{id}")
     public ResponseEntity<Product> updateProduct(
             @RequestBody ProductDto productToUpdate
-        ) {
+    ) {
         log.info("Called updateProduct id={}, productToUpdate={}", productToUpdate.id(), productToUpdate);
 
         try {
-            Product updated = productService.updateProduct(productToUpdate);
+            Product updated = shopService.updateProduct(productToUpdate);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(updated);
         } catch (EntityNotFoundException e) {
@@ -77,18 +53,18 @@ public class FeedController{
     }
 
     //fix
-    @PatchMapping("/{id}")
+    @PatchMapping("/product/{id}")
     public ResponseEntity<Product> partiallyUpdateProduct() {
         log.info("Called partiallyUpdateProduct");
         return null;
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/product/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
         log.info("Called deleteProduct id={}", id);
 
         try {
-            productService.deleteProduct(id);
+            shopService.deleteProduct(id);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch(NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

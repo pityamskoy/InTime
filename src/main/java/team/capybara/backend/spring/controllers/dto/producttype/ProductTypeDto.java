@@ -1,16 +1,16 @@
 package team.capybara.backend.spring.controllers.dto.producttype;
 
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
-import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
 
 import java.util.List;
+import java.util.UUID;
 
 public record ProductTypeDto(
-        String id,
+        UUID id,
         String name,
         String description,
         String mainImagePath,
         List<ImageDto> imagesDto,
-        ShopDto shopDto
+        UUID shopId
 ) {
 }

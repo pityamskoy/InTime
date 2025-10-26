@@ -5,13 +5,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.hibernate.User;
+import team.capybara.backend.spring.entitys.User;
 import team.capybara.backend.spring.controllers.services.UserService;
 
 import java.util.List;
 
-@RestController()
+@RestController
+@CrossOrigin(value = {"http://localhost:3000"})
 @RequestMapping("/users")
+@SuppressWarnings(value = {"unused"})
 public class ProfileController {
     private static final Logger log = LoggerFactory.getLogger(ProfileController.class);
 
