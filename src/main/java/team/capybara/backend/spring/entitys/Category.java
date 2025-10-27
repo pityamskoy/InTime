@@ -26,7 +26,7 @@ public class Category {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<ProductType> productTypes;
 
 }

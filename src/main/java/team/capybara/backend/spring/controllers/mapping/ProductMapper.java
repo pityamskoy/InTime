@@ -47,7 +47,7 @@ public class ProductMapper implements Mapper<Product, ProductDto> {
     }
 
     @Override
-    public Product toEntity(ProductDto productDto) {
+    public Product postEntity(ProductDto productDto) {
         UUID productTypeId = productDto.productTypeId();
         Optional<ProductType> productType = productTypeRepository.findById(productTypeId);
 

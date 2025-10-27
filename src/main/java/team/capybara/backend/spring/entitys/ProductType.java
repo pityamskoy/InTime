@@ -29,10 +29,10 @@ public class ProductType {
     @Column(name = "main_image_path", nullable = false)
     private String mainImagePath;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Image> images;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "shop_id")
     private Shop shop;
 

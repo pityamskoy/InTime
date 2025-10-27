@@ -3,6 +3,10 @@ package team.capybara.backend.spring.controllers.services;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import team.capybara.backend.spring.controllers.repositories.ImageRepository;
+import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
+import team.capybara.backend.spring.controllers.repositories.ShopRepository;
+import team.capybara.backend.spring.entitys.Image;
 import team.capybara.backend.spring.entitys.Product;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.mapping.ProductMapper;
@@ -17,14 +21,20 @@ import java.util.UUID;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final ProductTypeRepository productTypeRepository;
+    private final ShopRepository shopRepository;
+    private final ImageRepository imageRepository;
 
     @Autowired
     ProductService(
             ProductRepository productRepository,
-            ProductMapper productMapper
+            ProductMapper productMapper, ProductTypeRepository productTypeRepository, ShopRepository shopRepository, ImageRepository imageRepository
     ) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
+        this.productTypeRepository = productTypeRepository;
+        this.shopRepository = shopRepository;
+        this.imageRepository = imageRepository;
     }
 
     public List<ProductDto> getAllProducts() {
@@ -42,11 +52,26 @@ public class ProductService {
 
         return Optional.ofNullable(productMapper.toDto(product.get()));
     }
-    
+
     public Product createProduct(ProductDto productToCreate) throws EntityNotFoundException {
-        Product productToSave = productMapper.toEntity(productToCreate);
+        Product productToSave = productMapper.postEntity(productToCreate);
 
         return productRepository.save(productToSave);
+    }
+
+    public Product createProduct(Product productToCreate) throws EntityNotFoundException {
+
+        //рабочий вариант без дто
+        for (Image img : productToCreate.getProductType().getImages()) {
+            imageRepository.save(img);
+        }
+        for (Image img : productToCreate.getProductType().getShop().getImages()) {
+            imageRepository.save(img);
+        }
+        shopRepository.save(productToCreate.getProductType().getShop());
+        productTypeRepository.save(productToCreate.getProductType());
+
+        return productRepository.save(productToCreate);
     }
 
     public Product updateProduct(

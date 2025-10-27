@@ -40,7 +40,7 @@ public class ProductTypeMapper implements Mapper<ProductType, ProductTypeDto>{
     }
 
     @Override
-    public ProductType toEntity(ProductTypeDto productTypeDto) {
+    public ProductType postEntity(ProductTypeDto productTypeDto) {
         UUID shopId = productTypeDto.shopId();
         List<Image> images = imageMapper.toEntityList(productTypeDto.imagesDto());
         Optional<Shop> optionalShop = this.shopRepository.findById(shopId);

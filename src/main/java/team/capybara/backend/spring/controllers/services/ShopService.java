@@ -3,14 +3,15 @@ package team.capybara.backend.spring.controllers.services;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.hibernate.Product;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.mapping.ProductMapper;
 import team.capybara.backend.spring.controllers.mapping.ShopMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
+import team.capybara.backend.spring.entitys.Product;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ShopService {
@@ -52,17 +53,17 @@ public class ShopService {
             product.setShelfLife(productToUpdate.shelfLife());
             product.setPrice(productToUpdate.price());
             product.setDiscount(productToUpdate.discount());
-            product.setIsSold(productToUpdate.isSold());
+            product.setSold(productToUpdate.isSold());
 
             return productRepository.save(product);
         }
     }
 
     public void deleteProduct(String id) {
-        if (!productRepository.existsById(id)) {
+        if (!productRepository.existsById(UUID.fromString(id))) {
             throw new ServiceException(new EntityNotFoundException("Not found product by id=" + id));
         }
 
-        productRepository.deleteById(id);
+        productRepository.deleteById(UUID.fromString(id));
     }
 }

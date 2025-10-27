@@ -32,7 +32,7 @@ public class Shop {
     @Column(name = "mainImagePath", nullable = false)
     private String mainImagePath;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Image> images;
 
     @Column(name = "address", nullable = false)
