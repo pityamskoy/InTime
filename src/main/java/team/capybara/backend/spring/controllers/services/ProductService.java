@@ -56,6 +56,15 @@ public class ProductService {
     public Product createProduct(ProductDto productToCreate) throws EntityNotFoundException {
         Product productToSave = productMapper.postEntity(productToCreate);
 
+        for (Image img : productToSave.getProductType().getImages()) {
+            imageRepository.save(img);
+        }
+        for (Image img : productToSave.getProductType().getShop().getImages()) {
+            imageRepository.save(img);
+        }
+        shopRepository.save(productToSave.getProductType().getShop());
+        productTypeRepository.save(productToSave.getProductType());
+
         return productRepository.save(productToSave);
     }
 
