@@ -7,13 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.spring.entitys.Product;
+import team.capybara.backend.spring.entitys.*;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.services.ProductService;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/feed")
@@ -30,8 +28,6 @@ public class FeedController{
     @GetMapping
     public ResponseEntity<List<ProductDto>> getAllProducts() {
         log.info("Called getAllProducts");
-
-        //productService.createProduct()
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(productService.getAllProducts());

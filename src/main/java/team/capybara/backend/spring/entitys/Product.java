@@ -20,7 +20,7 @@ public class Product {
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_type_id")
     private ProductType productType;
 
