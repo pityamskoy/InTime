@@ -1,8 +1,9 @@
-package team.capybara.backend.spring.controllers.mapping;
+package team.capybara.backend.spring.controllers.mapping.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import team.capybara.backend.spring.controllers.mapping.Mapper;
 import team.capybara.backend.spring.entitys.Product;
 import team.capybara.backend.spring.entitys.ProductType;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;

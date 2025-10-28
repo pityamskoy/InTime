@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 public class ImageService {
-    ImageRepository imageRepository;
+    private final ImageRepository imageRepository;
 
     @Autowired
     public ImageService(ImageRepository imageRepository) {
@@ -27,7 +27,7 @@ public class ImageService {
         return imageRepository.save(newImage);
     }
 
-    public List<Image> getAllUsers() {
+    public List<Image> getAllImages() {
         return imageRepository.findAll();
     }
 }

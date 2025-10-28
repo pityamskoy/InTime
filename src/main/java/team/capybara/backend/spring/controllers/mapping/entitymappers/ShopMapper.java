@@ -1,6 +1,7 @@
-package team.capybara.backend.spring.controllers.mapping;
+package team.capybara.backend.spring.controllers.mapping.entitymappers;
 
 import org.springframework.stereotype.Component;
+import team.capybara.backend.spring.controllers.mapping.Mapper;
 import team.capybara.backend.spring.entitys.Image;
 import team.capybara.backend.spring.entitys.Shop;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;

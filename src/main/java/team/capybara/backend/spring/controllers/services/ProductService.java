@@ -9,7 +9,7 @@ import team.capybara.backend.spring.controllers.repositories.ShopRepository;
 import team.capybara.backend.spring.entitys.Image;
 import team.capybara.backend.spring.entitys.Product;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
-import team.capybara.backend.spring.controllers.mapping.ProductMapper;
+import team.capybara.backend.spring.controllers.mapping.entitymappers.ProductMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 
 import java.text.MessageFormat;
@@ -66,21 +66,6 @@ public class ProductService {
         productTypeRepository.save(productToSave.getProductType());
 
         return productRepository.save(productToSave);
-    }
-
-    public Product createProduct(Product productToCreate) throws EntityNotFoundException {
-
-        //рабочий вариант без дто
-        for (Image img : productToCreate.getProductType().getImages()) {
-            imageRepository.save(img);
-        }
-        for (Image img : productToCreate.getProductType().getShop().getImages()) {
-            imageRepository.save(img);
-        }
-        shopRepository.save(productToCreate.getProductType().getShop());
-        productTypeRepository.save(productToCreate.getProductType());
-
-        return productRepository.save(productToCreate);
     }
 
     public Product updateProduct(

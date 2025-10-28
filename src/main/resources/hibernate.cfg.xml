@@ -21,9 +21,5 @@
         <!-- Update database on startup -->
         <property name="hibernate.hbm2ddl.auto">update</property>
 
-        <!-- Annotated entity classes -->
-        <!-- Возможно, сюда нужно добавлять ORM-классы -->
-        <!--<mapping class="tutorial.hibernate.postgresql.Student"/>-->
-
     </session-factory>
 </hibernate-configuration>

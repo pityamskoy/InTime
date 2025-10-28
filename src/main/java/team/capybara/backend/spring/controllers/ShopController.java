@@ -8,8 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
+import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
 import team.capybara.backend.spring.controllers.services.ShopService;
 import team.capybara.backend.spring.entitys.Product;
+import team.capybara.backend.spring.entitys.Shop;
 
 import java.util.NoSuchElementException;
 
@@ -26,25 +28,25 @@ public class ShopController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Product> createProduct(@RequestBody ProductDto productToCreate) {
-        log.info("Called createProduct product={}", productToCreate);
+    public ResponseEntity<Shop> createProduct(@RequestBody ShopDto shopToCreate) {
+        log.info("Called createShop product={}", shopToCreate);
 
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(shopService.createProduct(productToCreate));
+                    .body(shopService.createShop(shopToCreate));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
-    @PutMapping("/product/{id}")
-    public ResponseEntity<Product> updateProduct(
-            @RequestBody ProductDto productToUpdate
+    @PutMapping("/shop/{id}")
+    public ResponseEntity<Shop> updateProduct(
+            @RequestBody ShopDto shopToUpdate
     ) {
-        log.info("Called updateProduct id={}, productToUpdate={}", productToUpdate.id(), productToUpdate);
+        log.info("Called updateShop id={}, shopToUpdate={}", shopToUpdate.id(), shopToUpdate);
 
         try {
-            Product updated = shopService.updateProduct(productToUpdate);
+            Shop updated = shopService.updateShop(shopToUpdate);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(updated);
         } catch (EntityNotFoundException e) {
@@ -53,18 +55,18 @@ public class ShopController {
     }
 
     //fix
-    @PatchMapping("/product/{id}")
+    @PatchMapping("/shop/{id}")
     public ResponseEntity<Product> partiallyUpdateProduct() {
-        log.info("Called partiallyUpdateProduct");
+        log.info("Called partiallyUpdateShop");
         return null;
     }
 
-    @DeleteMapping("/product/{id}")
+    @DeleteMapping("/shop/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
-        log.info("Called deleteProduct id={}", id);
+        log.info("Called deleteShop id={}", id);
 
         try {
-            shopService.deleteProduct(id);
+            shopService.deleteShop(id);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch(NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

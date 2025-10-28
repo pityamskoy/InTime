@@ -1,8 +1,9 @@
-package team.capybara.backend.spring.controllers.mapping;
+package team.capybara.backend.spring.controllers.mapping.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import team.capybara.backend.spring.controllers.mapping.Mapper;
 import team.capybara.backend.spring.entitys.Image;
 import team.capybara.backend.spring.entitys.ProductType;
 import team.capybara.backend.spring.entitys.Shop;
@@ -15,7 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class ProductTypeMapper implements Mapper<ProductType, ProductTypeDto>{
+public class ProductTypeMapper implements Mapper<ProductType, ProductTypeDto> {
     private final ImageMapper imageMapper = new ImageMapper();
     private final ShopRepository shopRepository;
 
