@@ -7,24 +7,47 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
+import team.capybara.backend.spring.controllers.services.ProductTypeService;
 import team.capybara.backend.spring.controllers.services.ShopService;
-import team.capybara.backend.spring.entitys.Product;
-import team.capybara.backend.spring.entitys.Shop;
+import team.capybara.backend.spring.entities.Product;
+import team.capybara.backend.spring.entities.Shop;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(value = {"http://localhost:3000"})
 @RequestMapping("/shops")
 @SuppressWarnings(value = {"unused"})
-public class ShopController {
+public final class ShopController {
     private static final Logger log = LoggerFactory.getLogger(ShopController.class);
-    ShopService shopService;
+    private final ShopService shopService;
 
-    ShopController(ShopService shopService) {
+    public ShopController(ShopService shopService) {
         this.shopService = shopService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ShopDto>> getAllShops() {
+        log.info("Called getAllShops");
+
+        return ResponseEntity.status(HttpStatus.OK).body(shopService.getAllShops());
+    }
+
+    //probably fix to UUID id
+    @GetMapping("/{id}")
+    public ResponseEntity<ShopDto> getShopById(@PathVariable String id) {
+        log.info("Called getShopById id={}", id);
+
+        Optional<ShopDto> shopDto = shopService.getShopById(id);
+
+        if (shopDto.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(shopDto.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @PostMapping("/create")
@@ -39,7 +62,7 @@ public class ShopController {
         }
     }
 
-    @PutMapping("/shop/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Shop> updateProduct(
             @RequestBody ShopDto shopToUpdate
     ) {
@@ -55,13 +78,13 @@ public class ShopController {
     }
 
     //fix
-    @PatchMapping("/shop/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<Product> partiallyUpdateProduct() {
         log.info("Called partiallyUpdateShop");
         return null;
     }
 
-    @DeleteMapping("/shop/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
         log.info("Called deleteShop id={}", id);
 

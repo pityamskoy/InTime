@@ -1,4 +1,4 @@
-package team.capybara.backend.spring.entitys;
+package team.capybara.backend.spring.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

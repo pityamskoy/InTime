@@ -1,13 +1,12 @@
 package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.repositories.ImageRepository;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
-import team.capybara.backend.spring.entitys.Image;
-import team.capybara.backend.spring.entitys.Product;
+import team.capybara.backend.spring.entities.Image;
+import team.capybara.backend.spring.entities.Product;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.mapping.entitymappers.ProductMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
@@ -20,15 +19,18 @@ import java.util.UUID;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
-    private final ProductMapper productMapper;
     private final ProductTypeRepository productTypeRepository;
     private final ShopRepository shopRepository;
     private final ImageRepository imageRepository;
 
-    @Autowired
-    ProductService(
+    private final ProductMapper productMapper;
+
+    public ProductService(
             ProductRepository productRepository,
-            ProductMapper productMapper, ProductTypeRepository productTypeRepository, ShopRepository shopRepository, ImageRepository imageRepository
+            ProductMapper productMapper,
+            ProductTypeRepository productTypeRepository,
+            ShopRepository shopRepository,
+            ImageRepository imageRepository
     ) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
@@ -53,7 +55,7 @@ public class ProductService {
         return Optional.ofNullable(productMapper.toDto(product.get()));
     }
 
-    public Product createProduct(ProductDto productToCreate) throws EntityNotFoundException {
+    public Product createProduct(ProductDto productToCreate) {
         Product productToSave = productMapper.postEntity(productToCreate);
 
         for (Image img : productToSave.getProductType().getImages()) {
@@ -63,14 +65,16 @@ public class ProductService {
             imageRepository.save(img);
         }
         shopRepository.save(productToSave.getProductType().getShop());
+        //Будет ли каждый раз сохраняться один и тот же productType?
         productTypeRepository.save(productToSave.getProductType());
 
         return productRepository.save(productToSave);
     }
 
+    //fix through mapper
     public Product updateProduct(
             ProductDto productToUpdate
-    ) throws EntityNotFoundException {
+    ) {
         Optional<Product> optionalProduct = productRepository.findById(productToUpdate.id());
 
         if (optionalProduct.isEmpty()) {

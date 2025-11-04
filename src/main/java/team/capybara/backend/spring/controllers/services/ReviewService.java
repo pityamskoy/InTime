@@ -1,13 +1,12 @@
 package team.capybara.backend.spring.controllers.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.repositories.ImageRepository;
 import team.capybara.backend.spring.controllers.repositories.ReviewRepository;
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
 import team.capybara.backend.spring.controllers.repositories.UserRepository;
-import team.capybara.backend.spring.entitys.Image;
-import team.capybara.backend.spring.entitys.Review;
+import team.capybara.backend.spring.entities.Image;
+import team.capybara.backend.spring.entities.Review;
 
 import java.util.List;
 
@@ -18,8 +17,12 @@ public class ReviewService {
     private final ShopRepository shopRepository;
     private final ImageRepository imageRepository;
 
-    @Autowired
-    public ReviewService(ReviewRepository reviewRepository, UserRepository userRepository, ShopRepository shopRepository, ImageRepository imageRepository) {
+    public ReviewService(
+            ReviewRepository reviewRepository,
+            UserRepository userRepository,
+            ShopRepository shopRepository,
+            ImageRepository imageRepository
+    ) {
         this.reviewRepository = reviewRepository;
         this.userRepository = userRepository;
         this.shopRepository = shopRepository;

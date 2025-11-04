@@ -1,11 +1,10 @@
 package team.capybara.backend.spring.controllers.mapping.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import team.capybara.backend.spring.controllers.mapping.Mapper;
-import team.capybara.backend.spring.entitys.Product;
-import team.capybara.backend.spring.entitys.ProductType;
+import team.capybara.backend.spring.entities.Product;
+import team.capybara.backend.spring.entities.ProductType;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
@@ -21,7 +20,6 @@ public class ProductMapper implements Mapper<Product, ProductDto> {
     private final ProductTypeRepository productTypeRepository;
     private final ImageMapper imageMapper = new ImageMapper();
 
-    @Autowired
     public ProductMapper(
             ProductTypeRepository productTypeRepository
     ) {
@@ -49,6 +47,7 @@ public class ProductMapper implements Mapper<Product, ProductDto> {
 
     @Override
     public Product postEntity(ProductDto productDto) {
+        //Этого не должно быть здесь. Невозможно передавать айди из фронта. Нарушаются все принципы безопасности
         UUID productTypeId = productDto.productTypeId();
         Optional<ProductType> productType = productTypeRepository.findById(productTypeId);
 

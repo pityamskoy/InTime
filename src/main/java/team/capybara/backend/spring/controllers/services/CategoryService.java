@@ -1,12 +1,10 @@
 package team.capybara.backend.spring.controllers.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.repositories.*;
-import team.capybara.backend.spring.entitys.Category;
-import team.capybara.backend.spring.entitys.Image;
-import team.capybara.backend.spring.entitys.ProductType;
-import team.capybara.backend.spring.entitys.Shop;
+import team.capybara.backend.spring.entities.Category;
+import team.capybara.backend.spring.entities.Image;
+import team.capybara.backend.spring.entities.ProductType;
 
 import java.util.List;
 
@@ -16,15 +14,17 @@ public class CategoryService {
     private final ImageRepository imageRepository;
     private final ProductTypeRepository productTypeRepository;
     private final ShopRepository shopRepository;
-    private final UserRepository userRepository;
 
-    @Autowired
-    public CategoryService(CategoryRepository categoryRepository, ImageRepository imageRepository, ProductTypeRepository productTypeRepository, ShopRepository shopRepository, UserRepository userRepository) {
+    public CategoryService(
+            CategoryRepository categoryRepository,
+            ImageRepository imageRepository,
+            ProductTypeRepository productTypeRepository,
+            ShopRepository shopRepository
+    ) {
         this.categoryRepository = categoryRepository;
         this.imageRepository = imageRepository;
         this.productTypeRepository = productTypeRepository;
         this.shopRepository = shopRepository;
-        this.userRepository = userRepository;
     }
 
     public Category createCategory(Category categoryToCreate) {

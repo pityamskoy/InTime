@@ -1,10 +1,9 @@
 package team.capybara.backend.spring.controllers.services;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.repositories.ImageRepository;
-import team.capybara.backend.spring.entitys.Image;
+import team.capybara.backend.spring.entities.Image;
 
 import java.util.List;
 
@@ -13,7 +12,6 @@ import java.util.List;
 public class ImageService {
     private final ImageRepository imageRepository;
 
-    @Autowired
     public ImageService(ImageRepository imageRepository) {
         this.imageRepository = imageRepository;
     }

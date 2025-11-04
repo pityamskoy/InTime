@@ -1,10 +1,9 @@
 package team.capybara.backend.spring.controllers.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.repositories.*;
-import team.capybara.backend.spring.entitys.Favorite;
-import team.capybara.backend.spring.entitys.Image;
+import team.capybara.backend.spring.entities.Favorite;
+import team.capybara.backend.spring.entities.Image;
 
 import java.util.List;
 
@@ -17,8 +16,13 @@ public class FavoriteService {
     private final ShopRepository shopRepository;
     private final UserRepository userRepository;
 
-    @Autowired
-    public FavoriteService(FavoriteRepository favoriteRepository, ImageRepository imageRepository, ProductTypeRepository productTypeRepository, ShopRepository shopRepository, UserRepository userRepository) {
+    public FavoriteService(
+            FavoriteRepository favoriteRepository,
+            ImageRepository imageRepository,
+            ProductTypeRepository productTypeRepository,
+            ShopRepository shopRepository,
+            UserRepository userRepository
+    ) {
         this.favoriteRepository = favoriteRepository;
         this.imageRepository = imageRepository;
         this.productTypeRepository = productTypeRepository;

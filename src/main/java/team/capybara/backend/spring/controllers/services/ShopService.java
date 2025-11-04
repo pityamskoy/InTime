@@ -1,32 +1,32 @@
 package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
 import team.capybara.backend.spring.controllers.mapping.entitymappers.ImageMapper;
 import team.capybara.backend.spring.controllers.mapping.entitymappers.ShopMapper;
-import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import team.capybara.backend.spring.controllers.repositories.ImageRepository;
-import team.capybara.backend.spring.entitys.Image;
-import team.capybara.backend.spring.entitys.Shop;
+import team.capybara.backend.spring.entities.Image;
+import team.capybara.backend.spring.entities.Shop;
 
 @Service
 public class ShopService {
-    private final ProductRepository productRepository;
     private final ShopMapper shopMapper;
     private final ImageMapper imageMapper;
     private final ShopRepository shopRepository;
     private final ImageRepository imageRepository;
 
-    @Autowired
-    ShopService(ProductRepository productRepository, ShopMapper shopMapper, ImageMapper imageMapper, ShopRepository shopRepository, ImageRepository imageRepository) {
-        this.productRepository = productRepository;
+    public ShopService(
+            ShopMapper shopMapper,
+            ImageMapper imageMapper,
+            ShopRepository shopRepository,
+            ImageRepository imageRepository
+    ) {
         this.shopMapper = shopMapper;
         this.imageMapper = imageMapper;
         this.shopRepository = shopRepository;
@@ -49,7 +49,7 @@ public class ShopService {
         return Optional.ofNullable(shopMapper.toDto(shop.get()));
     }
 
-    public Shop createShop(ShopDto shopToCreate) throws EntityNotFoundException {
+    public Shop createShop(ShopDto shopToCreate) {
         Shop shopToSave = shopMapper.postEntity(shopToCreate);
 
         for (Image img : shopToSave.getImages()) {
@@ -58,7 +58,7 @@ public class ShopService {
         return shopRepository.save(shopToSave);
     }
 
-    public Shop updateShop(ShopDto shopToUpdate) throws EntityNotFoundException {
+    public Shop updateShop(ShopDto shopToUpdate){
         Optional<Shop> optionalProduct = shopRepository.findById(shopToUpdate.id());
 
         if (optionalProduct.isEmpty()) {

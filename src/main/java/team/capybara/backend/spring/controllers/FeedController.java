@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.spring.entitys.*;
+import team.capybara.backend.spring.entities.*;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.services.ProductService;
 
@@ -15,7 +15,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/feed")
-public class FeedController{
+public final class FeedController{
     private static final Logger log = LoggerFactory.getLogger(FeedController.class);
 
     ProductService productService;
