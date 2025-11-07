@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import team.capybara.backend.spring.controllers.mapping.entitymappers.ProductMapper;
 import team.capybara.backend.spring.entities.*;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.services.ProductService;
@@ -19,9 +20,14 @@ import java.util.*;
 public final class FeedController{
     private static final Logger log = LoggerFactory.getLogger(FeedController.class);
     private final ProductService productService;
+    private final ProductMapper productMapper;
 
-    public FeedController(ProductService productService) {
+    public FeedController(
+            ProductService productService,
+            ProductMapper productMapper
+    ) {
         this.productService = productService;
+        this.productMapper = productMapper;
     }
 
     @GetMapping
@@ -33,14 +39,14 @@ public final class FeedController{
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<ProductDto>> getProductById(@PathVariable String id) {
+    public ResponseEntity<ProductDto> getProductById(@PathVariable String id) {
         log.info("Called getProduct id={}", id);
 
-        try {
-            Optional<ProductDto> productDto = productService.getProductById(id);
-            return ResponseEntity.status(HttpStatus.OK).body(productDto);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        Optional<Product> product = productService.getProductById(UUID.fromString(id));
+        if (product.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(productMapper.getEntity(product.get()));
         }
     }
 

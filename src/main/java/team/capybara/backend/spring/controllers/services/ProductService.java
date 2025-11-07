@@ -17,9 +17,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class ProductService {
+public final class ProductService {
     private final ProductRepository productRepository;
-    private final ProductTypeRepository productTypeRepository;
     private final ShopRepository shopRepository;
     private final ImageRepository imageRepository;
 
@@ -28,13 +27,11 @@ public class ProductService {
     public ProductService(
             ProductRepository productRepository,
             ProductMapper productMapper,
-            ProductTypeRepository productTypeRepository,
             ShopRepository shopRepository,
             ImageRepository imageRepository
     ) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
-        this.productTypeRepository = productTypeRepository;
         this.shopRepository = shopRepository;
         this.imageRepository = imageRepository;
     }
@@ -45,14 +42,8 @@ public class ProductService {
         return products.stream().map(productMapper::getEntity).toList();
     }
 
-    public Optional<ProductDto> getProductById(String id) {
-        Optional<Product> product = productRepository.findById(UUID.fromString(id));
-
-        if (product.isEmpty()) {
-            throw new EntityNotFoundException(MessageFormat.format("Not found product by id={0}", UUID.fromString(id)));
-        }
-
-        return Optional.ofNullable(productMapper.getEntity(product.get()));
+    public Optional<Product> getProductById(UUID id) {
+        return productRepository.findById(id);
     }
 
     public Product createProduct(ProductDto productToCreate) {

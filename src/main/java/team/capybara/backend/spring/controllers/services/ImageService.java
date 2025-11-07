@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 import team.capybara.backend.spring.controllers.mapping.entitymappers.ImageMapper;
 import team.capybara.backend.spring.controllers.repositories.ImageRepository;
-import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 import team.capybara.backend.spring.entities.Image;
 
 import java.util.List;
@@ -27,8 +26,9 @@ public class ImageService {
         return imageRepository.save(image);
     }
 
-    public List<Image> getAllImages() {
-        return imageRepository.findAll();
+    public List<ImageDto> getAllImages() {
+        List<Image> images = imageRepository.findAll();
+        return images.stream().map(imageMapper::getEntity).toList();
     }
 }
 

@@ -1,5 +1,7 @@
 package team.capybara.backend.spring.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
@@ -12,19 +14,24 @@ import java.util.List;
 @CrossOrigin(value = {"http://localhost:3000"})
 @RequestMapping("/images")
 public final class ImageController {
-    ImageService imageService;
+    private static final Logger log = LoggerFactory.getLogger(ImageController.class);
+    private final ImageService imageService;
 
     public ImageController(ImageService imageService) {
         this.imageService = imageService;
     }
 
     @GetMapping
-    public ResponseEntity<List<Image>> getAllImages() {
+    public ResponseEntity<List<ImageDto>> getAllImages() {
+        log.info("Called getAllImages");
+
         return ResponseEntity.ok(imageService.getAllImages());
     }
 
     @PostMapping("/create")
     public ResponseEntity<Image> createImage(@RequestBody ImageDto imageDto) {
+        log.info("Called createImage");
+
         return ResponseEntity.ok(imageService.createImage(imageDto));
     }
 }
