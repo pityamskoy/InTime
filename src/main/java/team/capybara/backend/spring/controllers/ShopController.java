@@ -8,79 +8,81 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
+import team.capybara.backend.spring.controllers.mapping.entitymappers.ShopMapper;
+import team.capybara.backend.spring.controllers.services.ServiceException;
 import team.capybara.backend.spring.controllers.services.ShopService;
 import team.capybara.backend.spring.entities.Shop;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(value = {"http://localhost:3000"})
 @RequestMapping("/shops")
+@CrossOrigin(value = {"http://localhost:3000"})
 @SuppressWarnings(value = {"unused"})
 public final class ShopController {
     private static final Logger log = LoggerFactory.getLogger(ShopController.class);
-    private final ShopService shopService;
 
-    public ShopController(ShopService shopService) {
+    private final ShopService shopService;
+    private final ShopMapper shopMapper;
+
+    public ShopController(ShopService shopService,  ShopMapper shopMapper) {
         this.shopService = shopService;
+        this.shopMapper = shopMapper;
     }
 
     @GetMapping
     public ResponseEntity<List<ShopDto>> getAllShops() {
         log.info("Called getAllShops");
 
-        return ResponseEntity.status(HttpStatus.OK).body(shopService.getAllShops());
+        return ResponseEntity.ok(shopService.getAllShops());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ShopDto> getShopById(@PathVariable String id) {
         log.info("Called getShopById id={}", id);
+        Optional<Shop> shopOptional = shopService.getShopById(UUID.fromString(id));
 
-        Optional<ShopDto> shopDto = shopService.getShopById(UUID.fromString(id));
-
-        if (shopDto.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(shopDto.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        return shopOptional.map(shop -> ResponseEntity.ok(shopMapper.getEntity(shop)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/create")
     public ResponseEntity<Shop> createShop(@RequestBody ShopDto shopToCreate) {
-        log.info("Called createShop product={}", shopToCreate);
+        log.info("Called createShop shopToCreate={}", shopToCreate);
 
         try {
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(shopService.createShop(shopToCreate));
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.CREATED).body(shopService.createShop(shopToCreate));
+        } catch (ServiceException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update")
     public ResponseEntity<Shop> updateShop(@RequestBody ShopDto shopToUpdate) {
-        log.info("Called updateShop id={}, shopToUpdate={}", shopToUpdate.id(), shopToUpdate);
+        log.info("Called updateShop shopToUpdate={}", shopToUpdate);
 
         try {
             Shop updated = shopService.updateShop(shopToUpdate);
-            return ResponseEntity.status(HttpStatus.OK).body(updated);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.ok(updated);
+        } catch (ServiceException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
         }
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
+    public ResponseEntity<Void> deleteProduct(@RequestBody String id) {
         log.info("Called deleteShop id={}", id);
 
         try {
             shopService.deleteShop(UUID.fromString(id));
             return ResponseEntity.status(HttpStatus.OK).build();
-        } catch(NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (ServiceException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
         }
     }
 }

@@ -16,21 +16,15 @@ import java.util.UUID;
 
 @Component
 public final class ProductMapper implements Mapper<Product, ProductDto> {
-    private final ProductTypeRepository productTypeRepository;
     private final ProductRepository productRepository;
-    private final ProductTypeMapper productTypeMapper;
-    private final ImageMapper imageMapper;
+    private final ProductTypeRepository productTypeRepository;
 
     public ProductMapper(
-            ProductTypeRepository productTypeRepository,
             ProductRepository productRepository,
-            ImageMapper imageMapper,
-            ProductTypeMapper productTypeMapper
+            ProductTypeRepository productTypeRepository
     ) {
-        this.productTypeRepository = productTypeRepository;
         this.productRepository = productRepository;
-        this.imageMapper = imageMapper;
-        this.productTypeMapper = productTypeMapper;
+        this.productTypeRepository = productTypeRepository;
     }
 
     @Override
@@ -67,23 +61,25 @@ public final class ProductMapper implements Mapper<Product, ProductDto> {
     }
 
     @Override
-    public Product putEntity(ProductDto dtoObject) {/*
-        Optional<Product> product = productRepository.findById(dtoObjectWithId.productTypeId());
+    public Product putEntity(ProductDto dtoObject) {
+        Optional<Product> product = productRepository.findById(dtoObject.id());
+        if (product.isEmpty()) {
+            throw new EntityNotFoundException("Not found product id=" + dtoObject.productTypeId());
+        }
 
-        if  (product.isEmpty()) {
-            throw new EntityNotFoundException("Not found product id=" + dtoObjectWithId.productTypeId());
+        Optional<ProductType> productType = productTypeRepository.findById(dtoObject.productTypeId());
+        if (productType.isEmpty()) {
+            throw new EntityNotFoundException("Not found productType id=" + dtoObject.productTypeId());
         }
 
         Product obj = product.get();
-        obj.setId(dtoObjectWithId.productTypeId());
-        obj.setSold(dtoObjectWithId.isSold());
-        obj.setPrice(dtoObjectWithId.price());
-        obj.setDiscount(dtoObjectWithId.discount());
-        obj.setShelfLife(dtoObjectWithId.shelfLife());
-        obj.setPrice(dtoObjectWithId.price());
+        obj.setProductType(productType.get());
+        obj.setShelfLife(dtoObject.shelfLife());
+        obj.setPrice(dtoObject.price());
+        obj.setDiscount(dtoObject.discount());
+        obj.setSold(dtoObject.isSold());
 
-        return obj;*/
-        return null;
+        return obj;
     }
 
     @Override

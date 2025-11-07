@@ -2,13 +2,10 @@ package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import team.capybara.backend.spring.controllers.dto.producttype.ProductTypeDto;
 import team.capybara.backend.spring.controllers.mapping.entitymappers.ProductTypeMapper;
-import team.capybara.backend.spring.controllers.repositories.ImageRepository;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
-import team.capybara.backend.spring.entities.Image;
 import team.capybara.backend.spring.entities.ProductType;
 import team.capybara.backend.spring.entities.Shop;
 
@@ -21,24 +18,15 @@ public final class ProductTypeService {
     private final ProductTypeMapper productTypeMapper;
     private final ProductTypeRepository productTypeRepository;
     private final ShopRepository shopRepository;
-    private final ImageRepository imageRepository;
 
     public ProductTypeService(
             ProductTypeMapper productTypeMapper,
             ProductTypeRepository productTypeRepository,
-            ShopRepository shopRepository,
-            ImageRepository imageRepository
+            ShopRepository shopRepository
     ) {
         this.productTypeMapper = productTypeMapper;
         this.productTypeRepository = productTypeRepository;
         this.shopRepository = shopRepository;
-        this.imageRepository = imageRepository;
-    }
-
-    public ProductType createProductType(ProductTypeDto productTypeDto) {
-        ProductType productType = productTypeMapper.postEntity(productTypeDto);
-
-        return productTypeRepository.save(productType);
     }
 
     public List<ProductTypeDto> getAllProductTypes() {
@@ -47,6 +35,7 @@ public final class ProductTypeService {
         return productTypes.stream().map(productTypeMapper::getEntity).toList();
     }
 
+    //fix soon. Don't throw exceptions. Use Optional
     public List<ProductType> getAllProductTypesByShopId(String shopId) {
         Optional<Shop> shop = shopRepository.findById(UUID.fromString(shopId));
 
@@ -62,9 +51,17 @@ public final class ProductTypeService {
         return productTypeRepository.findById(id);
     }
 
-    public ProductType updateProductType(@RequestBody ProductTypeDto productTypeDto) {
+    public ProductType createProductType(ProductTypeDto productTypeToCreate) {
         try {
-            return productTypeMapper.putEntity(productTypeDto);
+            return productTypeRepository.save(productTypeMapper.postEntity(productTypeToCreate));
+        } catch (EntityNotFoundException e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
+
+    public ProductType updateProductType(ProductTypeDto productTypeToUpdate) {
+        try {
+            return productTypeMapper.putEntity(productTypeToUpdate);
         } catch (EntityNotFoundException e) {
             throw new ServiceException(e.getMessage());
         }
@@ -72,7 +69,7 @@ public final class ProductTypeService {
 
     public void deleteProductType(UUID id) {
         try {
-            productTypeRepository.deleteById(id);
+            productTypeMapper.deleteEntity(id);
         } catch (EntityNotFoundException e) {
             throw new ServiceException(e.getMessage());
         }

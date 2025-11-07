@@ -16,8 +16,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(value = {"http://localhost:3000"})
 @RequestMapping("/product_types")
+@CrossOrigin(value = {"http://localhost:3000"})
+@SuppressWarnings(value = {"unused"})
 public final class ProductTypeController {
     private static final Logger log = LoggerFactory.getLogger(ProductTypeController.class);
 
@@ -26,7 +27,8 @@ public final class ProductTypeController {
 
     public ProductTypeController(
             ProductTypeService productTypeService,
-            ProductTypeMapper productTypeMapper) {
+            ProductTypeMapper productTypeMapper
+    ) {
         this.productTypeService = productTypeService;
         this.productTypeMapper = productTypeMapper;
     }
@@ -35,66 +37,67 @@ public final class ProductTypeController {
     public ResponseEntity<List<ProductTypeDto>> getAllProductTypes() {
         log.info("Called getAllProductTypes");
 
-        return ResponseEntity.status(HttpStatus.OK).body(productTypeService.getAllProductTypes());
+        return ResponseEntity.ok(productTypeService.getAllProductTypes());
     }
 
-    @GetMapping("/{shop_id}")
-    public ResponseEntity<List<ProductTypeDto>> getAllProductTypesByShopId(@PathVariable("shop_id") String shopId) {
-        log.info("Called getAllProductTypesByShopId shopId= " + shopId);
-        try {
-            List<ProductTypeDto> shopProductTypes = productTypeService.getAllProductTypes();
+    //fix soon. Make optional instead of ServiceException
+    @GetMapping("/{shopId}")
+    public ResponseEntity<List<ProductTypeDto>> getAllProductTypesByShopId(@PathVariable("shopId") String shopId) {
+        log.info("Called getAllProductTypesByShopId shopId={}", shopId);
 
-            return ResponseEntity.status(HttpStatus.OK).body(shopProductTypes);
+        try {
+            return ResponseEntity.ok(productTypeService.getAllProductTypes());
         } catch (ServiceException e) {
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductTypeDto> getProductTypeById(@PathVariable("id") String id) {
-        log.info("Called getProductTypeById id= " + id);
-
+        log.info("Called getProductTypeById id={}", id);
         Optional<ProductType> productType = productTypeService.getProductTypeById(UUID.fromString(id));
 
-        if (productType.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(productTypeMapper.getEntity(productType.get()));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+        return productType.map(type -> ResponseEntity.ok(productTypeMapper.getEntity(type)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ProductType> createProductType(@RequestBody ProductTypeDto productTypeDto) {
-        log.info("Called createProductType productType= " + productTypeDto);
-        ProductType createdProductType = productTypeService.createProductType(productTypeDto);
+    public ResponseEntity<ProductType> createProductType(@RequestBody ProductTypeDto productToCreate) {
+        log.info("Called createProductType productTypeToCreate={}", productToCreate);
+        ProductType productTypeCreated = productTypeService.createProductType(productToCreate);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProductType);
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(productTypeCreated);
+        } catch (ServiceException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ProductType> updateProductType(@RequestBody ProductTypeDto productTypeDto) {
-        log.info("Called updateProductType productType= " + productTypeDto);
+    public ResponseEntity<ProductType> updateProductType(@RequestBody ProductTypeDto productTypeToUpdate) {
+        log.info("Called updateProductType productTypeToUpdate={}", productTypeToUpdate);
 
         try {
-            ProductType productTypeUpdated = productTypeService.updateProductType(productTypeDto);
-            return ResponseEntity.status(HttpStatus.OK).body(productTypeUpdated);
+            ProductType productTypeUpdated = productTypeService.updateProductType(productTypeToUpdate);
+            return ResponseEntity.ok(productTypeUpdated);
         } catch (ServiceException e) {
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.notFound().build();
         }
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<ProductType> deleteProductType(String id) {
-        log.info("Called deleteProductType productType= {}", id);
+    public ResponseEntity<ProductType> deleteProductType(@RequestBody String id) {
+        log.info("Called deleteProductType id={}", id);
 
         try {
             productTypeService.deleteProductType(UUID.fromString(id));
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (ServiceException e) {
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.notFound().build();
         }
     }
 }

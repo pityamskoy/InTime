@@ -7,15 +7,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 import team.capybara.backend.spring.controllers.services.ImageService;
+import team.capybara.backend.spring.controllers.services.ServiceException;
 import team.capybara.backend.spring.entities.Image;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
-@CrossOrigin(value = {"http://localhost:3000"})
 @RequestMapping("/images")
+@CrossOrigin(value = {"http://localhost:3000"})
+@SuppressWarnings(value = {"unused"})
 public final class ImageController {
     private static final Logger log = LoggerFactory.getLogger(ImageController.class);
+
     private final ImageService imageService;
 
     public ImageController(ImageService imageService) {
@@ -30,9 +34,30 @@ public final class ImageController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Image> createImage(@RequestBody ImageDto imageDto) {
-        log.info("Called createImage");
+    public ResponseEntity<Image> createImage(@RequestBody ImageDto imageToCreate) {
+        log.info("Called createImage imageToCreate={}", imageToCreate);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(imageService.createImage(imageDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(imageService.createImage(imageToCreate));
+    }
+
+    public ResponseEntity<Image> updateImage(@RequestBody ImageDto imageToUpdate) {
+        log.info("Called updateImage imageToUpdate={}", imageToUpdate);
+
+        try {
+            return ResponseEntity.ok(imageService.updateImage(imageToUpdate));
+        } catch (ServiceException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    public ResponseEntity<Void> deleteImage(@RequestBody String id) {
+        log.info("Called deleteImage id={}", id);
+
+        try {
+            imageService.deleteImage(UUID.fromString(id));
+            return ResponseEntity.noContent().build();
+        } catch (ServiceException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

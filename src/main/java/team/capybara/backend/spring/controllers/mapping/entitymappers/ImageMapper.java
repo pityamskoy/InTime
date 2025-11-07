@@ -37,19 +37,20 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
     @Override
     public Image putEntity(ImageDto dtoObject) {
         Optional<Image> image = imageRepository.findById(dtoObject.imageId());
-        if (image.isPresent()) {
-            Image obj = image.get();
-            obj.setPath(dtoObject.path());
-            return obj;
-        } else {
-            throw new EntityNotFoundException("Image not found with id: " + dtoObject.imageId());
+
+        if (image.isEmpty()) {
+            throw new EntityNotFoundException("Not found image id=" + dtoObject.imageId());
         }
+
+        Image obj = image.get();
+        obj.setPath(dtoObject.path());
+        return obj;
     }
 
     @Override
     public void deleteEntity(UUID entityId) {
         if (!imageRepository.existsById(entityId)) {
-            throw new EntityNotFoundException("Image not found with id: " + entityId);
+            throw new EntityNotFoundException("Image not found with id=" + entityId);
         }
 
         imageRepository.deleteById(entityId);
@@ -73,7 +74,7 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
             if (optionalImage.isPresent()) {
                 images.add(optionalImage.get());
             } else {
-                throw new EntityNotFoundException("Image not found with id: " + imageDto.imageId());
+                throw new EntityNotFoundException("Image not found with id=" + imageDto.imageId());
             }
         }
         return images;
@@ -87,7 +88,7 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
             if (optionalImage.isPresent()) {
                 images.add(optionalImage.get());
             } else  {
-                throw new EntityNotFoundException("Image not found with id: " + imageId);
+                throw new EntityNotFoundException("Image not found with id=" + imageId);
             }
         }
 

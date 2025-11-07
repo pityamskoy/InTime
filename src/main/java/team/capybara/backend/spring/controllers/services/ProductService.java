@@ -2,8 +2,6 @@ package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.controllers.repositories.ImageRepository;
-import team.capybara.backend.spring.controllers.repositories.ShopRepository;
 import team.capybara.backend.spring.entities.Product;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.mapping.entitymappers.ProductMapper;
@@ -15,22 +13,15 @@ import java.util.UUID;
 
 @Service
 public final class ProductService {
-    private final ProductRepository productRepository;
-    private final ShopRepository shopRepository;
-    private final ImageRepository imageRepository;
-
     private final ProductMapper productMapper;
+    private final ProductRepository productRepository;
 
     public ProductService(
-            ProductRepository productRepository,
             ProductMapper productMapper,
-            ShopRepository shopRepository,
-            ImageRepository imageRepository
+            ProductRepository productRepository
     ) {
-        this.productRepository = productRepository;
         this.productMapper = productMapper;
-        this.shopRepository = shopRepository;
-        this.imageRepository = imageRepository;
+        this.productRepository = productRepository;
     }
 
     public List<ProductDto> getAllProducts() {
@@ -44,14 +35,12 @@ public final class ProductService {
     }
 
     public Product createProduct(ProductDto productToCreate) {
-        Product productToSave = productMapper.postEntity(productToCreate);
-
-        return productRepository.save(productToSave);
+        return productRepository.save(productMapper.postEntity(productToCreate));
     }
 
-    public Product updateProduct(ProductDto productDto) {
+    public Product updateProduct(ProductDto productToUpdate) {
         try {
-            return productMapper.putEntity(productDto);
+            return productMapper.putEntity(productToUpdate);
         } catch (EntityNotFoundException e) {
             throw new ServiceException(e.getMessage());
         }
@@ -59,7 +48,7 @@ public final class ProductService {
 
     public void deleteProduct(UUID id) {
         try {
-            imageRepository.deleteById(id);
+            productMapper.deleteEntity(id);
         } catch (EntityNotFoundException e) {
             throw new ServiceException(e.getMessage());
         }
