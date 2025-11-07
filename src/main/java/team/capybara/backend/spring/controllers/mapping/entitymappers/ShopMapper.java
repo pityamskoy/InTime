@@ -61,27 +61,27 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
     }
 
     @Override
-    public Shop putEntity(ShopDto dtoObjectWithId) {
-        Optional<Shop> shop = shopRepository.findById(dtoObjectWithId.id());
+    public Shop putEntity(ShopDto dtoObject) {
+        Optional<Shop> shop = shopRepository.findById(dtoObject.id());
         if (shop.isEmpty()) {
-            throw new EntityNotFoundException("Not found shop, id=" + dtoObjectWithId.id());
+            throw new EntityNotFoundException("Not found shop, id=" + dtoObject.id());
         }
 
         Shop obj =  shop.get();
-        obj.setName(dtoObjectWithId.name());
-        obj.setDescription(dtoObjectWithId.description());
-        obj.setVerifide(dtoObjectWithId.isVerified());
-        obj.setMainImagePath(dtoObjectWithId.mainImagePath());
-        obj.setImages(imageMapper.toEntityList(dtoObjectWithId.images()));
-        obj.setAddress(dtoObjectWithId.address());
-        obj.setLat(dtoObjectWithId.lat());
-        obj.setLon(dtoObjectWithId.lon());
+        obj.setName(dtoObject.name());
+        obj.setDescription(dtoObject.description());
+        obj.setVerifide(dtoObject.isVerified());
+        obj.setMainImagePath(dtoObject.mainImagePath());
+        obj.setImages(imageMapper.toEntityList(dtoObject.images()));
+        obj.setAddress(dtoObject.address());
+        obj.setLat(dtoObject.lat());
+        obj.setLon(dtoObject.lon());
 
         return obj;
     }
 
     @Override
-    public void removeEntity(UUID entityId) {
+    public void deleteEntity(UUID entityId) {
         Optional<Shop> shop = shopRepository.findById(entityId);
 
         if (shop.isEmpty()) {

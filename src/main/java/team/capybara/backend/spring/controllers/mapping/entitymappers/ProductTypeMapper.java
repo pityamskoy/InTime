@@ -68,23 +68,23 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
     }
 
     @Override
-    public ProductType putEntity(ProductTypeDto dtoObjectWithId) {
-        Optional<ProductType> productType = productTypeRepository.findById(dtoObjectWithId.id());
+    public ProductType putEntity(ProductTypeDto dtoObject) {
+        Optional<ProductType> productType = productTypeRepository.findById(dtoObject.id());
         if (productType.isEmpty()) {
-            throw new EntityNotFoundException("Not found product type with id: " + dtoObjectWithId.id());
+            throw new EntityNotFoundException("Not found product type with id: " + dtoObject.id());
         }
-        Optional<Shop> shop =  shopRepository.findById(dtoObjectWithId.shopId());
+        Optional<Shop> shop =  shopRepository.findById(dtoObject.shopId());
         if (shop.isEmpty()) {
-            throw new EntityNotFoundException("Not found shop with id: " + dtoObjectWithId.shopId());
+            throw new EntityNotFoundException("Not found shop with id: " + dtoObject.shopId());
         }
 
         ProductType obj = productType.get();
-        obj.setName(dtoObjectWithId.name());
-        obj.setDescription(dtoObjectWithId.description());
-        obj.setMainImagePath(dtoObjectWithId.mainImagePath());
+        obj.setName(dtoObject.name());
+        obj.setDescription(dtoObject.description());
+        obj.setMainImagePath(dtoObject.mainImagePath());
         obj.setShop(shop.get());
 
-        List<Image> images = imageMapper.toEntityList(dtoObjectWithId.imagesDto());
+        List<Image> images = imageMapper.toEntityList(dtoObject.imagesDto());
         obj.setImages(images);
 
         return obj;
@@ -92,7 +92,7 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
 
 
     @Override
-    public void removeEntity(UUID entityId) {
+    public void deleteEntity(UUID entityId) {
         Optional<ProductType> productType = productTypeRepository.findById(entityId);
         if (productType.isEmpty()) {
             throw new EntityNotFoundException("Not found product type with id: " + entityId);

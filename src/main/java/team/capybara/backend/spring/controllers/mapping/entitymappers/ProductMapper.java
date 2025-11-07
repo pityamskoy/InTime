@@ -67,7 +67,7 @@ public final class ProductMapper implements Mapper<Product, ProductDto> {
     }
 
     @Override
-    public Product putEntity(ProductDto dtoObjectWithId) {/*
+    public Product putEntity(ProductDto dtoObject) {/*
         Optional<Product> product = productRepository.findById(dtoObjectWithId.productTypeId());
 
         if  (product.isEmpty()) {
@@ -87,7 +87,7 @@ public final class ProductMapper implements Mapper<Product, ProductDto> {
     }
 
     @Override
-    public void removeEntity(UUID entityId) {
+    public void deleteEntity(UUID entityId) {
         Optional<Product> product = productRepository.findById(entityId);
 
         if (product.isEmpty()) {

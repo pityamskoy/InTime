@@ -7,10 +7,7 @@ import team.capybara.backend.spring.controllers.repositories.ImageRepository;
 import team.capybara.backend.spring.entities.Image;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public final class ImageMapper implements Mapper<Image, ImageDto> {
@@ -38,19 +35,19 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
     }
 
     @Override
-    public Image putEntity(ImageDto dtoObjectWithId) {
-        Optional<Image> image = imageRepository.findById(dtoObjectWithId.imageId());
+    public Image putEntity(ImageDto dtoObject) {
+        Optional<Image> image = imageRepository.findById(dtoObject.imageId());
         if (image.isPresent()) {
             Image obj = image.get();
-            obj.setPath(dtoObjectWithId.path());
+            obj.setPath(dtoObject.path());
             return obj;
         } else {
-            throw new EntityNotFoundException("Image not found with id: " + dtoObjectWithId.imageId());
+            throw new EntityNotFoundException("Image not found with id: " + dtoObject.imageId());
         }
     }
 
     @Override
-    public void removeEntity(UUID entityId) {
+    public void deleteEntity(UUID entityId) {
         if (!imageRepository.existsById(entityId)) {
             throw new EntityNotFoundException("Image not found with id: " + entityId);
         }
@@ -79,6 +76,21 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
                 throw new EntityNotFoundException("Image not found with id: " + imageDto.imageId());
             }
         }
+        return images;
+    }
+
+    public List<Image> toEntityList(ArrayList<UUID> imagesId) {
+        List<Image> images = new LinkedList<>();
+
+        for (UUID imageId : imagesId) {
+            Optional<Image> optionalImage = imageRepository.findById(imageId);
+            if (optionalImage.isPresent()) {
+                images.add(optionalImage.get());
+            } else  {
+                throw new EntityNotFoundException("Image not found with id: " + imageId);
+            }
+        }
+
         return images;
     }
 }

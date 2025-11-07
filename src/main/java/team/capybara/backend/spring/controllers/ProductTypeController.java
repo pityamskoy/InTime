@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-//fix urls/
 @RestController
 @CrossOrigin(value = {"http://localhost:3000"})
 @RequestMapping("/product_types")
@@ -71,5 +70,31 @@ public final class ProductTypeController {
         ProductType createdProductType = productTypeService.createProductType(productTypeDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProductType);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<ProductType> updateProductType(@RequestBody ProductTypeDto productTypeDto) {
+        log.info("Called updateProductType productType= " + productTypeDto);
+
+        try {
+            ProductType productTypeUpdated = productTypeService.updateProductType(productTypeDto);
+            return ResponseEntity.status(HttpStatus.OK).body(productTypeUpdated);
+        } catch (ServiceException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<ProductType> deleteProductType(String id) {
+        log.info("Called deleteProductType productType= {}", id);
+
+        try {
+            productTypeService.deleteProductType(UUID.fromString(id));
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        } catch (ServiceException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 }

@@ -10,27 +10,19 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import team.capybara.backend.spring.controllers.repositories.ImageRepository;
-import team.capybara.backend.spring.entities.Image;
 import team.capybara.backend.spring.entities.Shop;
 
 @Service
 public class ShopService {
     private final ShopMapper shopMapper;
-    private final ImageMapper imageMapper;
     private final ShopRepository shopRepository;
-    private final ImageRepository imageRepository;
 
     public ShopService(
             ShopMapper shopMapper,
-            ImageMapper imageMapper,
-            ShopRepository shopRepository,
-            ImageRepository imageRepository
+            ShopRepository shopRepository
     ) {
         this.shopMapper = shopMapper;
-        this.imageMapper = imageMapper;
         this.shopRepository = shopRepository;
-        this.imageRepository = imageRepository;
     }
 
     public List<ShopDto> getAllShops() {
@@ -39,51 +31,35 @@ public class ShopService {
         return shops.stream().map(shopMapper::getEntity).toList();
     }
 
-    public Optional<ShopDto> getShopById(String id) {
-        Optional<Shop> shop = shopRepository.findById(UUID.fromString(id));
+    public Optional<ShopDto> getShopById(UUID id) {
+        Optional<Shop> shop = shopRepository.findById(id);
 
         if (shop.isEmpty()) {
-            throw new EntityNotFoundException(MessageFormat.format("Not found shop by id={0}", UUID.fromString(id)));
+            throw new EntityNotFoundException(MessageFormat.format("Not found shop by id={0}", id));
         }
 
-        return Optional.ofNullable(shopMapper.getEntity(shop.get()));
+        return Optional.of(shopMapper.getEntity(shop.get()));
     }
 
     public Shop createShop(ShopDto shopToCreate) {
         Shop shopToSave = shopMapper.postEntity(shopToCreate);
-        /*
-        for (Image img : shopToSave.getImages()) {
-            imageRepository.save(img);
-        }*/
+
         return shopRepository.save(shopToSave);
     }
 
     public Shop updateShop(ShopDto shopToUpdate){
-        Optional<Shop> optionalProduct = shopRepository.findById(shopToUpdate.id());
-
-        if (optionalProduct.isEmpty()) {
-            throw new EntityNotFoundException("Not found product by id=" + shopToUpdate.id());
-        } else {
-            Shop shop = optionalProduct.get();
-
-            shop.setAddress(shopToUpdate.description());
-            shop.setDescription(shopToUpdate.description());
-            shop.setImages(imageMapper.toEntityList (shopToUpdate.images()));
-            shop.setMainImagePath(shopToUpdate.mainImagePath());
-            shop.setLat(shopToUpdate.lat());
-            shop.setLon(shopToUpdate.lon());
-            shop.setName(shopToUpdate.name());
-            shop.setVerifide(shopToUpdate.isVerified());
-
-            return shopRepository.save(shop);
+        try {
+            return shopMapper.putEntity(shopToUpdate);
+        } catch (EntityNotFoundException e) {
+            throw new ServiceException(e.getMessage());
         }
     }
 
-    public void deleteShop(String id) {
-        if (!shopRepository.existsById(UUID.fromString(id))) {
-            throw new EntityNotFoundException("Not found shop by id=" + id);
+    public void deleteShop(UUID id) {
+        try {
+            shopMapper.deleteEntity(id);
+        }  catch (EntityNotFoundException e) {
+            throw new ServiceException(e.getMessage());
         }
-
-        shopRepository.deleteById(UUID.fromString(id));
     }
 }

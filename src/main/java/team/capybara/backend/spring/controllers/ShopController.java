@@ -8,14 +8,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
-import team.capybara.backend.spring.controllers.services.ProductTypeService;
 import team.capybara.backend.spring.controllers.services.ShopService;
-import team.capybara.backend.spring.entities.Product;
 import team.capybara.backend.spring.entities.Shop;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin(value = {"http://localhost:3000"})
@@ -36,22 +35,21 @@ public final class ShopController {
         return ResponseEntity.status(HttpStatus.OK).body(shopService.getAllShops());
     }
 
-    //probably fix to UUID id
     @GetMapping("/{id}")
     public ResponseEntity<ShopDto> getShopById(@PathVariable String id) {
         log.info("Called getShopById id={}", id);
 
-        Optional<ShopDto> shopDto = shopService.getShopById(id);
+        Optional<ShopDto> shopDto = shopService.getShopById(UUID.fromString(id));
 
         if (shopDto.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(shopDto.get());
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Shop> createProduct(@RequestBody ShopDto shopToCreate) {
+    public ResponseEntity<Shop> createShop(@RequestBody ShopDto shopToCreate) {
         log.info("Called createShop product={}", shopToCreate);
 
         try {
@@ -63,33 +61,23 @@ public final class ShopController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Shop> updateProduct(
-            @RequestBody ShopDto shopToUpdate
-    ) {
+    public ResponseEntity<Shop> updateShop(@RequestBody ShopDto shopToUpdate) {
         log.info("Called updateShop id={}, shopToUpdate={}", shopToUpdate.id(), shopToUpdate);
 
         try {
             Shop updated = shopService.updateShop(shopToUpdate);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(updated);
+            return ResponseEntity.status(HttpStatus.OK).body(updated);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
-    //fix
-    @PatchMapping("/{id}")
-    public ResponseEntity<Product> partiallyUpdateProduct() {
-        log.info("Called partiallyUpdateShop");
-        return null;
-    }
-
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
         log.info("Called deleteShop id={}", id);
 
         try {
-            shopService.deleteShop(id);
+            shopService.deleteShop(UUID.fromString(id));
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch(NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
