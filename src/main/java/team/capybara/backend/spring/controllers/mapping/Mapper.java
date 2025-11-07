@@ -8,7 +8,7 @@ public interface Mapper<EntityObject, DtoObject> {
 
     EntityObject postEntity(DtoObject dtoObject);
 
-    void putEntity(DtoObject dtoObjectWithId);
+    EntityObject putEntity(DtoObject dtoObjectWithId);
 
     void removeEntity(UUID entityId);
 }

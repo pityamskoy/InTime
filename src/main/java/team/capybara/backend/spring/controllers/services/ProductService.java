@@ -69,31 +69,19 @@ public class ProductService {
         return productRepository.save(productToSave);
     }
 
-    //fix through mapper
-    public Product updateProduct(
-            ProductDto productToUpdate
-    ) {
-        Optional<Product> optionalProduct = productRepository.findById(productToUpdate.id());
-
-        if (optionalProduct.isEmpty()) {
-            throw new EntityNotFoundException("Not found product by id=" + productToUpdate.id());
-        } else {
-            Product product = optionalProduct.get();
-
-            product.setShelfLife(productToUpdate.shelfLife());
-            product.setPrice(productToUpdate.price());
-            product.setDiscount(productToUpdate.discount());
-            product.setSold(productToUpdate.isSold());
-
-            return productRepository.save(product);
+    public Product updateProduct(ProductDto productDto) {
+        try {
+            return productMapper.putEntity(productDto);
+        } catch (EntityNotFoundException e) {
+            throw new ServiceException(e.getMessage());
         }
     }
 
-    public void deleteProduct(String id) {
-        if (!productRepository.existsById(UUID.fromString(id))) {
-            throw new EntityNotFoundException("Not found product by id=" + id);
+    public void deleteProduct(UUID id) {
+        try {
+            imageRepository.deleteById(id);
+        } catch (EntityNotFoundException e) {
+            throw new ServiceException(e.getMessage());
         }
-
-        productRepository.deleteById(UUID.fromString(id));
     }
 }

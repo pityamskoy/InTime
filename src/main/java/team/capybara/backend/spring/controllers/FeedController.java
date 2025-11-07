@@ -83,7 +83,7 @@ public final class FeedController{
         log.info("Called deleteProduct id={}", id);
 
         try {
-            productService.deleteProduct(id);
+            productService.deleteProduct(UUID.fromString(id));
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch(NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

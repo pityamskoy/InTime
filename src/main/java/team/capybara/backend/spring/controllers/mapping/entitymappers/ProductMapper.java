@@ -3,6 +3,7 @@ package team.capybara.backend.spring.controllers.mapping.entitymappers;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
 import team.capybara.backend.spring.controllers.mapping.Mapper;
+import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 import team.capybara.backend.spring.entities.Product;
 import team.capybara.backend.spring.entities.ProductType;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
@@ -16,15 +17,18 @@ import java.util.UUID;
 
 
 @Component
-public class ProductMapper implements Mapper<Product, ProductDto> {
+public final class ProductMapper implements Mapper<Product, ProductDto> {
     private final ProductTypeRepository productTypeRepository;
+    private final ProductRepository productRepository;
     private final ImageMapper imageMapper;
 
     public ProductMapper(
             ProductTypeRepository productTypeRepository,
+            ProductRepository productRepository,
             ImageMapper imageMapper
     ) {
         this.productTypeRepository = productTypeRepository;
+        this.productRepository = productRepository;
         this.imageMapper = imageMapper;
     }
 
@@ -67,12 +71,32 @@ public class ProductMapper implements Mapper<Product, ProductDto> {
     }
 
     @Override
-    public void putEntity(ProductDto dtoObjectWithId) {
+    public Product putEntity(ProductDto dtoObjectWithId) {
+        Optional<Product> product = productRepository.findById(dtoObjectWithId.productTypeId());
 
+        if  (product.isEmpty()) {
+            throw new EntityNotFoundException("Not found product id=" + dtoObjectWithId.productTypeId());
+        }
+
+        Product obj = product.get();
+        obj.setId(dtoObjectWithId.productTypeId());
+        obj.setSold(dtoObjectWithId.isSold());
+        obj.setPrice(dtoObjectWithId.price());
+        obj.setDiscount(dtoObjectWithId.discount());
+        obj.setShelfLife(dtoObjectWithId.shelfLife());
+        obj.setPrice(dtoObjectWithId.price());
+
+        return obj;
     }
 
     @Override
     public void removeEntity(UUID entityId) {
+        Optional<Product> product = productRepository.findById(entityId);
 
+        if (product.isEmpty()) {
+            throw new EntityNotFoundException("Not found product id=" + entityId);
+        }
+
+        productRepository.delete(product.get());
     }
 }

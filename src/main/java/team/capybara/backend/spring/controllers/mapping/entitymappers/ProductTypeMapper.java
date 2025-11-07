@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class ProductTypeMapper implements Mapper<ProductType, ProductTypeDto> {
+public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeDto> {
     private final ShopRepository shopRepository;
     private final ProductTypeRepository productTypeRepository;
     private final ImageMapper imageMapper;
@@ -68,7 +68,7 @@ public class ProductTypeMapper implements Mapper<ProductType, ProductTypeDto> {
     }
 
     @Override
-    public void putEntity(ProductTypeDto dtoObjectWithId) {
+    public ProductType putEntity(ProductTypeDto dtoObjectWithId) {
         Optional<ProductType> productType = productTypeRepository.findById(dtoObjectWithId.id());
         if (productType.isEmpty()) {
             throw new EntityNotFoundException("Not found product type with id: " + dtoObjectWithId.id());
@@ -86,6 +86,8 @@ public class ProductTypeMapper implements Mapper<ProductType, ProductTypeDto> {
 
         List<Image> images = imageMapper.toEntityList(dtoObjectWithId.imagesDto());
         obj.setImages(images);
+
+        return obj;
     }
 
 

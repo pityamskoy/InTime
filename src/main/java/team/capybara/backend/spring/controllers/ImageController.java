@@ -2,6 +2,7 @@ package team.capybara.backend.spring.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 import team.capybara.backend.spring.controllers.services.ImageService;
 import team.capybara.backend.spring.entities.Image;
 
@@ -23,7 +24,7 @@ public final class ImageController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Image> createImage(@RequestBody Image image) {
-        return ResponseEntity.ok(imageService.createImage(image));
+    public ResponseEntity<Image> createImage(@RequestBody ImageDto imageDto) {
+        return ResponseEntity.ok(imageService.createImage(imageDto));
     }
 }

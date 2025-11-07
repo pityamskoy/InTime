@@ -38,10 +38,12 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
     }
 
     @Override
-    public void putEntity(ImageDto dtoObjectWithId) {
+    public Image putEntity(ImageDto dtoObjectWithId) {
         Optional<Image> image = imageRepository.findById(dtoObjectWithId.imageId());
         if (image.isPresent()) {
-            image.get().setPath(dtoObjectWithId.path());
+            Image obj = image.get();
+            obj.setPath(dtoObjectWithId.path());
+            return obj;
         } else {
             throw new EntityNotFoundException("Image not found with id: " + dtoObjectWithId.imageId());
         }

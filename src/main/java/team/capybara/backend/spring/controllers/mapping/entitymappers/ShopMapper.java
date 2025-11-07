@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class ShopMapper implements Mapper<Shop, ShopDto> {
+public final class ShopMapper implements Mapper<Shop, ShopDto> {
     private final ShopRepository shopRepository;
     private final ImageMapper imageMapper;
 
@@ -61,7 +61,7 @@ public class ShopMapper implements Mapper<Shop, ShopDto> {
     }
 
     @Override
-    public void putEntity(ShopDto dtoObjectWithId) {
+    public Shop putEntity(ShopDto dtoObjectWithId) {
         Optional<Shop> shop = shopRepository.findById(dtoObjectWithId.id());
         if (shop.isEmpty()) {
             throw new EntityNotFoundException("Not found shop, id=" + dtoObjectWithId.id());
@@ -76,6 +76,8 @@ public class ShopMapper implements Mapper<Shop, ShopDto> {
         obj.setAddress(dtoObjectWithId.address());
         obj.setLat(dtoObjectWithId.lat());
         obj.setLon(dtoObjectWithId.lon());
+
+        return obj;
     }
 
     @Override
