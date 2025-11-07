@@ -11,7 +11,7 @@ import java.util.List;
 
 
 @Service
-public class ImageService {
+public final class ImageService {
     private final ImageRepository imageRepository;
     private final ImageMapper imageMapper;
 

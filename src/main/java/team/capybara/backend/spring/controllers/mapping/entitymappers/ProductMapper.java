@@ -6,12 +6,10 @@ import team.capybara.backend.spring.controllers.mapping.Mapper;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 import team.capybara.backend.spring.entities.Product;
 import team.capybara.backend.spring.entities.ProductType;
-import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
 
 import java.text.MessageFormat;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,30 +18,28 @@ import java.util.UUID;
 public final class ProductMapper implements Mapper<Product, ProductDto> {
     private final ProductTypeRepository productTypeRepository;
     private final ProductRepository productRepository;
+    private final ProductTypeMapper productTypeMapper;
     private final ImageMapper imageMapper;
 
     public ProductMapper(
             ProductTypeRepository productTypeRepository,
             ProductRepository productRepository,
-            ImageMapper imageMapper
+            ImageMapper imageMapper,
+            ProductTypeMapper productTypeMapper
     ) {
         this.productTypeRepository = productTypeRepository;
         this.productRepository = productRepository;
         this.imageMapper = imageMapper;
+        this.productTypeMapper = productTypeMapper;
     }
 
     @Override
     public ProductDto getEntity(Product product) {
-        ProductType productType = product.getProductType();
-        List<ImageDto> images = imageMapper.toDtoList(productType.getImages());
+        UUID productTypeId = product.getProductType().getId();
 
         return new ProductDto(
                 product.getId(),
-                productType.getId(),
-                productType.getName(),
-                productType.getDescription(),
-                productType.getMainImagePath(),
-                images,
+                productTypeId,
                 product.getShelfLife(),
                 product.getPrice(),
                 product.getDiscount(),
@@ -71,7 +67,7 @@ public final class ProductMapper implements Mapper<Product, ProductDto> {
     }
 
     @Override
-    public Product putEntity(ProductDto dtoObjectWithId) {
+    public Product putEntity(ProductDto dtoObjectWithId) {/*
         Optional<Product> product = productRepository.findById(dtoObjectWithId.productTypeId());
 
         if  (product.isEmpty()) {
@@ -86,7 +82,8 @@ public final class ProductMapper implements Mapper<Product, ProductDto> {
         obj.setShelfLife(dtoObjectWithId.shelfLife());
         obj.setPrice(dtoObjectWithId.price());
 
-        return obj;
+        return obj;*/
+        return null;
     }
 
     @Override

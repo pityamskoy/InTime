@@ -68,13 +68,17 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
         return dtoImages;
     }
 
-    public List<Image> toEntityList(List<ImageDto> DtoImages) {
+    public List<Image> toEntityList(List<ImageDto> dtoImages) {
         List<Image> images = new LinkedList<>();
 
-        for (ImageDto imageDto : DtoImages) {
-            images.add(this.postEntity(imageDto));
+        for (ImageDto imageDto : dtoImages) {
+            Optional<Image> optionalImage = imageRepository.findById(imageDto.imageId());
+            if (optionalImage.isPresent()) {
+                images.add(optionalImage.get());
+            } else {
+                throw new EntityNotFoundException("Image not found with id: " + imageDto.imageId());
+            }
         }
-
         return images;
     }
 }

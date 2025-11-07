@@ -51,10 +51,10 @@ public class ShopService {
 
     public Shop createShop(ShopDto shopToCreate) {
         Shop shopToSave = shopMapper.postEntity(shopToCreate);
-
+        /*
         for (Image img : shopToSave.getImages()) {
             imageRepository.save(img);
-        }
+        }*/
         return shopRepository.save(shopToSave);
     }
 

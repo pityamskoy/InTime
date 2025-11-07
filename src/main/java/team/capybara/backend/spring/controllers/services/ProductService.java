@@ -3,15 +3,12 @@ package team.capybara.backend.spring.controllers.services;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.repositories.ImageRepository;
-import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
-import team.capybara.backend.spring.entities.Image;
 import team.capybara.backend.spring.entities.Product;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.mapping.entitymappers.ProductMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -48,14 +45,6 @@ public final class ProductService {
 
     public Product createProduct(ProductDto productToCreate) {
         Product productToSave = productMapper.postEntity(productToCreate);
-
-        for (Image img : productToSave.getProductType().getImages()) {
-            imageRepository.save(img);
-        }
-        for (Image img : productToSave.getProductType().getShop().getImages()) {
-            imageRepository.save(img);
-        }
-        shopRepository.save(productToSave.getProductType().getShop());
 
         return productRepository.save(productToSave);
     }

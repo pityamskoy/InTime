@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class ProductTypeService {
+public final class ProductTypeService {
     private final ProductTypeMapper productTypeMapper;
     private final ProductTypeRepository productTypeRepository;
     private final ShopRepository shopRepository;
@@ -36,6 +36,7 @@ public class ProductTypeService {
     public ProductType createProductType(ProductTypeDto productTypeDto) {
         ProductType productType = productTypeMapper.postEntity(productTypeDto);
 
+        /*
         for(Image img:productType.getImages())
             imageRepository.save(img);
 
@@ -43,6 +44,7 @@ public class ProductTypeService {
             imageRepository.save(img);
 
         shopRepository.save(productType.getShop());
+        */
 
         return productTypeRepository.save(productType);
     }

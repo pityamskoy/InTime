@@ -18,7 +18,7 @@ import java.util.UUID;
 //fix urls/
 @RestController
 @CrossOrigin(value = {"http://localhost:3000"})
-@RequestMapping("/patterns")
+@RequestMapping("/product_types")
 public final class ProductTypeController {
     private static final Logger log = LoggerFactory.getLogger(ProductTypeController.class);
 

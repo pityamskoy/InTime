@@ -2,6 +2,7 @@ package team.capybara.backend.spring.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
@@ -32,6 +33,6 @@ public final class ImageController {
     public ResponseEntity<Image> createImage(@RequestBody ImageDto imageDto) {
         log.info("Called createImage");
 
-        return ResponseEntity.ok(imageService.createImage(imageDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(imageService.createImage(imageDto));
     }
 }
