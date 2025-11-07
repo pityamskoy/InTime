@@ -1,19 +1,28 @@
 package team.capybara.backend.spring.controllers.mapping.entitymappers;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
 import team.capybara.backend.spring.controllers.mapping.Mapper;
+import team.capybara.backend.spring.controllers.repositories.ImageRepository;
 import team.capybara.backend.spring.entities.Image;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class ImageMapper implements Mapper<Image, ImageDto> {
+public final class ImageMapper implements Mapper<Image, ImageDto> {
+    ImageRepository imageRepository;
+
+    public ImageMapper(ImageRepository imageRepository) {
+        this.imageRepository = imageRepository;
+    }
+
 
     @Override
-    public ImageDto toDto(Image image) {
+    public ImageDto getEntity(Image image) {
         return new  ImageDto(
                 image.getId(),
                 image.getPath()
@@ -28,11 +37,30 @@ public class ImageMapper implements Mapper<Image, ImageDto> {
         );
     }
 
+    @Override
+    public void putEntity(ImageDto dtoObjectWithId) {
+        Optional<Image> image = imageRepository.findById(dtoObjectWithId.imageId());
+        if (image.isPresent()) {
+            image.get().setPath(dtoObjectWithId.path());
+        } else {
+            throw new EntityNotFoundException("Image not found with id: " + dtoObjectWithId.imageId());
+        }
+    }
+
+    @Override
+    public void removeEntity(UUID entityId) {
+        if (!imageRepository.existsById(entityId)) {
+            throw new EntityNotFoundException("Image not found with id: " + entityId);
+        }
+
+        imageRepository.deleteById(entityId);
+    }
+
     public List<ImageDto> toDtoList(List<Image> images) {
         List<ImageDto> dtoImages = new LinkedList<>();
 
         for (Image image : images) {
-            dtoImages.add(this.toDto(image));
+            dtoImages.add(this.getEntity(image));
         }
 
         return dtoImages;

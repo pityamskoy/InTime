@@ -18,16 +18,18 @@ import java.util.UUID;
 @Component
 public class ProductMapper implements Mapper<Product, ProductDto> {
     private final ProductTypeRepository productTypeRepository;
-    private final ImageMapper imageMapper = new ImageMapper();
+    private final ImageMapper imageMapper;
 
     public ProductMapper(
-            ProductTypeRepository productTypeRepository
+            ProductTypeRepository productTypeRepository,
+            ImageMapper imageMapper
     ) {
         this.productTypeRepository = productTypeRepository;
+        this.imageMapper = imageMapper;
     }
 
     @Override
-    public ProductDto toDto(Product product) {
+    public ProductDto getEntity(Product product) {
         ProductType productType = product.getProductType();
         List<ImageDto> images = imageMapper.toDtoList(productType.getImages());
 
@@ -47,7 +49,6 @@ public class ProductMapper implements Mapper<Product, ProductDto> {
 
     @Override
     public Product postEntity(ProductDto productDto) {
-        //Этого не должно быть здесь. Невозможно передавать айди из фронта. Нарушаются все принципы безопасности
         UUID productTypeId = productDto.productTypeId();
         Optional<ProductType> productType = productTypeRepository.findById(productTypeId);
 
@@ -63,5 +64,15 @@ public class ProductMapper implements Mapper<Product, ProductDto> {
                 productDto.discount(),
                 productDto.isSold()
         );
+    }
+
+    @Override
+    public void putEntity(ProductDto dtoObjectWithId) {
+
+    }
+
+    @Override
+    public void removeEntity(UUID entityId) {
+
     }
 }

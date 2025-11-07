@@ -14,13 +14,12 @@ import team.capybara.backend.spring.controllers.services.ProductService;
 import java.util.*;
 
 @RestController
+@CrossOrigin(value = {"http://localhost:3000"})
 @RequestMapping("/feed")
 public final class FeedController{
     private static final Logger log = LoggerFactory.getLogger(FeedController.class);
+    private final ProductService productService;
 
-    ProductService productService;
-
-    @Autowired
     public FeedController(ProductService productService) {
         this.productService = productService;
     }

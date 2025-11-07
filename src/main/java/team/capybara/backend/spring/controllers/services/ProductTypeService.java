@@ -42,7 +42,6 @@ public class ProductTypeService {
         for(Image img:newProductType.getImages())
             imageRepository.save(img);
 
-        //I don't like adding productType images to shopImages. Why should they be there?
         for(Image img:newProductType.getShop().getImages())
             imageRepository.save(img);
 

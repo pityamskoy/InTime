@@ -13,8 +13,9 @@ import java.util.Optional;
 
 //fix urls/
 @RestController
+@CrossOrigin(value = {"http://localhost:3000"})
 @RequestMapping("/patterns")
-public class ProductTypeController {
+public final class ProductTypeController {
     private static final Logger log = LoggerFactory.getLogger(ShopController.class);
 
     private final ProductTypeService productTypeService;

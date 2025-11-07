@@ -36,7 +36,7 @@ public class ShopService {
     public List<ShopDto> getAllShops() {
         List<Shop> shops = shopRepository.findAll();
 
-        return shops.stream().map(shopMapper::toDto).toList();
+        return shops.stream().map(shopMapper::getEntity).toList();
     }
 
     public Optional<ShopDto> getShopById(String id) {
@@ -46,7 +46,7 @@ public class ShopService {
             throw new EntityNotFoundException(MessageFormat.format("Not found shop by id={0}", UUID.fromString(id)));
         }
 
-        return Optional.ofNullable(shopMapper.toDto(shop.get()));
+        return Optional.ofNullable(shopMapper.getEntity(shop.get()));
     }
 
     public Shop createShop(ShopDto shopToCreate) {

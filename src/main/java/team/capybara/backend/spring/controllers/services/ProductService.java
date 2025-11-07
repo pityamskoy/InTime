@@ -42,7 +42,7 @@ public class ProductService {
     public List<ProductDto> getAllProducts() {
         List<Product> products = productRepository.findAll();
 
-        return products.stream().map(productMapper::toDto).toList();
+        return products.stream().map(productMapper::getEntity).toList();
     }
 
     public Optional<ProductDto> getProductById(String id) {
@@ -52,7 +52,7 @@ public class ProductService {
             throw new EntityNotFoundException(MessageFormat.format("Not found product by id={0}", UUID.fromString(id)));
         }
 
-        return Optional.ofNullable(productMapper.toDto(product.get()));
+        return Optional.ofNullable(productMapper.getEntity(product.get()));
     }
 
     public Product createProduct(ProductDto productToCreate) {
@@ -65,8 +65,6 @@ public class ProductService {
             imageRepository.save(img);
         }
         shopRepository.save(productToSave.getProductType().getShop());
-        //Будет ли каждый раз сохраняться один и тот же productType?
-        productTypeRepository.save(productToSave.getProductType());
 
         return productRepository.save(productToSave);
     }
