@@ -17,7 +17,6 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
         this.imageRepository = imageRepository;
     }
 
-
     @Override
     public ImageDto getEntity(Image image) {
         return new  ImageDto(

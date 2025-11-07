@@ -22,7 +22,6 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
     private final ShopRepository shopRepository;
     private final ImageRepository imageRepository;
 
-
     public ProductTypeMapper(
             ProductTypeRepository productTypeRepository,
             ShopRepository shopRepository,
@@ -117,7 +116,6 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
 
         return obj;
     }
-
 
     @Override
     public void deleteEntity(UUID entityId) {
