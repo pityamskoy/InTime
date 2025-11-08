@@ -46,6 +46,15 @@ public final class ShopController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/shop_stars/{id}")
+    public ResponseEntity<Double> getShopStarsById(@PathVariable String id) {
+        log.info("Called getShopStarsById; id={}", id);
+
+        Optional<Double> shopOptional = shopService.getShopStarsById(UUID.fromString(id));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(shopOptional.get());
+    }
+
     @PostMapping("/create")
     public ResponseEntity<Shop> createShop(@RequestBody ShopDto shopToCreate) {
         log.info("Called createShop; shopToCreate={}", shopToCreate);
