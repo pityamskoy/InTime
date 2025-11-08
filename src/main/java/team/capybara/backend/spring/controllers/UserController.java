@@ -1,5 +1,6 @@
 package team.capybara.backend.spring.controllers;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,18 @@ public final class UserController {
     public ResponseEntity<List<UserDto>> getAllUsers() {
         log.info("Called getAllUsers");
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getUserById(@PathVariable String id) {
+        log.info("Called getUserById; id={}", id);
+
+        try {
+            return ResponseEntity.ok(userService.getUserById(UUID.fromString(id)));
+        } catch (ServiceException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("/create")

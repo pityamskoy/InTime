@@ -32,6 +32,18 @@ public final class ReviewController {
         return ResponseEntity.ok(reviewService.getAllReviews());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ReviewDto> getReviewById(@PathVariable String id) {
+        log.info("Called getReviewById; id={}", id);
+
+        try {
+            return ResponseEntity.ok(reviewService.getReviewById(UUID.fromString(id)));
+        } catch (ServiceException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PostMapping("/create")
     public ResponseEntity<ReviewDto> createReview(@RequestBody ReviewDto reviewToCreate) {
         log.info("Called createReview, reviewToCreate={}", reviewToCreate);

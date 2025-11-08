@@ -1,19 +1,10 @@
 package team.capybara.backend.spring.controllers;
 
-import jakarta.servlet.MultipartConfigElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.web.servlet.MultipartConfigFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.unit.DataSize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.support.StandardServletMultipartResolver;
-import team.capybara.backend.spring.FileFromStorageStore;
 import team.capybara.backend.spring.controllers.dto.image.ImageBase64Dto;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 import team.capybara.backend.spring.controllers.services.ImageService;
@@ -43,7 +34,19 @@ public final class ImageController {
         return ResponseEntity.ok(imageService.getAllImages());
     }
 
-    @GetMapping("image_load/{id}")
+    @GetMapping("/{id}")
+    public ResponseEntity<ImageDto> getImageById(@PathVariable String id) {
+        log.info("Called getImageById; id={}", id);
+
+        try {
+            return ResponseEntity.ok(imageService.getImageById(UUID.fromString(id)));
+        } catch (ServiceException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/image_load/{id}")
     public ResponseEntity<byte[]> loadImage(@PathVariable String id) {
         log.info("Called loadImage; id={}", id);
         byte[] imageData = null;
@@ -62,7 +65,8 @@ public final class ImageController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(imageService.createImage(imageToCreate));
     }
-    
+
+    //fix soon
     @PostMapping("/image_upload/{id}")
     public ResponseEntity<Boolean> uploadImage (@RequestBody ImageBase64Dto imageBase64, @PathVariable String id) {
         log.info("Called uploadImage; imageBase64={}", imageBase64);
