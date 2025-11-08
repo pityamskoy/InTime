@@ -15,7 +15,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "Category")
-public class Category {
+public class Category implements EntityWithId {
     @Id
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
@@ -29,4 +29,8 @@ public class Category {
     @OneToMany(fetch = FetchType.EAGER)
     private List<ProductType> productTypes;
 
+    @Override
+    public UUID getId() {
+        return id;
+    }
 }

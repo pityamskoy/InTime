@@ -14,7 +14,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "Favorite")
-public class Favorite {
+public class Favorite implements EntityWithId {
 
     @Id
     @Column(name = "id", nullable = false, unique = true)
@@ -28,4 +28,8 @@ public class Favorite {
     @JoinColumn(name = "product_type_id")
     private ProductType productType;
 
+    @Override
+    public UUID getId(){
+        return id;
+    }
 }

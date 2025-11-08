@@ -15,7 +15,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "Product_types")
-public class ProductType {
+public class ProductType implements EntityWithId {
     @Id
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
@@ -35,5 +35,10 @@ public class ProductType {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "shop_id")
     private Shop shop;
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
 
 }

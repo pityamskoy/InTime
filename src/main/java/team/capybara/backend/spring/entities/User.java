@@ -14,7 +14,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "Users")
-public class User {
+public class User implements EntityWithId {
     @Id
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
@@ -27,5 +27,10 @@ public class User {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
 
 }

@@ -15,7 +15,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "Shops")
-public class Shop {
+public class Shop implements EntityWithId {
     @Id
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
@@ -43,5 +43,10 @@ public class Shop {
 
     @Column(name = "lon", nullable = false)
     private Double lon; //longitude
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
 
 }
