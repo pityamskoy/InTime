@@ -11,12 +11,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EnableAutoConfiguration
 @ComponentScan(basePackages = {"team.capybara.backend.spring"})
-@EntityScan(basePackages = {"team.capybara.backend.spring.entitys"})
+@EntityScan(basePackages = {"team.capybara.backend.spring.entities"})
 @EnableJpaRepositories(basePackages = {"team.capybara.backend.spring.controllers.repositories"})
 public class Main {
     public static void main(String[] args) {
-
         SpringApplication.run(Main.class, args);
-
     }
 }

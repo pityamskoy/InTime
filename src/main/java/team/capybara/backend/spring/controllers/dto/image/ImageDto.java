@@ -3,7 +3,7 @@ package team.capybara.backend.spring.controllers.dto.image;
 import java.util.UUID;
 
 public record ImageDto(
-        UUID id,
+        UUID imageId,
         String path
 ) {
 }

@@ -1,89 +1,52 @@
 package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
-import team.capybara.backend.spring.controllers.mapping.ImageMapper;
-import team.capybara.backend.spring.controllers.mapping.ShopMapper;
-import team.capybara.backend.spring.controllers.repositories.ProductRepository;
+import team.capybara.backend.spring.controllers.mapping.entitymappers.ShopMapper;
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import team.capybara.backend.spring.controllers.repositories.ImageRepository;
-import team.capybara.backend.spring.entitys.Image;
-import team.capybara.backend.spring.entitys.Shop;
+import team.capybara.backend.spring.entities.Shop;
 
 @Service
-public class ShopService {
-    private final ProductRepository productRepository;
+public final class ShopService {
     private final ShopMapper shopMapper;
-    private final ImageMapper imageMapper;
     private final ShopRepository shopRepository;
-    private final ImageRepository imageRepository;
 
-    @Autowired
-    ShopService(ProductRepository productRepository, ShopMapper shopMapper, ImageMapper imageMapper, ShopRepository shopRepository, ImageRepository imageRepository) {
-        this.productRepository = productRepository;
+    public ShopService(ShopMapper shopMapper, ShopRepository shopRepository) {
         this.shopMapper = shopMapper;
-        this.imageMapper = imageMapper;
         this.shopRepository = shopRepository;
-        this.imageRepository = imageRepository;
     }
 
     public List<ShopDto> getAllShops() {
         List<Shop> shops = shopRepository.findAll();
 
-        return shops.stream().map(shopMapper::toDto).toList();
+        return shops.stream().map(shopMapper::getEntity).toList();
     }
 
-    public Optional<ShopDto> getShopById(String id) {
-        Optional<Shop> shop = shopRepository.findById(UUID.fromString(id));
-
-        if (shop.isEmpty()) {
-            throw new EntityNotFoundException(MessageFormat.format("Not found shop by id={0}", UUID.fromString(id)));
-        }
-
-        return Optional.ofNullable(shopMapper.toDto(shop.get()));
+    public Optional<Shop> getShopById(UUID id) {
+        return shopRepository.findById(id);
     }
 
-    public Shop createShop(ShopDto shopToCreate) throws EntityNotFoundException {
-        Shop shopToSave = shopMapper.postEntity(shopToCreate);
-
-        for (Image img : shopToSave.getImages()) {
-            imageRepository.save(img);
-        }
-        return shopRepository.save(shopToSave);
+    public Shop createShop(ShopDto shopToCreate) {
+        return shopRepository.save(shopMapper.postEntity(shopToCreate));
     }
 
-    public Shop updateShop(ShopDto shopToUpdate) throws EntityNotFoundException {
-        Optional<Shop> optionalProduct = shopRepository.findById(shopToUpdate.id());
-
-        if (optionalProduct.isEmpty()) {
-            throw new EntityNotFoundException("Not found product by id=" + shopToUpdate.id());
-        } else {
-            Shop shop = optionalProduct.get();
-
-            shop.setAddress(shopToUpdate.description());
-            shop.setDescription(shopToUpdate.description());
-            shop.setImages(imageMapper.toEntityList (shopToUpdate.images()));
-            shop.setMainImagePath(shopToUpdate.mainImagePath());
-            shop.setLat(shopToUpdate.lat());
-            shop.setLon(shopToUpdate.lon());
-            shop.setName(shopToUpdate.name());
-            shop.setVerifide(shopToUpdate.isVerified());
-
-            return shopRepository.save(shop);
+    public Shop updateShop(ShopDto shopToUpdate){
+        try {
+            return shopRepository.save(shopMapper.putEntity(shopToUpdate));
+        } catch (EntityNotFoundException e) {
+            throw new ServiceException(e.getMessage());
         }
     }
 
-    public void deleteShop(String id) {
-        if (!shopRepository.existsById(UUID.fromString(id))) {
-            throw new EntityNotFoundException("Not found shop by id=" + id);
+    public void deleteShop(UUID id) {
+        try {
+            shopMapper.deleteEntity(id);
+        }  catch (EntityNotFoundException e) {
+            throw new ServiceException(e.getMessage());
         }
-
-        shopRepository.deleteById(UUID.fromString(id));
     }
 }

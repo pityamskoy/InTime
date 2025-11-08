@@ -1,4 +1,4 @@
-package team.capybara.backend.spring.entitys;
+package team.capybara.backend.spring.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,19 +13,13 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "Favorite")
-public class Favorite {
-
+@Table(name = "Images")
+public class Image {
     @Id
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_type_id")
-    private ProductType productType;
+    @Column(name = "image_paths", nullable = false)
+    private String path;
 
 }

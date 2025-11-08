@@ -1,4 +1,4 @@
-package team.capybara.backend.spring.entitys;
+package team.capybara.backend.spring.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,8 +14,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "Shops")
-public class Shop {
+@Table(name = "Category")
+public class Category {
     @Id
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
@@ -26,22 +26,7 @@ public class Shop {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "isVerifide", nullable = false)
-    private boolean isVerifide;
-
-    @Column(name = "mainImagePath", nullable = false)
-    private String mainImagePath;
-
     @OneToMany(fetch = FetchType.EAGER)
-    private List<Image> images;
-
-    @Column(name = "address", nullable = false)
-    private String address;
-
-    @Column(name = "lat", nullable = false)
-    private Double lat; //latitude
-
-    @Column(name = "lon", nullable = false)
-    private Double lon; //longitude
+    private List<ProductType> productTypes;
 
 }

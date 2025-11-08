@@ -1,4 +1,4 @@
-package team.capybara.backend.spring.entitys;
+package team.capybara.backend.spring.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -13,8 +14,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "Reviews")
-public class Review {
+@Table(name = "Interests")
+public class Interests {
     @Id
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
@@ -24,13 +25,10 @@ public class Review {
     private User user;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "shop_id")
-    private Shop shop;
+    @JoinColumn(name = "product_id")
+    private Product product;
 
-    @Column(name = "text", nullable = false)
-    private String text;
-
-    @Column(name = "stars", nullable = false)
-    private int stars; // 1-5
+    @Column(name = "time", nullable = false)
+    private Date time;
 
 }
