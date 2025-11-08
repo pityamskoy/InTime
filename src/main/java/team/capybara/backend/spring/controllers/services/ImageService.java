@@ -60,11 +60,10 @@ public final class ImageService {
         Image image = imageMapper.postEntity(imageToCreate);
         image.setPath(imagePath+image.getId().toString());
         return imageRepository.save(image);
-    }
 
-    public Image updateImage(ImageDto imageToUpdate) {
+    public ImageDto updateImage(ImageDto imageToUpdate) {
         try {
-            return imageRepository.save(imageMapper.putEntity(imageToUpdate));
+            return imageMapper.putEntity(imageToUpdate);
         } catch (EntityNotFoundException e) {
             throw new ServiceException(e.getMessage());
         }

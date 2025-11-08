@@ -34,13 +34,13 @@ public final class ProductService {
         return productRepository.findById(id);
     }
 
-    public Product createProduct(ProductDto productToCreate) {
-        return productRepository.save(productMapper.postEntity(productToCreate));
+    public ProductDto createProduct(ProductDto productToCreate) {
+        return productMapper.postEntity(productToCreate);
     }
 
-    public Product updateProduct(ProductDto productToUpdate) {
+    public ProductDto updateProduct(ProductDto productToUpdate) {
         try {
-            return productRepository.save(productMapper.putEntity(productToUpdate));
+            return productMapper.putEntity(productToUpdate);
         } catch (EntityNotFoundException e) {
             throw new ServiceException(e.getMessage());
         }

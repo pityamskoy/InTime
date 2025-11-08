@@ -63,12 +63,11 @@ public final class ProductTypeController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ProductType> createProductType(@RequestBody ProductTypeDto productToCreate) {
+    public ResponseEntity<ProductTypeDto> createProductType(@RequestBody ProductTypeDto productToCreate) {
         log.info("Called createProductType; productTypeToCreate={}", productToCreate);
-        ProductType productTypeCreated = productTypeService.createProductType(productToCreate);
 
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(productTypeCreated);
+            return ResponseEntity.status(HttpStatus.CREATED).body(productTypeService.createProductType(productToCreate));
         } catch (ServiceException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
@@ -76,12 +75,11 @@ public final class ProductTypeController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ProductType> updateProductType(@RequestBody ProductTypeDto productTypeToUpdate) {
+    public ResponseEntity<ProductTypeDto> updateProductType(@RequestBody ProductTypeDto productTypeToUpdate) {
         log.info("Called updateProductType; productTypeToUpdate={}", productTypeToUpdate);
 
         try {
-            ProductType productTypeUpdated = productTypeService.updateProductType(productTypeToUpdate);
-            return ResponseEntity.ok(productTypeUpdated);
+            return ResponseEntity.ok(productTypeService.updateProductType(productTypeToUpdate));
         } catch (ServiceException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();

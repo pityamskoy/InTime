@@ -6,9 +6,9 @@ import java.util.UUID;
 public interface Mapper<EntityObject, DtoObject> {
     DtoObject getEntity(EntityObject entityObject);
 
-    EntityObject postEntity(DtoObject dtoObject);
+    DtoObject postEntity(DtoObject dtoObject);
 
-    EntityObject putEntity(DtoObject dtoObject);
+    DtoObject putEntity(DtoObject dtoObject);
 
     void deleteEntity(UUID entityId);
 }

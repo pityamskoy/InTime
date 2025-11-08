@@ -30,13 +30,13 @@ public final class UserService {
         return users.stream().map(userMapper::getEntity).toList();
     }
 
-    public User createUser(UserAuthDto userToCreate) {
-        return userRepository.save(userAuthMapper.postEntity(userToCreate));
+    public UserAuthDto createUser(UserAuthDto userToCreate) {
+        return userAuthMapper.postEntity(userToCreate);
     }
 
-    public User updateUser(UserAuthDto userToUpdate) {
+    public UserAuthDto updateUser(UserAuthDto userToUpdate) {
         try {
-            return userRepository.save(userAuthMapper.putEntity(userToUpdate));
+            return userAuthMapper.putEntity(userToUpdate);
         } catch (EntityNotFoundException e) {
             throw new ServiceException(e.getMessage());
         }

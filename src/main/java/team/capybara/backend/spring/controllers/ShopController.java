@@ -56,7 +56,7 @@ public final class ShopController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Shop> createShop(@RequestBody ShopDto shopToCreate) {
+    public ResponseEntity<ShopDto> createShop(@RequestBody ShopDto shopToCreate) {
         log.info("Called createShop; shopToCreate={}", shopToCreate);
 
         try {
@@ -68,12 +68,11 @@ public final class ShopController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Shop> updateShop(@RequestBody ShopDto shopToUpdate) {
+    public ResponseEntity<ShopDto> updateShop(@RequestBody ShopDto shopToUpdate) {
         log.info("Called updateShop; shopToUpdate={}", shopToUpdate);
 
         try {
-            Shop updated = shopService.updateShop(shopToUpdate);
-            return ResponseEntity.ok(updated);
+            return ResponseEntity.ok(shopService.updateShop(shopToUpdate));
         } catch (ServiceException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();

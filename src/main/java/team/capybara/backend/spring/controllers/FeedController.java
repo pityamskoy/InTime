@@ -48,7 +48,7 @@ public final class FeedController{
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Product> createProduct(@RequestBody ProductDto productToCreate) {
+    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productToCreate) {
         log.info("Called createProduct; productToCreate={}", productToCreate);
 
         try {
@@ -61,12 +61,11 @@ public final class FeedController{
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Product> updateProduct(@RequestBody ProductDto productToUpdate) {
+    public ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto productToUpdate) {
         log.info("Called updateProduct; productToUpdate={}", productToUpdate);
 
         try {
-            Product updated = productService.updateProduct(productToUpdate);
-            return ResponseEntity.ok(updated);
+            return ResponseEntity.ok(productService.updateProduct(productToUpdate));
         } catch (ServiceException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();

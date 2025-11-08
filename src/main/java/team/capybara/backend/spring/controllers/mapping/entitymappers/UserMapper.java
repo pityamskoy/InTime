@@ -39,17 +39,19 @@ public final class UserMapper {
         }
 
         @Override
-        public User postEntity(UserAuthDto userAuthToCreate) {
-            return new User(
+        public UserAuthDto postEntity(UserAuthDto userAuthToCreate) {
+            User userCreated = new User(
                     UUID.randomUUID(),
                     userAuthToCreate.name(),
                     userAuthToCreate.email(),
                     userAuthToCreate.password()
             );
+
+            return getEntity(userCreated);
         }
 
         @Override
-        public User putEntity(UserAuthDto userAuthToUpdate) {
+        public UserAuthDto putEntity(UserAuthDto userAuthToUpdate) {
             Optional<User> user = userRepository.findById(userAuthToUpdate.id());
 
             if (user.isEmpty()) {
@@ -60,8 +62,9 @@ public final class UserMapper {
             obj.setName(userAuthToUpdate.name());
             obj.setEmail(userAuthToUpdate.email());
             obj.setPassword(userAuthToUpdate.password());
+            userRepository.save(obj);
 
-            return obj;
+            return getEntity(obj);
         }
 
         @Override

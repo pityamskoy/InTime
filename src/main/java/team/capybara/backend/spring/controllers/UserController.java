@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.user.UserAuthDto;
 import team.capybara.backend.spring.controllers.dto.user.UserDto;
 import team.capybara.backend.spring.controllers.services.ServiceException;
-import team.capybara.backend.spring.entities.User;
 import team.capybara.backend.spring.controllers.services.UserService;
 
 import java.util.List;
@@ -34,14 +33,14 @@ public final class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<User> createUser(@RequestBody UserAuthDto userToCreate) {
+    public ResponseEntity<UserAuthDto> createUser(@RequestBody UserAuthDto userToCreate) {
         log.info("Called createUser; userToCreate={}", userToCreate);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userService.createUser(userToCreate));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<User> updateUser(@RequestBody UserAuthDto userToUpdate) {
+    public ResponseEntity<UserAuthDto> updateUser(@RequestBody UserAuthDto userToUpdate) {
         log.info("Called updateUser; userToUpdate={}", userToUpdate);
 
         try {

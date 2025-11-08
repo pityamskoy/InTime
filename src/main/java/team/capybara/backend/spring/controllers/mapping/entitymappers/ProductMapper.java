@@ -9,7 +9,6 @@ import team.capybara.backend.spring.entities.ProductType;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
 
-import java.text.MessageFormat;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,26 +41,27 @@ public final class ProductMapper implements Mapper<Product, ProductDto> {
     }
 
     @Override
-    public Product postEntity(ProductDto productToCreate) {
-        UUID productTypeId = productToCreate.productTypeId();
-        Optional<ProductType> productType = productTypeRepository.findById(productTypeId);
+    public ProductDto postEntity(ProductDto productToCreate) {
+        Optional<ProductType> productType = productTypeRepository.findById(productToCreate.productTypeId());
 
         if (productType.isEmpty()) {
-            throw new EntityNotFoundException(MessageFormat.format("Not found productType; id={0}", productTypeId));
+            throw new EntityNotFoundException("ProductType not found; id=" + productToCreate.productTypeId());
         }
 
-        return new Product(
+        Product productCreated = productRepository.save(new Product(
                 UUID.randomUUID(),
                 productType.get(),
                 productToCreate.shelfLife(),
                 productToCreate.price(),
                 productToCreate.discount(),
                 productToCreate.isSold()
-        );
+        ));
+
+        return getEntity(productCreated);
     }
 
     @Override
-    public Product putEntity(ProductDto productToUpdate) {
+    public ProductDto putEntity(ProductDto productToUpdate) {
         Optional<Product> product = productRepository.findById(productToUpdate.id());
         if (product.isEmpty()) {
             throw new EntityNotFoundException("Not found product; id=" + productToUpdate.productTypeId());
@@ -78,8 +78,9 @@ public final class ProductMapper implements Mapper<Product, ProductDto> {
         obj.setPrice(productToUpdate.price());
         obj.setDiscount(productToUpdate.discount());
         obj.setSold(productToUpdate.isSold());
+        productRepository.save(obj);
 
-        return obj;
+        return getEntity(obj);
     }
 
     @Override

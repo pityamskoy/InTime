@@ -35,29 +35,31 @@ public final class ShopService {
         return shopRepository.findById(id);
     }
 
+    public ShopDto createShop(ShopDto shopToCreate) {
+        return shopMapper.postEntity(shopToCreate);
+    }
     public Optional<Double> getShopStarsById(UUID id) {
+        Optional<Shop> shop = shopRepository.findById(id);
 
-        List<Review> rewiews = reviewRepository.findByShop(shopRepository.findById(id).get());
-        Double sumOfStarsValue  = (double) 0;
-        Double colOfReview  = (double) 0;
+        if (shop.isEmpty()) {
+            throw new EntityNotFoundException("Shop not found; id=" + id);
+        }
 
-        for(Review review:rewiews){
+        List<Review> reviews = reviewRepository.findByShop(shop.get());
+        double sumOfStarsValue = 0.0;
+        double colOfReview = 0.0;
+
+        for (Review review:reviews) {
             sumOfStarsValue+=review.getStars();
             colOfReview++;
         }
 
-        Optional<Double> stars = Optional.of(sumOfStarsValue / colOfReview);
-
-        return stars;
+        return Optional.of(sumOfStarsValue / colOfReview);
     }
 
-    public Shop createShop(ShopDto shopToCreate) {
-        return shopRepository.save(shopMapper.postEntity(shopToCreate));
-    }
-
-    public Shop updateShop(ShopDto shopToUpdate){
+    public ShopDto updateShop(ShopDto shopToUpdate){
         try {
-            return shopRepository.save(shopMapper.putEntity(shopToUpdate));
+            return shopMapper.putEntity(shopToUpdate);
         } catch (EntityNotFoundException e) {
             throw new ServiceException(e.getMessage());
         }
