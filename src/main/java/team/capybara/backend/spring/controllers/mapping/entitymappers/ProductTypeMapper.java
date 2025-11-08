@@ -52,14 +52,14 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
     }
 
     @Override
-    public ProductType postEntity(ProductTypeDto productTypeDto) {
-        Optional<Shop> optionalShop = this.shopRepository.findById(productTypeDto.shopId());
+    public ProductType postEntity(ProductTypeDto productTypeToCreate) {
+        Optional<Shop> optionalShop = this.shopRepository.findById(productTypeToCreate.shopId());
 
         if (optionalShop.isEmpty()) {
-            throw new EntityNotFoundException("Not found shop with id=" + productTypeDto.shopId());
+            throw new EntityNotFoundException("Not found shop with id=" + productTypeToCreate.shopId());
         }
 
-        List<String> imagesId = productTypeDto.imagesId();
+        List<String> imagesId = productTypeToCreate.imagesId();
         List<Image> images = new ArrayList<>();
 
         for (String imageId : imagesId) {
@@ -74,27 +74,27 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
 
         return new ProductType(
                 UUID.randomUUID(),
-                productTypeDto.name(),
-                productTypeDto.description(),
-                productTypeDto.mainImagePath(),
+                productTypeToCreate.name(),
+                productTypeToCreate.description(),
+                productTypeToCreate.mainImagePath(),
                 images,
                 optionalShop.get()
         );
     }
 
     @Override
-    public ProductType putEntity(ProductTypeDto dtoObject) {
-        Optional<ProductType> productType = productTypeRepository.findById(dtoObject.id());
+    public ProductType putEntity(ProductTypeDto productTypeToUpdate) {
+        Optional<ProductType> productType = productTypeRepository.findById(productTypeToUpdate.id());
         if (productType.isEmpty()) {
-            throw new EntityNotFoundException("Not found product type with id=" + dtoObject.id());
+            throw new EntityNotFoundException("Not found product type with id=" + productTypeToUpdate.id());
         }
 
-        Optional<Shop> shop = shopRepository.findById(dtoObject.shopId());
+        Optional<Shop> shop = shopRepository.findById(productTypeToUpdate.shopId());
         if (shop.isEmpty()) {
-            throw new EntityNotFoundException("Not found shop with id=" + dtoObject.shopId());
+            throw new EntityNotFoundException("Not found shop with id=" + productTypeToUpdate.shopId());
         }
 
-        List<String> imagesId = dtoObject.imagesId();
+        List<String> imagesId = productTypeToUpdate.imagesId();
         List<Image> images = new ArrayList<>();
 
         for (String imageId : imagesId) {
@@ -103,14 +103,13 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
             if (image.isEmpty()) {
                 throw new EntityNotFoundException("Not found image with id=" + imageId);
             }
-
             images.add(image.get());
         }
 
         ProductType obj = productType.get();
-        obj.setName(dtoObject.name());
-        obj.setDescription(dtoObject.description());
-        obj.setMainImagePath(dtoObject.mainImagePath());
+        obj.setName(productTypeToUpdate.name());
+        obj.setDescription(productTypeToUpdate.description());
+        obj.setMainImagePath(productTypeToUpdate.mainImagePath());
         obj.setImages(images);
         obj.setShop(shop.get());
 
@@ -118,13 +117,13 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
     }
 
     @Override
-    public void deleteEntity(UUID entityId) {
-        Optional<ProductType> productType = productTypeRepository.findById(entityId);
+    public void deleteEntity(UUID id) {
+        Optional<ProductType> productType = productTypeRepository.findById(id);
 
         if (productType.isEmpty()) {
-            throw new EntityNotFoundException("Not found product type with id=" + entityId);
+            throw new EntityNotFoundException("Not found product type with id=" + id);
         }
 
-        productTypeRepository.deleteById(entityId);
+        productTypeRepository.deleteById(id);
     }
 }

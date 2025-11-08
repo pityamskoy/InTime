@@ -44,50 +44,51 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
     }
 
     @Override
-    public Shop postEntity(ShopDto shopDto) {
-        List<Image> images = imageMapper.toEntityList(shopDto.images());
+    public Shop postEntity(ShopDto shopToCreate) {
+        List<Image> images = imageMapper.toEntityList(shopToCreate.images());
 
         return new Shop(
                 UUID.randomUUID(),
-                shopDto.name(),
-                shopDto.description(),
-                shopDto.isVerified(),
-                shopDto.mainImagePath(),
+                shopToCreate.name(),
+                shopToCreate.description(),
+                shopToCreate.isVerified(),
+                shopToCreate.mainImagePath(),
                 images,
-                shopDto.address(),
-                shopDto.lat(),
-                shopDto.lon()
+                shopToCreate.address(),
+                shopToCreate.lat(),
+                shopToCreate.lon()
         );
     }
 
     @Override
-    public Shop putEntity(ShopDto dtoObject) {
-        Optional<Shop> shop = shopRepository.findById(dtoObject.id());
+    public Shop putEntity(ShopDto shopToUpdate) {
+        Optional<Shop> shop = shopRepository.findById(shopToUpdate.id());
+
         if (shop.isEmpty()) {
-            throw new EntityNotFoundException("Not found shop, id=" + dtoObject.id());
+            throw new EntityNotFoundException("Not found shop, id=" + shopToUpdate.id());
         }
 
-        Shop obj =  shop.get();
-        obj.setName(dtoObject.name());
-        obj.setDescription(dtoObject.description());
-        obj.setVerifide(dtoObject.isVerified());
-        obj.setMainImagePath(dtoObject.mainImagePath());
-        obj.setImages(imageMapper.toEntityList(dtoObject.images()));
-        obj.setAddress(dtoObject.address());
-        obj.setLat(dtoObject.lat());
-        obj.setLon(dtoObject.lon());
+        Shop obj = shop.get();
+        obj.setName(shopToUpdate.name());
+        obj.setDescription(shopToUpdate.description());
+        obj.setVerifide(shopToUpdate.isVerified());
+        obj.setMainImagePath(shopToUpdate.mainImagePath());
+        obj.setImages(imageMapper.toEntityList(shopToUpdate.images()));
+        obj.setAddress(shopToUpdate.address());
+        obj.setLat(shopToUpdate.lat());
+        obj.setLon(shopToUpdate.lon());
 
         return obj;
     }
 
     @Override
-    public void deleteEntity(UUID entityId) {
-        Optional<Shop> shop = shopRepository.findById(entityId);
+    public void deleteEntity(UUID id) {
+        Optional<Shop> shop = shopRepository.findById(id);
 
         if (shop.isEmpty()) {
-            throw new EntityNotFoundException("Not found shop, id=" + entityId);
+            throw new EntityNotFoundException("Not found shop, id=" + id);
         }
 
-        shopRepository.deleteById(entityId);
+        shopRepository.deleteById(id);
     }
 }

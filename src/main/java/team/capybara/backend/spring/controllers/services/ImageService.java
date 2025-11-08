@@ -33,7 +33,7 @@ public final class ImageService {
 
     public Image updateImage(ImageDto imageToUpdate) {
         try {
-            return imageMapper.putEntity(imageToUpdate);
+            return imageRepository.save(imageMapper.putEntity(imageToUpdate));
         } catch (EntityNotFoundException e) {
             throw new ServiceException(e.getMessage());
         }

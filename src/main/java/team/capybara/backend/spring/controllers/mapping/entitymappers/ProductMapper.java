@@ -42,8 +42,8 @@ public final class ProductMapper implements Mapper<Product, ProductDto> {
     }
 
     @Override
-    public Product postEntity(ProductDto productDto) {
-        UUID productTypeId = productDto.productTypeId();
+    public Product postEntity(ProductDto productToCreate) {
+        UUID productTypeId = productToCreate.productTypeId();
         Optional<ProductType> productType = productTypeRepository.findById(productTypeId);
 
         if (productType.isEmpty()) {
@@ -53,41 +53,41 @@ public final class ProductMapper implements Mapper<Product, ProductDto> {
         return new Product(
                 UUID.randomUUID(),
                 productType.get(),
-                productDto.shelfLife(),
-                productDto.price(),
-                productDto.discount(),
-                productDto.isSold()
+                productToCreate.shelfLife(),
+                productToCreate.price(),
+                productToCreate.discount(),
+                productToCreate.isSold()
         );
     }
 
     @Override
-    public Product putEntity(ProductDto dtoObject) {
-        Optional<Product> product = productRepository.findById(dtoObject.id());
+    public Product putEntity(ProductDto productToUpdate) {
+        Optional<Product> product = productRepository.findById(productToUpdate.id());
         if (product.isEmpty()) {
-            throw new EntityNotFoundException("Not found product id=" + dtoObject.productTypeId());
+            throw new EntityNotFoundException("Not found product id=" + productToUpdate.productTypeId());
         }
 
-        Optional<ProductType> productType = productTypeRepository.findById(dtoObject.productTypeId());
+        Optional<ProductType> productType = productTypeRepository.findById(productToUpdate.productTypeId());
         if (productType.isEmpty()) {
-            throw new EntityNotFoundException("Not found productType id=" + dtoObject.productTypeId());
+            throw new EntityNotFoundException("Not found productType id=" + productToUpdate.productTypeId());
         }
 
         Product obj = product.get();
         obj.setProductType(productType.get());
-        obj.setShelfLife(dtoObject.shelfLife());
-        obj.setPrice(dtoObject.price());
-        obj.setDiscount(dtoObject.discount());
-        obj.setSold(dtoObject.isSold());
+        obj.setShelfLife(productToUpdate.shelfLife());
+        obj.setPrice(productToUpdate.price());
+        obj.setDiscount(productToUpdate.discount());
+        obj.setSold(productToUpdate.isSold());
 
         return obj;
     }
 
     @Override
-    public void deleteEntity(UUID entityId) {
-        Optional<Product> product = productRepository.findById(entityId);
+    public void deleteEntity(UUID id) {
+        Optional<Product> product = productRepository.findById(id);
 
         if (product.isEmpty()) {
-            throw new EntityNotFoundException("Not found product id=" + entityId);
+            throw new EntityNotFoundException("Not found product id=" + id);
         }
 
         productRepository.delete(product.get());

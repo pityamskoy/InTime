@@ -1,32 +1,52 @@
 package team.capybara.backend.spring.controllers.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.entities.User;
+import team.capybara.backend.spring.controllers.dto.user.UserAuthDto;
+import team.capybara.backend.spring.controllers.dto.user.UserDto;
+import team.capybara.backend.spring.controllers.mapping.entitymappers.UserMapper;
 import team.capybara.backend.spring.controllers.repositories.UserRepository;
+import team.capybara.backend.spring.entities.User;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @Service
-public class UserService {
+public final class UserService {
+    private final UserMapper userMapper;
+    private final UserMapper.UserAuthMapper userAuthMapper;
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserMapper userMapper, UserMapper.UserAuthMapper userAuthMapper, UserRepository userRepository) {
+        this.userMapper = userMapper;
         this.userRepository = userRepository;
+        this.userAuthMapper = userAuthMapper;
     }
 
-    public User createUser(User userToCreate) {
-        User newUser = new User(
-                userToCreate.getId(),
-                userToCreate.getName(),
-                userToCreate.getEmail(),
-                userToCreate.getPassword()
-        );
+    public List<UserDto> getAllUsers() {
+        List<User> users = userRepository.findAll();
 
-        return userRepository.save(newUser);
+        return users.stream().map(userMapper::getEntity).toList();
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public User createUser(UserAuthDto userToCreate) {
+        return userRepository.save(userAuthMapper.postEntity(userToCreate));
+    }
+
+    public User updateUser(UserAuthDto userToUpdate) {
+        try {
+            return userRepository.save(userAuthMapper.putEntity(userToUpdate));
+        } catch (EntityNotFoundException e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
+
+    public void deleteUser(UUID id) {
+        try {
+            userAuthMapper.deleteEntity(id);
+        } catch (EntityNotFoundException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 }

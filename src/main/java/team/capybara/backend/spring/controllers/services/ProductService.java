@@ -40,7 +40,7 @@ public final class ProductService {
 
     public Product updateProduct(ProductDto productToUpdate) {
         try {
-            return productMapper.putEntity(productToUpdate);
+            return productRepository.save(productMapper.putEntity(productToUpdate));
         } catch (EntityNotFoundException e) {
             throw new ServiceException(e.getMessage());
         }

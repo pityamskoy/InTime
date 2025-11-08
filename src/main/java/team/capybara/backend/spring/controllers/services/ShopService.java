@@ -36,7 +36,7 @@ public final class ShopService {
 
     public Shop updateShop(ShopDto shopToUpdate){
         try {
-            return shopMapper.putEntity(shopToUpdate);
+            return shopRepository.save(shopMapper.putEntity(shopToUpdate));
         } catch (EntityNotFoundException e) {
             throw new ServiceException(e.getMessage());
         }

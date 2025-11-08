@@ -61,7 +61,7 @@ public final class ProductTypeService {
 
     public ProductType updateProductType(ProductTypeDto productTypeToUpdate) {
         try {
-            return productTypeMapper.putEntity(productTypeToUpdate);
+            return productTypeRepository.save(productTypeMapper.putEntity(productTypeToUpdate));
         } catch (EntityNotFoundException e) {
             throw new ServiceException(e.getMessage());
         }
