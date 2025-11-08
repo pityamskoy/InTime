@@ -1,7 +1,5 @@
 package team.capybara.backend.spring.controllers;
 
-
-import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -41,7 +39,7 @@ public final class ShopController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ShopDto> getShopById(@PathVariable String id) {
-        log.info("Called getShopById id={}", id);
+        log.info("Called getShopById; id={}", id);
         Optional<Shop> shopOptional = shopService.getShopById(UUID.fromString(id));
 
         return shopOptional.map(shop -> ResponseEntity.ok(shopMapper.getEntity(shop)))
@@ -50,7 +48,7 @@ public final class ShopController {
 
     @PostMapping("/create")
     public ResponseEntity<Shop> createShop(@RequestBody ShopDto shopToCreate) {
-        log.info("Called createShop shopToCreate={}", shopToCreate);
+        log.info("Called createShop; shopToCreate={}", shopToCreate);
 
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(shopService.createShop(shopToCreate));
@@ -62,7 +60,7 @@ public final class ShopController {
 
     @PutMapping("/update")
     public ResponseEntity<Shop> updateShop(@RequestBody ShopDto shopToUpdate) {
-        log.info("Called updateShop shopToUpdate={}", shopToUpdate);
+        log.info("Called updateShop; shopToUpdate={}", shopToUpdate);
 
         try {
             Shop updated = shopService.updateShop(shopToUpdate);
@@ -75,7 +73,7 @@ public final class ShopController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteProduct(@RequestBody String id) {
-        log.info("Called deleteShop id={}", id);
+        log.info("Called deleteShop; id={}", id);
 
         try {
             shopService.deleteShop(UUID.fromString(id));

@@ -38,7 +38,7 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
         Optional<Image> image = imageRepository.findById(imageToUpdate.imageId());
 
         if (image.isEmpty()) {
-            throw new EntityNotFoundException("Not found image id=" + imageToUpdate.imageId());
+            throw new EntityNotFoundException("Not found image; id=" + imageToUpdate.imageId());
         }
 
         Image obj = image.get();
@@ -49,7 +49,7 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
     @Override
     public void deleteEntity(UUID id) {
         if (!imageRepository.existsById(id)) {
-            throw new EntityNotFoundException("Image not found with id=" + id);
+            throw new EntityNotFoundException("Image not found; id=" + id);
         }
 
         imageRepository.deleteById(id);
@@ -73,7 +73,7 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
             if (optionalImage.isPresent()) {
                 images.add(optionalImage.get());
             } else {
-                throw new EntityNotFoundException("Image not found with id=" + imageDto.imageId());
+                throw new EntityNotFoundException("Image not found; id=" + imageDto.imageId());
             }
         }
         return images;
@@ -87,7 +87,7 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
             if (optionalImage.isPresent()) {
                 images.add(optionalImage.get());
             } else  {
-                throw new EntityNotFoundException("Image not found with id=" + imageId);
+                throw new EntityNotFoundException("Image not found; id=" + imageId);
             }
         }
 

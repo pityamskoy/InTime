@@ -43,7 +43,7 @@ public final class ProductTypeController {
     //fix soon. Make optional instead of ServiceException
     @GetMapping("/{shopId}")
     public ResponseEntity<List<ProductTypeDto>> getAllProductTypesByShopId(@PathVariable("shopId") String shopId) {
-        log.info("Called getAllProductTypesByShopId shopId={}", shopId);
+        log.info("Called getAllProductTypesByShopId; shopId={}", shopId);
 
         try {
             return ResponseEntity.ok(productTypeService.getAllProductTypes());
@@ -55,7 +55,7 @@ public final class ProductTypeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductTypeDto> getProductTypeById(@PathVariable("id") String id) {
-        log.info("Called getProductTypeById id={}", id);
+        log.info("Called getProductTypeById; id={}", id);
         Optional<ProductType> productType = productTypeService.getProductTypeById(UUID.fromString(id));
 
         return productType.map(type -> ResponseEntity.ok(productTypeMapper.getEntity(type)))
@@ -64,7 +64,7 @@ public final class ProductTypeController {
 
     @PostMapping("/create")
     public ResponseEntity<ProductType> createProductType(@RequestBody ProductTypeDto productToCreate) {
-        log.info("Called createProductType productTypeToCreate={}", productToCreate);
+        log.info("Called createProductType; productTypeToCreate={}", productToCreate);
         ProductType productTypeCreated = productTypeService.createProductType(productToCreate);
 
         try {
@@ -77,7 +77,7 @@ public final class ProductTypeController {
 
     @PutMapping("/update")
     public ResponseEntity<ProductType> updateProductType(@RequestBody ProductTypeDto productTypeToUpdate) {
-        log.info("Called updateProductType productTypeToUpdate={}", productTypeToUpdate);
+        log.info("Called updateProductType; productTypeToUpdate={}", productTypeToUpdate);
 
         try {
             ProductType productTypeUpdated = productTypeService.updateProductType(productTypeToUpdate);
@@ -90,7 +90,7 @@ public final class ProductTypeController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<ProductType> deleteProductType(@RequestBody String id) {
-        log.info("Called deleteProductType id={}", id);
+        log.info("Called deleteProductType; id={}", id);
 
         try {
             productTypeService.deleteProductType(UUID.fromString(id));

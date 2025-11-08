@@ -35,14 +35,14 @@ public final class UserController {
 
     @PostMapping("/create")
     public ResponseEntity<User> createUser(@RequestBody UserAuthDto userToCreate) {
-        log.info("Called createUser userToCreate={}", userToCreate);
+        log.info("Called createUser; userToCreate={}", userToCreate);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userService.createUser(userToCreate));
     }
 
     @PutMapping("/update")
     public ResponseEntity<User> updateUser(@RequestBody UserAuthDto userToUpdate) {
-        log.info("Called updateUser userToUpdate={}", userToUpdate);
+        log.info("Called updateUser; userToUpdate={}", userToUpdate);
 
         try {
             return ResponseEntity.ok(userService.updateUser(userToUpdate));
@@ -54,7 +54,7 @@ public final class UserController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteUser(@RequestBody String id) {
-        log.info("Called deleteUser id={}", id);
+        log.info("Called deleteUser; id={}", id);
 
         try {
             userService.deleteUser(UUID.fromString(id));

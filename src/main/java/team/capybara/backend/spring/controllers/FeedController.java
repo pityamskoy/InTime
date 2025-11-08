@@ -40,7 +40,7 @@ public final class FeedController{
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable String id) {
-        log.info("Called getProduct id={}", id);
+        log.info("Called getProduct; id={}", id);
         Optional<Product> product = productService.getProductById(UUID.fromString(id));
 
         return product.map(value -> ResponseEntity.ok(productMapper.getEntity(value)))
@@ -49,7 +49,7 @@ public final class FeedController{
 
     @PostMapping("/create")
     public ResponseEntity<Product> createProduct(@RequestBody ProductDto productToCreate) {
-        log.info("Called createProduct productToCreate={}", productToCreate);
+        log.info("Called createProduct; productToCreate={}", productToCreate);
 
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -62,7 +62,7 @@ public final class FeedController{
 
     @PutMapping("/update")
     public ResponseEntity<Product> updateProduct(@RequestBody ProductDto productToUpdate) {
-        log.info("Called updateProduct productToUpdate={}", productToUpdate);
+        log.info("Called updateProduct; productToUpdate={}", productToUpdate);
 
         try {
             Product updated = productService.updateProduct(productToUpdate);
@@ -83,7 +83,7 @@ public final class FeedController{
 
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteProduct(@RequestBody String id) {
-        log.info("Called deleteProduct id={}", id);
+        log.info("Called deleteProduct; id={}", id);
 
         try {
             productService.deleteProduct(UUID.fromString(id));

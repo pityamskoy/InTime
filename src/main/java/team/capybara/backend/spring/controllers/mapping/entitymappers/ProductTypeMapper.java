@@ -35,10 +35,10 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
     @Override
     public ProductTypeDto getEntity(ProductType productType) {
         List<Image> images = productType.getImages();
-        List<String> imagesId = new ArrayList<>();
+        List<UUID> imagesId = new ArrayList<>();
 
         for (Image image : images) {
-            imagesId.add(image.getId().toString());
+            imagesId.add(image.getId());
         }
 
         return new ProductTypeDto(
@@ -56,17 +56,17 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
         Optional<Shop> optionalShop = this.shopRepository.findById(productTypeToCreate.shopId());
 
         if (optionalShop.isEmpty()) {
-            throw new EntityNotFoundException("Not found shop with id=" + productTypeToCreate.shopId());
+            throw new EntityNotFoundException("Not found shop; id=" + productTypeToCreate.shopId());
         }
 
-        List<String> imagesId = productTypeToCreate.imagesId();
+        List<UUID> imagesId = productTypeToCreate.imagesId();
         List<Image> images = new ArrayList<>();
 
-        for (String imageId : imagesId) {
-            Optional<Image> image = imageRepository.findById(UUID.fromString(imageId));
+        for (UUID imageId : imagesId) {
+            Optional<Image> image = imageRepository.findById(imageId);
 
             if (image.isEmpty()) {
-                throw new EntityNotFoundException("Not found image with id=" + imageId);
+                throw new EntityNotFoundException("Not found image; id=" + imageId);
             }
 
             images.add(image.get());
@@ -86,22 +86,22 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
     public ProductType putEntity(ProductTypeDto productTypeToUpdate) {
         Optional<ProductType> productType = productTypeRepository.findById(productTypeToUpdate.id());
         if (productType.isEmpty()) {
-            throw new EntityNotFoundException("Not found product type with id=" + productTypeToUpdate.id());
+            throw new EntityNotFoundException("Not found product type; id=" + productTypeToUpdate.id());
         }
 
         Optional<Shop> shop = shopRepository.findById(productTypeToUpdate.shopId());
         if (shop.isEmpty()) {
-            throw new EntityNotFoundException("Not found shop with id=" + productTypeToUpdate.shopId());
+            throw new EntityNotFoundException("Not found shop; id=" + productTypeToUpdate.shopId());
         }
 
-        List<String> imagesId = productTypeToUpdate.imagesId();
+        List<UUID> imagesId = productTypeToUpdate.imagesId();
         List<Image> images = new ArrayList<>();
 
-        for (String imageId : imagesId) {
-            Optional<Image> image = imageRepository.findById(UUID.fromString(imageId));
+        for (UUID imageId : imagesId) {
+            Optional<Image> image = imageRepository.findById(imageId);
 
             if (image.isEmpty()) {
-                throw new EntityNotFoundException("Not found image with id=" + imageId);
+                throw new EntityNotFoundException("Not found image; id=" + imageId);
             }
             images.add(image.get());
         }
@@ -121,7 +121,7 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
         Optional<ProductType> productType = productTypeRepository.findById(id);
 
         if (productType.isEmpty()) {
-            throw new EntityNotFoundException("Not found product type with id=" + id);
+            throw new EntityNotFoundException("Not found product type; id=" + id);
         }
 
         productTypeRepository.deleteById(id);

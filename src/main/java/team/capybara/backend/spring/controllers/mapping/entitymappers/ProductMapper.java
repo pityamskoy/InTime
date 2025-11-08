@@ -47,7 +47,7 @@ public final class ProductMapper implements Mapper<Product, ProductDto> {
         Optional<ProductType> productType = productTypeRepository.findById(productTypeId);
 
         if (productType.isEmpty()) {
-            throw new EntityNotFoundException(MessageFormat.format("Not found productType id={0}", productTypeId));
+            throw new EntityNotFoundException(MessageFormat.format("Not found productType; id={0}", productTypeId));
         }
 
         return new Product(
@@ -64,12 +64,12 @@ public final class ProductMapper implements Mapper<Product, ProductDto> {
     public Product putEntity(ProductDto productToUpdate) {
         Optional<Product> product = productRepository.findById(productToUpdate.id());
         if (product.isEmpty()) {
-            throw new EntityNotFoundException("Not found product id=" + productToUpdate.productTypeId());
+            throw new EntityNotFoundException("Not found product; id=" + productToUpdate.productTypeId());
         }
 
         Optional<ProductType> productType = productTypeRepository.findById(productToUpdate.productTypeId());
         if (productType.isEmpty()) {
-            throw new EntityNotFoundException("Not found productType id=" + productToUpdate.productTypeId());
+            throw new EntityNotFoundException("Not found productType; id=" + productToUpdate.productTypeId());
         }
 
         Product obj = product.get();
@@ -87,7 +87,7 @@ public final class ProductMapper implements Mapper<Product, ProductDto> {
         Optional<Product> product = productRepository.findById(id);
 
         if (product.isEmpty()) {
-            throw new EntityNotFoundException("Not found product id=" + id);
+            throw new EntityNotFoundException("Not found product; id=" + id);
         }
 
         productRepository.delete(product.get());

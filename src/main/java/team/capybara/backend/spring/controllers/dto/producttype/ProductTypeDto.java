@@ -8,7 +8,7 @@ public record ProductTypeDto(
         String name,
         String description,
         String mainImagePath,
-        List<String> imagesId,
+        List<UUID> imagesId,
         UUID shopId
 ) {
 }

@@ -53,7 +53,7 @@ public final class UserMapper {
             Optional<User> user = userRepository.findById(userAuthToUpdate.id());
 
             if (user.isEmpty()) {
-                throw new EntityNotFoundException("Not found user with id=" + userAuthToUpdate.id());
+                throw new EntityNotFoundException("Not found user; id=" + userAuthToUpdate.id());
             }
 
             User obj = user.get();
@@ -69,7 +69,7 @@ public final class UserMapper {
             Optional<User> user = userRepository.findById(id);
 
             if (user.isEmpty()) {
-                throw new EntityNotFoundException("Not found user with id=" + id);
+                throw new EntityNotFoundException("Not found user; id=" + id);
             }
 
             userRepository.deleteById(id);

@@ -35,13 +35,13 @@ public final class ImageController {
 
     @PostMapping("/create")
     public ResponseEntity<Image> createImage(@RequestBody ImageDto imageToCreate) {
-        log.info("Called createImage imageToCreate={}", imageToCreate);
+        log.info("Called createImage; imageToCreate={}", imageToCreate);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(imageService.createImage(imageToCreate));
     }
 
     public ResponseEntity<Image> updateImage(@RequestBody ImageDto imageToUpdate) {
-        log.info("Called updateImage imageToUpdate={}", imageToUpdate);
+        log.info("Called updateImage; imageToUpdate={}", imageToUpdate);
 
         try {
             return ResponseEntity.ok(imageService.updateImage(imageToUpdate));
@@ -51,7 +51,7 @@ public final class ImageController {
     }
 
     public ResponseEntity<Void> deleteImage(@RequestBody String id) {
-        log.info("Called deleteImage id={}", id);
+        log.info("Called deleteImage; id={}", id);
 
         try {
             imageService.deleteImage(UUID.fromString(id));
