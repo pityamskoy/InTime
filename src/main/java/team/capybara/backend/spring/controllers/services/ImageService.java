@@ -27,13 +27,13 @@ public final class ImageService {
         return images.stream().map(imageMapper::getEntity).toList();
     }
 
-    public Image createImage(ImageDto imageToCreate) {
-        return imageRepository.save(imageMapper.postEntity(imageToCreate));
+    public ImageDto createImage(ImageDto imageToCreate) {
+        return imageMapper.postEntity(imageToCreate);
     }
 
-    public Image updateImage(ImageDto imageToUpdate) {
+    public ImageDto updateImage(ImageDto imageToUpdate) {
         try {
-            return imageRepository.save(imageMapper.putEntity(imageToUpdate));
+            return imageMapper.putEntity(imageToUpdate);
         } catch (EntityNotFoundException e) {
             throw new ServiceException(e.getMessage());
         }

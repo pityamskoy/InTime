@@ -50,7 +50,7 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
     }
 
     @Override
-    public Shop postEntity(ShopDto shopToCreate) {
+    public ShopDto postEntity(ShopDto shopToCreate) {
         List<UUID> imagesId = shopToCreate.imagesId();
         List<Image> images = new ArrayList<>();
 
@@ -63,7 +63,7 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
             images.add(image.get());
         }
 
-        return new Shop(
+        Shop shopCreated = shopRepository.save(new Shop(
                 UUID.randomUUID(),
                 shopToCreate.name(),
                 shopToCreate.description(),
@@ -73,11 +73,13 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
                 shopToCreate.address(),
                 shopToCreate.lat(),
                 shopToCreate.lon()
-        );
+        ));
+
+        return getEntity(shopCreated);
     }
 
     @Override
-    public Shop putEntity(ShopDto shopToUpdate) {
+    public ShopDto putEntity(ShopDto shopToUpdate) {
         Optional<Shop> shop = shopRepository.findById(shopToUpdate.id());
 
         if (shop.isEmpty()) {
@@ -105,8 +107,9 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
         obj.setAddress(shopToUpdate.address());
         obj.setLat(shopToUpdate.lat());
         obj.setLon(shopToUpdate.lon());
+        shopRepository.save(obj);
 
-        return obj;
+        return getEntity(obj);
     }
 
     @Override

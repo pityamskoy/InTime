@@ -19,31 +19,35 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
 
     @Override
     public ImageDto getEntity(Image image) {
-        return new  ImageDto(
+        return new ImageDto(
                 image.getId(),
                 image.getPath()
         );
     }
 
     @Override
-    public Image postEntity(ImageDto imageToCreate) {
-        return new Image(
+    public ImageDto postEntity(ImageDto imageToCreate) {
+        Image imageCreated = imageRepository.save(new Image(
                 UUID.randomUUID(),
                 imageToCreate.path()
-        );
+        ));
+
+        return getEntity(imageCreated);
     }
 
     @Override
-    public Image putEntity(ImageDto imageToUpdate) {
+    public ImageDto putEntity(ImageDto imageToUpdate) {
         Optional<Image> image = imageRepository.findById(imageToUpdate.imageId());
 
         if (image.isEmpty()) {
-            throw new EntityNotFoundException("Not found image; id=" + imageToUpdate.imageId());
+            throw new EntityNotFoundException("Image not found; id=" + imageToUpdate.imageId());
         }
 
         Image obj = image.get();
         obj.setPath(imageToUpdate.path());
-        return obj;
+        imageRepository.save(obj);
+
+        return getEntity(obj);
     }
 
     @Override

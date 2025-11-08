@@ -30,13 +30,13 @@ public final class ShopService {
         return shopRepository.findById(id);
     }
 
-    public Shop createShop(ShopDto shopToCreate) {
-        return shopRepository.save(shopMapper.postEntity(shopToCreate));
+    public ShopDto createShop(ShopDto shopToCreate) {
+        return shopMapper.postEntity(shopToCreate);
     }
 
-    public Shop updateShop(ShopDto shopToUpdate){
+    public ShopDto updateShop(ShopDto shopToUpdate){
         try {
-            return shopRepository.save(shopMapper.putEntity(shopToUpdate));
+            return shopMapper.putEntity(shopToUpdate);
         } catch (EntityNotFoundException e) {
             throw new ServiceException(e.getMessage());
         }

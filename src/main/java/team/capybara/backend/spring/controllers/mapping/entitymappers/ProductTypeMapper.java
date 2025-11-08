@@ -52,7 +52,7 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
     }
 
     @Override
-    public ProductType postEntity(ProductTypeDto productTypeToCreate) {
+    public ProductTypeDto postEntity(ProductTypeDto productTypeToCreate) {
         Optional<Shop> optionalShop = this.shopRepository.findById(productTypeToCreate.shopId());
 
         if (optionalShop.isEmpty()) {
@@ -72,7 +72,7 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
             images.add(image.get());
         }
 
-        return new ProductType(
+        ProductType productTypeCreated = new ProductType(
                 UUID.randomUUID(),
                 productTypeToCreate.name(),
                 productTypeToCreate.description(),
@@ -80,10 +80,12 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
                 images,
                 optionalShop.get()
         );
+
+        return getEntity(productTypeCreated);
     }
 
     @Override
-    public ProductType putEntity(ProductTypeDto productTypeToUpdate) {
+    public ProductTypeDto putEntity(ProductTypeDto productTypeToUpdate) {
         Optional<ProductType> productType = productTypeRepository.findById(productTypeToUpdate.id());
         if (productType.isEmpty()) {
             throw new EntityNotFoundException("Not found product type; id=" + productTypeToUpdate.id());
@@ -112,8 +114,9 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
         obj.setMainImagePath(productTypeToUpdate.mainImagePath());
         obj.setImages(images);
         obj.setShop(shop.get());
+        productTypeRepository.save(obj);
 
-        return obj;
+        return getEntity(obj);
     }
 
     @Override

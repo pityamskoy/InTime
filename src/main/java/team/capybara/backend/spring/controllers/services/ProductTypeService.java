@@ -51,17 +51,17 @@ public final class ProductTypeService {
         return productTypeRepository.findById(id);
     }
 
-    public ProductType createProductType(ProductTypeDto productTypeToCreate) {
+    public ProductTypeDto createProductType(ProductTypeDto productTypeToCreate) {
         try {
-            return productTypeRepository.save(productTypeMapper.postEntity(productTypeToCreate));
+            return productTypeMapper.postEntity(productTypeToCreate);
         } catch (EntityNotFoundException e) {
             throw new ServiceException(e.getMessage());
         }
     }
 
-    public ProductType updateProductType(ProductTypeDto productTypeToUpdate) {
+    public ProductTypeDto updateProductType(ProductTypeDto productTypeToUpdate) {
         try {
-            return productTypeRepository.save(productTypeMapper.putEntity(productTypeToUpdate));
+            return productTypeMapper.putEntity(productTypeToUpdate);
         } catch (EntityNotFoundException e) {
             throw new ServiceException(e.getMessage());
         }

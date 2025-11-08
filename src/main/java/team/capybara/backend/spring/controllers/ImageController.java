@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 import team.capybara.backend.spring.controllers.services.ImageService;
 import team.capybara.backend.spring.controllers.services.ServiceException;
-import team.capybara.backend.spring.entities.Image;
 
 import java.util.List;
 import java.util.UUID;
@@ -34,13 +33,14 @@ public final class ImageController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Image> createImage(@RequestBody ImageDto imageToCreate) {
+    public ResponseEntity<ImageDto> createImage(@RequestBody ImageDto imageToCreate) {
         log.info("Called createImage; imageToCreate={}", imageToCreate);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(imageService.createImage(imageToCreate));
     }
 
-    public ResponseEntity<Image> updateImage(@RequestBody ImageDto imageToUpdate) {
+    @PutMapping("/update")
+    public ResponseEntity<ImageDto> updateImage(@RequestBody ImageDto imageToUpdate) {
         log.info("Called updateImage; imageToUpdate={}", imageToUpdate);
 
         try {
@@ -50,6 +50,7 @@ public final class ImageController {
         }
     }
 
+    @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteImage(@RequestBody String id) {
         log.info("Called deleteImage; id={}", id);
 
