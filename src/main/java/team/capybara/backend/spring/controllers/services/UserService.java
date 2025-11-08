@@ -11,7 +11,6 @@ import team.capybara.backend.spring.controllers.services.exceptions.ServiceExcep
 import team.capybara.backend.spring.entities.User;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 

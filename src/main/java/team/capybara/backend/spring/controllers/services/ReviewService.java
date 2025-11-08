@@ -5,12 +5,8 @@ import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.review.ReviewDto;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ReviewConverter;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ReviewMapper;
-import team.capybara.backend.spring.controllers.repositories.ImageRepository;
 import team.capybara.backend.spring.controllers.repositories.ReviewRepository;
-import team.capybara.backend.spring.controllers.repositories.ShopRepository;
-import team.capybara.backend.spring.controllers.repositories.UserRepository;
 import team.capybara.backend.spring.controllers.services.exceptions.ServiceException;
-import team.capybara.backend.spring.entities.Image;
 import team.capybara.backend.spring.entities.Review;
 
 import java.util.List;
