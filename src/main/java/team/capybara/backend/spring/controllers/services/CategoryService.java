@@ -11,20 +11,11 @@ import java.util.List;
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;
-    private final ImageRepository imageRepository;
-    private final ProductTypeRepository productTypeRepository;
-    private final ShopRepository shopRepository;
 
     public CategoryService(
-            CategoryRepository categoryRepository,
-            ImageRepository imageRepository,
-            ProductTypeRepository productTypeRepository,
-            ShopRepository shopRepository
+            CategoryRepository categoryRepository
     ) {
         this.categoryRepository = categoryRepository;
-        this.imageRepository = imageRepository;
-        this.productTypeRepository = productTypeRepository;
-        this.shopRepository = shopRepository;
     }
 
     public Category createCategory(Category categoryToCreate) {
@@ -34,15 +25,6 @@ public class CategoryService {
                 categoryToCreate.getDescription(),
                 categoryToCreate.getProductTypes()
         );
-
-        for(ProductType prt:newCategory.getProductTypes()){
-            for(Image img:prt.getImages())
-                imageRepository.save(img);
-            for(Image img:prt.getShop().getImages())
-                imageRepository.save(img);
-            shopRepository.save(prt.getShop());
-            productTypeRepository.save(prt);
-        }
 
         return categoryRepository.save(newCategory);
     }

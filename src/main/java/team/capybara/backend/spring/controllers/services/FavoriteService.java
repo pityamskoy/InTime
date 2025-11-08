@@ -11,23 +11,11 @@ import java.util.List;
 @Service
 public class FavoriteService {
     private final FavoriteRepository favoriteRepository;
-    private final ImageRepository imageRepository;
-    private final ProductTypeRepository productTypeRepository;
-    private final ShopRepository shopRepository;
-    private final UserRepository userRepository;
 
     public FavoriteService(
-            FavoriteRepository favoriteRepository,
-            ImageRepository imageRepository,
-            ProductTypeRepository productTypeRepository,
-            ShopRepository shopRepository,
-            UserRepository userRepository
+            FavoriteRepository favoriteRepository
     ) {
         this.favoriteRepository = favoriteRepository;
-        this.imageRepository = imageRepository;
-        this.productTypeRepository = productTypeRepository;
-        this.shopRepository = shopRepository;
-        this.userRepository = userRepository;
     }
 
     public Favorite createFavorite(Favorite favoriteToCreate) {
@@ -36,17 +24,6 @@ public class FavoriteService {
                 favoriteToCreate.getUser(),
                 favoriteToCreate.getProductType()
         );
-
-        userRepository.save(newFavorite.getUser());
-
-        for (Image img : newFavorite.getProductType().getShop().getImages())
-            imageRepository.save(img);
-
-        for (Image img : newFavorite.getProductType().getImages())
-            imageRepository.save(img);
-
-        shopRepository.save(newFavorite.getProductType().getShop());
-        productTypeRepository.save(newFavorite.getProductType());
 
         return favoriteRepository.save(newFavorite);
     }

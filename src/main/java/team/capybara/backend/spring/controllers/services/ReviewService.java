@@ -13,20 +13,11 @@ import java.util.List;
 @Service
 public class ReviewService {
     private final ReviewRepository reviewRepository;
-    private final UserRepository userRepository;
-    private final ShopRepository shopRepository;
-    private final ImageRepository imageRepository;
 
     public ReviewService(
-            ReviewRepository reviewRepository,
-            UserRepository userRepository,
-            ShopRepository shopRepository,
-            ImageRepository imageRepository
+            ReviewRepository reviewRepository
     ) {
         this.reviewRepository = reviewRepository;
-        this.userRepository = userRepository;
-        this.shopRepository = shopRepository;
-        this.imageRepository = imageRepository;
     }
 
     public Review createReview(Review reviewToCreate) {
@@ -37,12 +28,6 @@ public class ReviewService {
                 reviewToCreate.getText(),
                 reviewToCreate.getStars()
         );
-
-        for(Image img:newReview.getShop().getImages())
-            imageRepository.save(img);
-
-        userRepository.save(newReview.getUser());
-        shopRepository.save(newReview.getShop());
 
         return reviewRepository.save(newReview);
     }
