@@ -15,7 +15,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "Favorite")
 public class Favorite implements EntityWithId {
-
     @Id
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
