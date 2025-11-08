@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
-import team.capybara.backend.spring.controllers.mapping.entitymappers.ShopMapper;
-import team.capybara.backend.spring.controllers.services.ServiceException;
+import team.capybara.backend.spring.controllers.mappers.entitymappers.ShopMapper;
+import team.capybara.backend.spring.controllers.services.exceptions.ServiceException;
 import team.capybara.backend.spring.controllers.services.ShopService;
 import team.capybara.backend.spring.entities.Shop;
 
@@ -46,6 +46,7 @@ public final class ShopController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    //fix soon
     @GetMapping("/shop_stars/{id}")
     public ResponseEntity<Double> getShopStarsById(@PathVariable String id) {
         log.info("Called getShopStarsById; id={}", id);

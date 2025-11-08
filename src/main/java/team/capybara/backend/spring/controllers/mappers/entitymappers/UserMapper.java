@@ -1,10 +1,11 @@
-package team.capybara.backend.spring.controllers.mapping.entitymappers;
+package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
 import team.capybara.backend.spring.controllers.dto.user.UserAuthDto;
 import team.capybara.backend.spring.controllers.dto.user.UserDto;
-import team.capybara.backend.spring.controllers.mapping.Mapper;
+import team.capybara.backend.spring.controllers.mappers.Mapper;
+import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.UserConverter;
 import team.capybara.backend.spring.controllers.repositories.UserRepository;
 import team.capybara.backend.spring.entities.User;
 
@@ -23,9 +24,11 @@ public final class UserMapper {
     @Component
     public static final class UserAuthMapper implements Mapper<User, UserAuthDto> {
         private final UserRepository userRepository;
+        private final UserConverter userConverter;
 
-        public UserAuthMapper(UserRepository userRepository) {
+        public UserAuthMapper(UserRepository userRepository, UserConverter userConverter) {
             this.userRepository = userRepository;
+            this.userConverter = userConverter;
         }
 
         @Override
@@ -52,19 +55,18 @@ public final class UserMapper {
 
         @Override
         public UserAuthDto putEntity(UserAuthDto userAuthToUpdate) {
-            Optional<User> user = userRepository.findById(userAuthToUpdate.id());
+            try {
+                User userUpdated = userConverter.toEntity(userAuthToUpdate.id());
 
-            if (user.isEmpty()) {
-                throw new EntityNotFoundException("Not found user; id=" + userAuthToUpdate.id());
+                userUpdated.setName(userAuthToUpdate.name());
+                userUpdated.setEmail(userAuthToUpdate.email());
+                userUpdated.setPassword(userAuthToUpdate.password());
+                userRepository.save(userUpdated);
+
+                return getEntity(userUpdated);
+            } catch (EntityNotFoundException e) {
+                throw new EntityNotFoundException(e.getMessage());
             }
-
-            User obj = user.get();
-            obj.setName(userAuthToUpdate.name());
-            obj.setEmail(userAuthToUpdate.email());
-            obj.setPassword(userAuthToUpdate.password());
-            userRepository.save(obj);
-
-            return getEntity(obj);
         }
 
         @Override

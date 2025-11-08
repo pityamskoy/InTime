@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.producttype.ProductTypeDto;
-import team.capybara.backend.spring.controllers.mapping.entitymappers.ProductTypeMapper;
+import team.capybara.backend.spring.controllers.mappers.entitymappers.ProductTypeMapper;
 import team.capybara.backend.spring.controllers.services.ProductTypeService;
-import team.capybara.backend.spring.controllers.services.ServiceException;
+import team.capybara.backend.spring.controllers.services.exceptions.ServiceException;
 import team.capybara.backend.spring.entities.ProductType;
 
 import java.util.List;

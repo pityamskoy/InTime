@@ -3,9 +3,10 @@ package team.capybara.backend.spring.controllers.services;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.producttype.ProductTypeDto;
-import team.capybara.backend.spring.controllers.mapping.entitymappers.ProductTypeMapper;
+import team.capybara.backend.spring.controllers.mappers.entitymappers.ProductTypeMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
+import team.capybara.backend.spring.controllers.services.exceptions.ServiceException;
 import team.capybara.backend.spring.entities.ProductType;
 import team.capybara.backend.spring.entities.Shop;
 

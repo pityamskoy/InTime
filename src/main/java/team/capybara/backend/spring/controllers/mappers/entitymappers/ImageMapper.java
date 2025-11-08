@@ -1,8 +1,9 @@
-package team.capybara.backend.spring.controllers.mapping.entitymappers;
+package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
-import team.capybara.backend.spring.controllers.mapping.Mapper;
+import team.capybara.backend.spring.controllers.mappers.Mapper;
+import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ImageConverter;
 import team.capybara.backend.spring.controllers.repositories.ImageRepository;
 import team.capybara.backend.spring.entities.Image;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
@@ -11,10 +12,12 @@ import java.util.*;
 
 @Component
 public final class ImageMapper implements Mapper<Image, ImageDto> {
-    ImageRepository imageRepository;
+    private final ImageRepository imageRepository;
+    private final ImageConverter imageConverter;
 
-    public ImageMapper(ImageRepository imageRepository) {
+    public ImageMapper(ImageRepository imageRepository, ImageConverter imageConverter) {
         this.imageRepository = imageRepository;
+        this.imageConverter = imageConverter;
     }
 
     @Override
@@ -37,17 +40,15 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
 
     @Override
     public ImageDto putEntity(ImageDto imageToUpdate) {
-        Optional<Image> image = imageRepository.findById(imageToUpdate.imageId());
+        try {
+            Image imageUpdated = imageConverter.toEntity(imageToUpdate.id());
+            imageUpdated.setPath(imageToUpdate.path());
+            imageRepository.save(imageUpdated);
 
-        if (image.isEmpty()) {
-            throw new EntityNotFoundException("Image not found; id=" + imageToUpdate.imageId());
+            return getEntity(imageUpdated);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         }
-
-        Image obj = image.get();
-        obj.setPath(imageToUpdate.path());
-        imageRepository.save(obj);
-
-        return getEntity(obj);
     }
 
     @Override
@@ -73,11 +74,11 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
         List<Image> images = new LinkedList<>();
 
         for (ImageDto imageDto : dtoImages) {
-            Optional<Image> optionalImage = imageRepository.findById(imageDto.imageId());
+            Optional<Image> optionalImage = imageRepository.findById(imageDto.id());
             if (optionalImage.isPresent()) {
                 images.add(optionalImage.get());
             } else {
-                throw new EntityNotFoundException("Image not found; id=" + imageDto.imageId());
+                throw new EntityNotFoundException("Image not found; id=" + imageDto.id());
             }
         }
         return images;

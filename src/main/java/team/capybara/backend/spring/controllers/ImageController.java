@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 import team.capybara.backend.spring.controllers.services.ImageService;
-import team.capybara.backend.spring.controllers.services.ServiceException;
+import team.capybara.backend.spring.controllers.services.exceptions.ServiceException;
 
 import java.util.List;
 import java.util.UUID;
@@ -46,6 +46,7 @@ public final class ImageController {
         try {
             return ResponseEntity.ok(imageService.updateImage(imageToUpdate));
         } catch (ServiceException e) {
+            log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
@@ -58,6 +59,7 @@ public final class ImageController {
             imageService.deleteImage(UUID.fromString(id));
             return ResponseEntity.noContent().build();
         } catch (ServiceException e) {
+            log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }

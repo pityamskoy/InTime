@@ -1,4 +1,4 @@
-package team.capybara.backend.spring.controllers.mapping;
+package team.capybara.backend.spring.controllers.mappers;
 
 
 import java.util.UUID;

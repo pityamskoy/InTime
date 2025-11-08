@@ -4,8 +4,9 @@ package team.capybara.backend.spring.controllers.services;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
-import team.capybara.backend.spring.controllers.mapping.entitymappers.ImageMapper;
+import team.capybara.backend.spring.controllers.mappers.entitymappers.ImageMapper;
 import team.capybara.backend.spring.controllers.repositories.ImageRepository;
+import team.capybara.backend.spring.controllers.services.exceptions.ServiceException;
 import team.capybara.backend.spring.entities.Image;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package team.capybara.backend.spring.controllers.services;
+package team.capybara.backend.spring.controllers.services.exceptions;
 
 public final class ServiceException extends RuntimeException {
     public ServiceException() {
