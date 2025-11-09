@@ -12,7 +12,6 @@ import java.util.UUID;
  *
  * @param <Entity> any entity, which implements {@link EntityWithId}
  */
-
 public interface EntityIdConverter<Entity> {
 
     /**
