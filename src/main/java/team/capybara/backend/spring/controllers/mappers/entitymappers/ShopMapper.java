@@ -5,10 +5,12 @@ import org.springframework.stereotype.Component;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ImageConverter;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ShopConverter;
+import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.UserConverter;
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
 import team.capybara.backend.spring.entities.Image;
 import team.capybara.backend.spring.entities.Shop;
 import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
+import team.capybara.backend.spring.entities.User;
 
 import java.util.List;
 import java.util.UUID;
@@ -18,15 +20,18 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
     private final ShopRepository shopRepository;
     private final ShopConverter shopConverter;
     private final ImageConverter imageConverter;
+    private final UserConverter userConverter;
 
     public ShopMapper(
             ShopRepository shopRepository,
             ShopConverter shopConverter,
-            ImageConverter imageConverter
+            ImageConverter imageConverter,
+            UserConverter userConverter
     ) {
         this.shopRepository = shopRepository;
         this.shopConverter = shopConverter;
         this.imageConverter = imageConverter;
+        this.userConverter = userConverter;
     }
 
     @Override
@@ -36,13 +41,20 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
         return new ShopDto(
                 shop.getId(),
                 shop.getName(),
+                shop.getTimeOpen(),
+                shop.getTimeClose(),
+                shop.getRegistrationDate(),
                 shop.getDescription(),
                 shop.isVerifide(),
+                shop.getInn(),
                 shop.getMainImagePath(),
                 imagesId,
                 shop.getAddress(),
                 shop.getLat(),
-                shop.getLon()
+                shop.getLon(),
+                shop.getLinksToSocialMedia(),
+                shop.getOwner().getId(),
+                shop.getCompanyType()
         );
     }
 
@@ -50,17 +62,25 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
     public ShopDto postEntity(ShopDto shopToCreate) {
         try {
             List<Image> images = imageConverter.toEntityList(shopToCreate.imagesId());
+            User owner = userConverter.toEntity(shopToCreate.owner());
 
             Shop shopCreated = shopRepository.save(new Shop(
                     UUID.randomUUID(),
                     shopToCreate.name(),
+                    shopToCreate.timeOpen(),
+                    shopToCreate.timeClose(),
+                    shopToCreate.registrationDate(),
                     shopToCreate.description(),
                     shopToCreate.isVerified(),
+                    shopToCreate.inn(),
                     shopToCreate.mainImagePath(),
                     images,
                     shopToCreate.address(),
                     shopToCreate.lat(),
-                    shopToCreate.lon()
+                    shopToCreate.lon(),
+                    shopToCreate.linksToSocialMedia(),
+                    owner,
+                    shopToCreate.companyType()
             ));
 
             return getEntity(shopCreated);
