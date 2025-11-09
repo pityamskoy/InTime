@@ -15,7 +15,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "Product_types")
-public class ProductType {
+public class ProductType implements EntityWithId {
     @Id
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
@@ -26,7 +26,25 @@ public class ProductType {
     @Column(name = "description", nullable = false)
     private String description;
 
-    @Column(name = "main_image_path", nullable = false)
+    @Column(name = "weight", nullable = false)
+    private Double weight;// вес в граммах
+
+    @Column(name = "calories")
+    private Double calories;
+
+    @Column(name = "squirrels")
+    private Double squirrels;
+
+    @Column(name = "fats")
+    private Double fats;
+
+    @Column(name = "carbohydrates")
+    private Double carbohydrates;
+
+    @Column(name = "quantityInOnePackage")
+    private int quantityInOnePackage;
+
+    @Column(name = "mainImagePath", nullable = false)
     private String mainImagePath;
 
     @OneToMany(fetch = FetchType.EAGER)
@@ -35,5 +53,10 @@ public class ProductType {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "shop_id")
     private Shop shop;
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
 
 }

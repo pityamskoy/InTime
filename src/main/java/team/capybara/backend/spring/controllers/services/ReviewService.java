@@ -1,53 +1,67 @@
 package team.capybara.backend.spring.controllers.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.controllers.repositories.ImageRepository;
+import team.capybara.backend.spring.controllers.dto.review.ReviewDto;
+import team.capybara.backend.spring.controllers.mappers.entitymappers.ReviewMapper;
 import team.capybara.backend.spring.controllers.repositories.ReviewRepository;
-import team.capybara.backend.spring.controllers.repositories.ShopRepository;
-import team.capybara.backend.spring.controllers.repositories.UserRepository;
-import team.capybara.backend.spring.entities.Image;
 import team.capybara.backend.spring.entities.Review;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
-public class ReviewService {
+public final class ReviewService {
+    private final ReviewMapper reviewMapper;
     private final ReviewRepository reviewRepository;
-    private final UserRepository userRepository;
-    private final ShopRepository shopRepository;
-    private final ImageRepository imageRepository;
 
     public ReviewService(
-            ReviewRepository reviewRepository,
-            UserRepository userRepository,
-            ShopRepository shopRepository,
-            ImageRepository imageRepository
+            ReviewMapper reviewMapper,
+            ReviewRepository reviewRepository
     ) {
+        this.reviewMapper = reviewMapper;
         this.reviewRepository = reviewRepository;
-        this.userRepository = userRepository;
-        this.shopRepository = shopRepository;
-        this.imageRepository = imageRepository;
     }
 
-    public Review createReview(Review reviewToCreate) {
-        Review newReview = new Review(
-                reviewToCreate.getId(),
-                reviewToCreate.getUser(),
-                reviewToCreate.getShop(),
-                reviewToCreate.getText(),
-                reviewToCreate.getStars()
-        );
+    public List<ReviewDto> getAllReviews() {
+        List<Review> reviews = reviewRepository.findAll();
 
-        for(Image img:newReview.getShop().getImages())
-            imageRepository.save(img);
-
-        userRepository.save(newReview.getUser());
-        shopRepository.save(newReview.getShop());
-
-        return reviewRepository.save(newReview);
+        return reviews.stream().map(reviewMapper::getEntity).toList();
     }
 
-    public List<Review> getAllUsers() {
-        return reviewRepository.findAll();
+    public Optional<ReviewDto> getReviewById(UUID id) {
+        Optional<Review> reviewOptional = reviewRepository.findById(id);
+
+        if (reviewOptional.isPresent()) {
+            ReviewDto reviewDto = reviewMapper.getEntity(reviewOptional.get());
+            return Optional.of(reviewDto);
+        }
+
+        return Optional.empty();
+    }
+
+    public ReviewDto createReview(ReviewDto reviewToCreate) {
+        try {
+            return reviewMapper.postEntity(reviewToCreate);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        }
+    }
+
+    public ReviewDto updateReview(ReviewDto reviewToUpdate) {
+        try {
+            return reviewMapper.putEntity(reviewToUpdate);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        }
+    }
+
+    public void deleteReview(UUID id) {
+        try {
+            reviewRepository.deleteById(id);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        }
     }
 }

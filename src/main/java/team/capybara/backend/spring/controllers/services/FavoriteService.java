@@ -1,57 +1,68 @@
 package team.capybara.backend.spring.controllers.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import team.capybara.backend.spring.controllers.dto.favorite.FavoriteDto;
+import team.capybara.backend.spring.controllers.mappers.entitymappers.FavoriteMapper;
 import team.capybara.backend.spring.controllers.repositories.*;
 import team.capybara.backend.spring.entities.Favorite;
-import team.capybara.backend.spring.entities.Image;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
-public class FavoriteService {
+public final class FavoriteService {
+    private final FavoriteMapper favoriteMapper;
     private final FavoriteRepository favoriteRepository;
-    private final ImageRepository imageRepository;
-    private final ProductTypeRepository productTypeRepository;
-    private final ShopRepository shopRepository;
-    private final UserRepository userRepository;
 
     public FavoriteService(
-            FavoriteRepository favoriteRepository,
-            ImageRepository imageRepository,
-            ProductTypeRepository productTypeRepository,
-            ShopRepository shopRepository,
-            UserRepository userRepository
+            FavoriteMapper favoriteMapper,
+            FavoriteRepository favoriteRepository
     ) {
+        this.favoriteMapper = favoriteMapper;
         this.favoriteRepository = favoriteRepository;
-        this.imageRepository = imageRepository;
-        this.productTypeRepository = productTypeRepository;
-        this.shopRepository = shopRepository;
-        this.userRepository = userRepository;
     }
 
-    public Favorite createFavorite(Favorite favoriteToCreate) {
-        Favorite newFavorite = new Favorite(
-                favoriteToCreate.getId(),
-                favoriteToCreate.getUser(),
-                favoriteToCreate.getProductType()
-        );
+    public List<FavoriteDto> getAllFavorites() {
+        List<Favorite> favorites = favoriteRepository.findAll();
 
-        userRepository.save(newFavorite.getUser());
-
-        for (Image img : newFavorite.getProductType().getShop().getImages())
-            imageRepository.save(img);
-
-        for (Image img : newFavorite.getProductType().getImages())
-            imageRepository.save(img);
-
-        shopRepository.save(newFavorite.getProductType().getShop());
-        productTypeRepository.save(newFavorite.getProductType());
-
-        return favoriteRepository.save(newFavorite);
+        return favorites.stream().map(favoriteMapper::getEntity).toList();
     }
 
-    public List<Favorite> getAllFavorites() {
-        return favoriteRepository.findAll();
+    public Optional<FavoriteDto> getFavoriteById(UUID id) {
+        Optional<Favorite> favorite = favoriteRepository.findById(id);
+
+        if (favorite.isPresent()) {
+            FavoriteDto favoriteDto = favoriteMapper.getEntity(favorite.get());
+            return Optional.of(favoriteDto);
+        }
+
+        return Optional.empty();
+    }
+
+    public FavoriteDto createFavorite(FavoriteDto favoriteToCreate) {
+        try {
+            return favoriteMapper.postEntity(favoriteToCreate);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        }
+    }
+
+    public FavoriteDto updateFavorite(FavoriteDto favoriteToUpdate) {
+        try {
+            return favoriteMapper.postEntity(favoriteToUpdate);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        }
+    }
+
+    public void deleteFavorite(UUID id) {
+        try {
+            favoriteRepository.deleteById(id);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        }
     }
 }

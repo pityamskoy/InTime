@@ -15,7 +15,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "Products")
-public class Product {
+public class Product implements EntityWithId {
     @Id
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
@@ -35,5 +35,10 @@ public class Product {
 
     @Column(name = "is_sold", nullable = false)
     private boolean isSold; //0 - false; 1 - true
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
 
 }

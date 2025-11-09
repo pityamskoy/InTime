@@ -1,17 +1,20 @@
 package team.capybara.backend.spring.controllers;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import team.capybara.backend.spring.controllers.dto.image.ImageBase64Dto;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 import team.capybara.backend.spring.controllers.services.ImageService;
-import team.capybara.backend.spring.controllers.services.ServiceException;
-import team.capybara.backend.spring.entities.Image;
+import team.capybara.backend.spring.exceptions.ImageFlowException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/images")
@@ -33,30 +36,73 @@ public final class ImageController {
         return ResponseEntity.ok(imageService.getAllImages());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ImageDto> getImageById(@PathVariable String id) {
+        log.info("Called getImageById; id={}", id);
+        Optional<ImageDto> imageDtoOptional = imageService.getImageById(UUID.fromString(id));
+
+        return imageDtoOptional.map(ResponseEntity::ok).orElseGet
+                (() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/image_load/{id}")
+    public ResponseEntity<byte[]> loadImage(@PathVariable String id) {
+        log.info("Called loadImage; id={}", id);
+
+        byte[] imageData;
+        try{
+            imageData = imageService.getImageData(id);
+            return ResponseEntity.ok(imageData);
+        }
+        catch (ImageFlowException e){
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @PostMapping("/create")
-    public ResponseEntity<Image> createImage(@RequestBody ImageDto imageToCreate) {
+    public ResponseEntity<ImageDto> createImage(@RequestBody ImageDto imageToCreate) {
         log.info("Called createImage; imageToCreate={}", imageToCreate);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(imageService.createImage(imageToCreate));
     }
 
-    public ResponseEntity<Image> updateImage(@RequestBody ImageDto imageToUpdate) {
+    //fix soon
+    @PostMapping("/image_upload/{id}")
+    public ResponseEntity<Boolean> uploadImage (@RequestBody ImageBase64Dto imageBase64, @PathVariable String id) {
+        log.info("Called uploadImage; imageBase64={}", imageBase64);
+
+        try{
+            imageService.saveImageData(imageBase64,id);
+        } catch (ImageFlowException e){
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+        //probably switch to .created with body
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<ImageDto> updateImage(@RequestBody ImageDto imageToUpdate) {
         log.info("Called updateImage; imageToUpdate={}", imageToUpdate);
 
         try {
             return ResponseEntity.ok(imageService.updateImage(imageToUpdate));
-        } catch (ServiceException e) {
+        } catch (EntityNotFoundException e) {
+            log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
 
+    @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteImage(@RequestBody String id) {
         log.info("Called deleteImage; id={}", id);
 
         try {
             imageService.deleteImage(UUID.fromString(id));
             return ResponseEntity.noContent().build();
-        } catch (ServiceException e) {
+        } catch (EntityNotFoundException e) {
+            log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }

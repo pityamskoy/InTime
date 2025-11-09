@@ -4,11 +4,12 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.user.UserAuthDto;
 import team.capybara.backend.spring.controllers.dto.user.UserDto;
-import team.capybara.backend.spring.controllers.mapping.entitymappers.UserMapper;
+import team.capybara.backend.spring.controllers.mappers.entitymappers.UserMapper;
 import team.capybara.backend.spring.controllers.repositories.UserRepository;
 import team.capybara.backend.spring.entities.User;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -18,7 +19,11 @@ public final class UserService {
     private final UserMapper.UserAuthMapper userAuthMapper;
     private final UserRepository userRepository;
 
-    public UserService(UserMapper userMapper, UserMapper.UserAuthMapper userAuthMapper, UserRepository userRepository) {
+    public UserService(
+            UserMapper userMapper,
+            UserMapper.UserAuthMapper userAuthMapper,
+            UserRepository userRepository
+    ) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.userAuthMapper = userAuthMapper;
@@ -30,15 +35,26 @@ public final class UserService {
         return users.stream().map(userMapper::getEntity).toList();
     }
 
-    public User createUser(UserAuthDto userToCreate) {
-        return userRepository.save(userAuthMapper.postEntity(userToCreate));
+    public Optional<UserDto> getUserById(UUID id) {
+        Optional<User> userOptional = userRepository.findById(id);
+
+        if (userOptional.isPresent()) {
+            UserDto userDto = userMapper.getEntity(userOptional.get());
+            return Optional.of(userDto);
+        }
+
+        return Optional.empty();
     }
 
-    public User updateUser(UserAuthDto userToUpdate) {
+    public UserAuthDto createUser(UserAuthDto userToCreate) {
+        return userAuthMapper.postEntity(userToCreate);
+    }
+
+    public UserAuthDto updateUser(UserAuthDto userToUpdate) {
         try {
-            return userRepository.save(userAuthMapper.putEntity(userToUpdate));
+            return userAuthMapper.putEntity(userToUpdate);
         } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 
@@ -46,7 +62,7 @@ public final class UserService {
         try {
             userAuthMapper.deleteEntity(id);
         } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 }

@@ -14,7 +14,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "Reviews")
-public class Review {
+public class Review implements EntityWithId {
     @Id
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
@@ -32,5 +32,10 @@ public class Review {
 
     @Column(name = "stars", nullable = false)
     private int stars; // 1-5
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
 
 }

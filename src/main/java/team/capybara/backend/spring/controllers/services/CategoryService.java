@@ -1,53 +1,67 @@
 package team.capybara.backend.spring.controllers.services;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
+import team.capybara.backend.spring.controllers.mappers.entitymappers.CategoryMapper;
 import team.capybara.backend.spring.controllers.repositories.*;
 import team.capybara.backend.spring.entities.Category;
-import team.capybara.backend.spring.entities.Image;
-import team.capybara.backend.spring.entities.ProductType;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
-public class CategoryService {
+public final class CategoryService {
+    private final CategoryMapper categoryMapper;
     private final CategoryRepository categoryRepository;
-    private final ImageRepository imageRepository;
-    private final ProductTypeRepository productTypeRepository;
-    private final ShopRepository shopRepository;
 
     public CategoryService(
-            CategoryRepository categoryRepository,
-            ImageRepository imageRepository,
-            ProductTypeRepository productTypeRepository,
-            ShopRepository shopRepository
+            CategoryMapper categoryMapper,
+            CategoryRepository categoryRepository
     ) {
+        this.categoryMapper = categoryMapper;
         this.categoryRepository = categoryRepository;
-        this.imageRepository = imageRepository;
-        this.productTypeRepository = productTypeRepository;
-        this.shopRepository = shopRepository;
     }
 
-    public Category createCategory(Category categoryToCreate) {
-        Category newCategory = new Category(
-                categoryToCreate.getId(),
-                categoryToCreate.getName(),
-                categoryToCreate.getDescription(),
-                categoryToCreate.getProductTypes()
-        );
+    public List<CategoryDto> getAllCategories() {
+        List<Category> categories = categoryRepository.findAll();
 
-        for(ProductType prt:newCategory.getProductTypes()){
-            for(Image img:prt.getImages())
-                imageRepository.save(img);
-            for(Image img:prt.getShop().getImages())
-                imageRepository.save(img);
-            shopRepository.save(prt.getShop());
-            productTypeRepository.save(prt);
+        return categories.stream().map(categoryMapper::getEntity).toList();
+    }
+
+    public Optional<CategoryDto> getCategoryById(UUID id) {
+        Optional<Category> categoryOptional = categoryRepository.findById(id);
+
+        if (categoryOptional.isPresent()) {
+            CategoryDto categoryDto = categoryMapper.getEntity(categoryOptional.get());
+            return Optional.of(categoryDto);
         }
 
-        return categoryRepository.save(newCategory);
+        return Optional.empty();
     }
 
-    public List<Category> getAllCategorys() {
-        return categoryRepository.findAll();
+    public CategoryDto createCategory(CategoryDto categoryToCreate) {
+        try {
+            return categoryMapper.postEntity(categoryToCreate);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        }
+    }
+
+    public CategoryDto updateCategory(CategoryDto categoryToUpdate) {
+        try {
+            return categoryMapper.putEntity(categoryToUpdate);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        }
+    }
+
+    public void deleteCategory(UUID id) {
+        try {
+            categoryRepository.deleteById(id);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        }
     }
 }

@@ -14,12 +14,17 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "Images")
-public class Image {
+public class Image implements EntityWithId {
     @Id
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
 
     @Column(name = "image_paths", nullable = false)
     private String path;
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
 
 }

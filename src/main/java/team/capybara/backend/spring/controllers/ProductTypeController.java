@@ -1,14 +1,13 @@
 package team.capybara.backend.spring.controllers;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.producttype.ProductTypeDto;
-import team.capybara.backend.spring.controllers.mapping.entitymappers.ProductTypeMapper;
 import team.capybara.backend.spring.controllers.services.ProductTypeService;
-import team.capybara.backend.spring.controllers.services.ServiceException;
 import team.capybara.backend.spring.entities.ProductType;
 
 import java.util.List;
@@ -23,14 +22,9 @@ public final class ProductTypeController {
     private static final Logger log = LoggerFactory.getLogger(ProductTypeController.class);
 
     private final ProductTypeService productTypeService;
-    private final ProductTypeMapper productTypeMapper;
 
-    public ProductTypeController(
-            ProductTypeService productTypeService,
-            ProductTypeMapper productTypeMapper
-    ) {
+    public ProductTypeController(ProductTypeService productTypeService){
         this.productTypeService = productTypeService;
-        this.productTypeMapper = productTypeMapper;
     }
 
     @GetMapping
@@ -47,7 +41,7 @@ public final class ProductTypeController {
 
         try {
             return ResponseEntity.ok(productTypeService.getAllProductTypes());
-        } catch (ServiceException e) {
+        } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
@@ -56,33 +50,31 @@ public final class ProductTypeController {
     @GetMapping("/{id}")
     public ResponseEntity<ProductTypeDto> getProductTypeById(@PathVariable("id") String id) {
         log.info("Called getProductTypeById; id={}", id);
-        Optional<ProductType> productType = productTypeService.getProductTypeById(UUID.fromString(id));
+        Optional<ProductTypeDto> productTypeDtoOptional = productTypeService.getProductTypeById(UUID.fromString(id));
 
-        return productType.map(type -> ResponseEntity.ok(productTypeMapper.getEntity(type)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return productTypeDtoOptional.map(ResponseEntity::ok).orElseGet
+                (() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ProductType> createProductType(@RequestBody ProductTypeDto productToCreate) {
+    public ResponseEntity<ProductTypeDto> createProductType(@RequestBody ProductTypeDto productToCreate) {
         log.info("Called createProductType; productTypeToCreate={}", productToCreate);
-        ProductType productTypeCreated = productTypeService.createProductType(productToCreate);
 
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(productTypeCreated);
-        } catch (ServiceException e) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(productTypeService.createProductType(productToCreate));
+        } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ProductType> updateProductType(@RequestBody ProductTypeDto productTypeToUpdate) {
+    public ResponseEntity<ProductTypeDto> updateProductType(@RequestBody ProductTypeDto productTypeToUpdate) {
         log.info("Called updateProductType; productTypeToUpdate={}", productTypeToUpdate);
 
         try {
-            ProductType productTypeUpdated = productTypeService.updateProductType(productTypeToUpdate);
-            return ResponseEntity.ok(productTypeUpdated);
-        } catch (ServiceException e) {
+            return ResponseEntity.ok(productTypeService.updateProductType(productTypeToUpdate));
+        } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
@@ -94,8 +86,8 @@ public final class ProductTypeController {
 
         try {
             productTypeService.deleteProductType(UUID.fromString(id));
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } catch (ServiceException e) {
+            return ResponseEntity.noContent().build();
+        } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }

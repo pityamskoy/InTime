@@ -1,15 +1,13 @@
 package team.capybara.backend.spring.controllers;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
-import team.capybara.backend.spring.controllers.mapping.entitymappers.ShopMapper;
-import team.capybara.backend.spring.controllers.services.ServiceException;
 import team.capybara.backend.spring.controllers.services.ShopService;
-import team.capybara.backend.spring.entities.Shop;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,11 +21,9 @@ public final class ShopController {
     private static final Logger log = LoggerFactory.getLogger(ShopController.class);
 
     private final ShopService shopService;
-    private final ShopMapper shopMapper;
 
-    public ShopController(ShopService shopService,  ShopMapper shopMapper) {
+    public ShopController(ShopService shopService) {
         this.shopService = shopService;
-        this.shopMapper = shopMapper;
     }
 
     @GetMapping
@@ -40,32 +36,40 @@ public final class ShopController {
     @GetMapping("/{id}")
     public ResponseEntity<ShopDto> getShopById(@PathVariable String id) {
         log.info("Called getShopById; id={}", id);
-        Optional<Shop> shopOptional = shopService.getShopById(UUID.fromString(id));
+        Optional<ShopDto> shopDtoOptional = shopService.getShopById(UUID.fromString(id));
 
-        return shopOptional.map(shop -> ResponseEntity.ok(shopMapper.getEntity(shop)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return shopDtoOptional.map(ResponseEntity::ok).orElseGet
+                (() -> ResponseEntity.notFound().build());
+    }
+
+    //fix soon
+    @GetMapping("/shop_stars/{id}")
+    public ResponseEntity<Double> getShopStarsById(@PathVariable String id) {
+        log.info("Called getShopStarsById; id={}", id);
+        Optional<Double> shopOptional = shopService.getShopStarsById(UUID.fromString(id));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(shopOptional.get());
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Shop> createShop(@RequestBody ShopDto shopToCreate) {
+    public ResponseEntity<ShopDto> createShop(@RequestBody ShopDto shopToCreate) {
         log.info("Called createShop; shopToCreate={}", shopToCreate);
 
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(shopService.createShop(shopToCreate));
-        } catch (ServiceException e) {
+        } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Shop> updateShop(@RequestBody ShopDto shopToUpdate) {
+    public ResponseEntity<ShopDto> updateShop(@RequestBody ShopDto shopToUpdate) {
         log.info("Called updateShop; shopToUpdate={}", shopToUpdate);
 
         try {
-            Shop updated = shopService.updateShop(shopToUpdate);
-            return ResponseEntity.ok(updated);
-        } catch (ServiceException e) {
+            return ResponseEntity.ok(shopService.updateShop(shopToUpdate));
+        } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
@@ -78,7 +82,7 @@ public final class ShopController {
         try {
             shopService.deleteShop(UUID.fromString(id));
             return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (ServiceException e) {
+        } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }

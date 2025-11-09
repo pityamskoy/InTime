@@ -4,7 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.entities.Product;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
-import team.capybara.backend.spring.controllers.mapping.entitymappers.ProductMapper;
+import team.capybara.backend.spring.controllers.mappers.entitymappers.ProductMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 
 import java.util.List;
@@ -30,19 +30,26 @@ public final class ProductService {
         return products.stream().map(productMapper::getEntity).toList();
     }
 
-    public Optional<Product> getProductById(UUID id) {
-        return productRepository.findById(id);
+    public Optional<ProductDto> getProductById(UUID id) {
+        Optional<Product> productOptional = productRepository.findById(id);
+
+        if (productOptional.isPresent()) {
+            ProductDto productDto = productMapper.getEntity(productOptional.get());
+            return Optional.of(productDto);
+        }
+
+        return Optional.empty();
     }
 
-    public Product createProduct(ProductDto productToCreate) {
-        return productRepository.save(productMapper.postEntity(productToCreate));
+    public ProductDto createProduct(ProductDto productToCreate) {
+        return productMapper.postEntity(productToCreate);
     }
 
-    public Product updateProduct(ProductDto productToUpdate) {
+    public ProductDto updateProduct(ProductDto productToUpdate) {
         try {
-            return productRepository.save(productMapper.putEntity(productToUpdate));
+            return productMapper.putEntity(productToUpdate);
         } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 
@@ -50,7 +57,7 @@ public final class ProductService {
         try {
             productMapper.deleteEntity(id);
         } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 }

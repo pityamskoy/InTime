@@ -7,6 +7,12 @@ public record ProductTypeDto(
         UUID id,
         String name,
         String description,
+        Double weight,
+        Double calories,
+        Double squirrels,
+        Double fats,
+        Double carbohydrates,
+        int quantityInOnePackage,
         String mainImagePath,
         List<UUID> imagesId,
         UUID shopId

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Date;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -15,7 +16,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @Table(name = "Shops")
-public class Shop {
+public class Shop implements EntityWithId {
     @Id
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
@@ -23,11 +24,23 @@ public class Shop {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "openTime", nullable = false)
+    private Date timeOpen;
+
+    @Column(name = "closeTime", nullable = false)
+    private Date timeClose;
+
+    @Column(name = "registrationDate", nullable = false)
+    private Date registrationDate;
+
     @Column(name = "description", nullable = false)
     private String description;
 
     @Column(name = "isVerifide", nullable = false)
     private boolean isVerifide;
+
+    @Column(name = "inn", nullable = false)
+    private String inn;
 
     @Column(name = "mainImagePath", nullable = false)
     private String mainImagePath;
@@ -43,5 +56,20 @@ public class Shop {
 
     @Column(name = "lon", nullable = false)
     private Double lon; //longitude
+
+    @Column(name = "linksToSocialMedia")
+    private String linksToSocialMedia;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User owner;
+
+    @Column(name = "companyType")
+    private String companyType;
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
 
 }
