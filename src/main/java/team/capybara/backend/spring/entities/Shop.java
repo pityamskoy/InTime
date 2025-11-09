@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Date;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -23,11 +24,23 @@ public class Shop implements EntityWithId {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "openTime", nullable = false)
+    private Date timeOpen;
+
+    @Column(name = "closeTime", nullable = false)
+    private Date timeClose;
+
+    @Column(name = "registrationDate", nullable = false)
+    private Date registrationDate;
+
     @Column(name = "description", nullable = false)
     private String description;
 
     @Column(name = "isVerifide", nullable = false)
     private boolean isVerifide;
+
+    @Column(name = "inn", nullable = false)
+    private String inn;
 
     @Column(name = "mainImagePath", nullable = false)
     private String mainImagePath;
@@ -43,6 +56,13 @@ public class Shop implements EntityWithId {
 
     @Column(name = "lon", nullable = false)
     private Double lon; //longitude
+
+    @Column(name = "address", nullable = false)
+    private String linksToSocialMedia;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User owner;
 
     @Override
     public UUID getId() {

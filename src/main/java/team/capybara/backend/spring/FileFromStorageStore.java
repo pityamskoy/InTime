@@ -10,7 +10,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 public class FileFromStorageStore {
-    private static final Logger log = LoggerFactory.getLogger(FileFromStorageStore.class);
 
     public void saveFile(String path, String fileName, byte[] values) throws IOException {
         Path directoryPath = Paths.get(path);

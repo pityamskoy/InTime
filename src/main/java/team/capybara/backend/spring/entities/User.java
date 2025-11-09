@@ -25,8 +25,14 @@ public class User implements EntityWithId {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column(name = "phoneNumber", nullable = false)
+    private String phoneNumber;
+
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "password", nullable = false)
+    private Boolean isShop;
 
     @Override
     public UUID getId() {
