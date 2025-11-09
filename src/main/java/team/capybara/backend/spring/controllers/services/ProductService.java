@@ -1,77 +1,63 @@
 package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.hibernate.Product;
+import team.capybara.backend.spring.entities.Product;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
-import team.capybara.backend.spring.controllers.mapping.ProductMapper;
+import team.capybara.backend.spring.controllers.mappers.entitymappers.ProductMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
-public class ProductService {
-    private final ProductRepository productRepository;
+public final class ProductService {
     private final ProductMapper productMapper;
+    private final ProductRepository productRepository;
 
-    @Autowired
-    ProductService(
-            ProductRepository productRepository,
-            ProductMapper productMapper
+    public ProductService(
+            ProductMapper productMapper,
+            ProductRepository productRepository
     ) {
-        this.productRepository = productRepository;
         this.productMapper = productMapper;
+        this.productRepository = productRepository;
     }
 
     public List<ProductDto> getAllProducts() {
         List<Product> products = productRepository.findAll();
 
-        return products.stream().map(productMapper::toDto).toList();
+        return products.stream().map(productMapper::getEntity).toList();
     }
 
-    public Optional<ProductDto> getProductById(String id) {
-        Optional<Product> product = productRepository.findById(id);
+    public Optional<ProductDto> getProductById(UUID id) {
+        Optional<Product> productOptional = productRepository.findById(id);
 
-        if (product.isEmpty()) {
-            throw new EntityNotFoundException(MessageFormat.format("Not found product by id={0}", id));
+        if (productOptional.isPresent()) {
+            ProductDto productDto = productMapper.getEntity(productOptional.get());
+            return Optional.of(productDto);
         }
 
-        return Optional.ofNullable(productMapper.toDto(product.get()));
-    }
-    
-    public Product createProduct(ProductDto productToCreate) throws EntityNotFoundException {
-        Product productToSave = productMapper.toEntity(productToCreate);
-
-        return productRepository.save(productToSave);
+        return Optional.empty();
     }
 
-    public Product updateProduct(
-            ProductDto productToUpdate
-    ) throws EntityNotFoundException {
-        Optional<Product> optionalProduct = productRepository.findById(productToUpdate.id());
+    public ProductDto createProduct(ProductDto productToCreate) {
+        return productMapper.postEntity(productToCreate);
+    }
 
-        if (optionalProduct.isEmpty()) {
-            throw new EntityNotFoundException("Not found product by id=" + productToUpdate.id());
-        } else {
-            Product product = optionalProduct.get();
-
-            product.setShelfLife(productToUpdate.shelfLife());
-            product.setPrice(productToUpdate.price());
-            product.setDiscount(productToUpdate.discount());
-            product.setIsSold(productToUpdate.isSold());
-
-            return productRepository.save(product);
+    public ProductDto updateProduct(ProductDto productToUpdate) {
+        try {
+            return productMapper.putEntity(productToUpdate);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 
-    public void deleteProduct(String id) {
-        if (!productRepository.existsById(id)) {
-            throw new EntityNotFoundException("Not found product by id=" + id);
+    public void deleteProduct(UUID id) {
+        try {
+            productMapper.deleteEntity(id);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         }
-
-        productRepository.deleteById(id);
     }
 }

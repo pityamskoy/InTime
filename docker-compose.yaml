@@ -1,3 +1,4 @@
+name: vSrok
 services:
   db:
     image: postgres

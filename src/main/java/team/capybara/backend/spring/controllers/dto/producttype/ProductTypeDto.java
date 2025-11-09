@@ -1,16 +1,20 @@
 package team.capybara.backend.spring.controllers.dto.producttype;
 
-import team.capybara.backend.spring.controllers.dto.image.ImageDto;
-import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
-
 import java.util.List;
+import java.util.UUID;
 
 public record ProductTypeDto(
-        String id,
+        UUID id,
         String name,
         String description,
+        Double weight,
+        Double calories,
+        Double squirrels,
+        Double fats,
+        Double carbohydrates,
+        int quantityInOnePackage,
         String mainImagePath,
-        List<ImageDto> imagesDto,
-        ShopDto shopDto
+        List<UUID> imagesId,
+        UUID shopId
 ) {
 }

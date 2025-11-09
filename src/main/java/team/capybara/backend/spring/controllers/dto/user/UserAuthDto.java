@@ -1,9 +1,13 @@
 package team.capybara.backend.spring.controllers.dto.user;
 
+import java.util.UUID;
+
 public record UserAuthDto(
-        String id,
+        UUID id,
         String name,
         String email,
-        String password
+        String phoneNumber,
+        String password,
+        Boolean isShopOwner
 ) {
 }
