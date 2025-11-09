@@ -36,7 +36,9 @@ public final class UserMapper {
                     user.getId(),
                     user.getName(),
                     user.getEmail(),
-                    user.getPassword()
+                    user.getPhoneNumber(),
+                    user.getPassword(),
+                    user.getIsShopOwner()
             );
         }
 
@@ -46,7 +48,9 @@ public final class UserMapper {
                     UUID.randomUUID(),
                     userAuthToCreate.name(),
                     userAuthToCreate.email(),
-                    userAuthToCreate.password()
+                    userAuthToCreate.phoneNumber(),
+                    userAuthToCreate.password(),
+                    userAuthToCreate.isShopOwner()
             );
 
             return getEntity(userCreated);

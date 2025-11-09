@@ -57,12 +57,15 @@ public class Shop implements EntityWithId {
     @Column(name = "lon", nullable = false)
     private Double lon; //longitude
 
-    @Column(name = "address", nullable = false)
+    @Column(name = "linksToSocialMedia")
     private String linksToSocialMedia;
 
     @OneToOne
     @JoinColumn(name = "user_id")
     private User owner;
+
+    @Column(name = "companyType")
+    private String companyType;
 
     @Override
     public UUID getId() {
