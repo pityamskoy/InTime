@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import team.capybara.backend.spring.controllers.services.exceptions.ServiceException;
 import team.capybara.backend.spring.entities.Review;
 import team.capybara.backend.spring.entities.Shop;
 
@@ -32,13 +31,21 @@ public final class ShopService {
         return shops.stream().map(shopMapper::getEntity).toList();
     }
 
-    public Optional<Shop> getShopById(UUID id) {
-        return shopRepository.findById(id);
+    public Optional<ShopDto> getShopById(UUID id) {
+        Optional<Shop> shopOptional = shopRepository.findById(id);
+
+        if  (shopOptional.isPresent()) {
+            ShopDto shopDto = shopMapper.getEntity(shopOptional.get());
+            return Optional.of(shopDto);
+        }
+
+        return Optional.empty();
     }
 
     public ShopDto createShop(ShopDto shopToCreate) {
         return shopMapper.postEntity(shopToCreate);
     }
+
     public Optional<Double> getShopStarsById(UUID id) {
         Optional<Shop> shop = shopRepository.findById(id);
 
@@ -62,7 +69,7 @@ public final class ShopService {
         try {
             return shopMapper.putEntity(shopToUpdate);
         } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 
@@ -70,7 +77,7 @@ public final class ShopService {
         try {
             shopMapper.deleteEntity(id);
         }  catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 }

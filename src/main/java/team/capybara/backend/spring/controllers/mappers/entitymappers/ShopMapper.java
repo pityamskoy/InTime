@@ -11,7 +11,6 @@ import team.capybara.backend.spring.entities.Shop;
 import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -90,12 +89,11 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
 
     @Override
     public void deleteEntity(UUID id) {
-        Optional<Shop> shop = shopRepository.findById(id);
-
-        if (shop.isEmpty()) {
-            throw new EntityNotFoundException("Not found shop; id=" + id);
+        try {
+            Shop shopDeleted = shopConverter.toEntity(id);
+            shopRepository.delete(shopDeleted);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         }
-
-        shopRepository.deleteById(id);
     }
 }

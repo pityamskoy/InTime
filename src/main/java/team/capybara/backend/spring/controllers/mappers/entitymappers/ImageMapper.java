@@ -53,11 +53,12 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
 
     @Override
     public void deleteEntity(UUID id) {
-        if (!imageRepository.existsById(id)) {
-            throw new EntityNotFoundException("Image not found; id=" + id);
+        try {
+            Image imageDeleted = imageConverter.toEntity(id);
+            imageRepository.delete(imageDeleted);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         }
-
-        imageRepository.deleteById(id);
     }
 
     public List<ImageDto> toDtoList(List<Image> images) {

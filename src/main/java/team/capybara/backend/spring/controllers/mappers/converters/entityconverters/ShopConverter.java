@@ -19,12 +19,12 @@ public final class ShopConverter implements EntityIdConverter<Shop> {
 
     @Override
     public Shop toEntity(UUID id) {
-        Optional<Shop> shop = shopRepository.findById(id);
+        Optional<Shop> shopOptional = shopRepository.findById(id);
 
-        if (shop.isEmpty()) {
+        if (shopOptional.isEmpty()) {
             throw new EntityNotFoundException("Shop not found; id=" + id);
         }
 
-        return shop.get();
+        return shopOptional.get();
     }
 }

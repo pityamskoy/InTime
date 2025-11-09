@@ -2,11 +2,12 @@ package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import team.capybara.backend.spring.controllers.dto.interest.InterestDto;
 import team.capybara.backend.spring.controllers.dto.producttype.ProductTypeDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ProductTypeMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
-import team.capybara.backend.spring.controllers.services.exceptions.ServiceException;
+import team.capybara.backend.spring.entities.Interest;
 import team.capybara.backend.spring.entities.ProductType;
 import team.capybara.backend.spring.entities.Shop;
 
@@ -44,19 +45,26 @@ public final class ProductTypeService {
             //List<ProductType> = shop.get().get
             return null;
         } else {
-            throw new ServiceException("Shop not found by id: " + shopId);
+            throw new EntityNotFoundException("Shop not found by id: " + shopId);
         }
     }
 
-    public Optional<ProductType> getProductTypeById(UUID id) {
-        return productTypeRepository.findById(id);
+    public Optional<ProductTypeDto> getProductTypeById(UUID id) {
+        Optional<ProductType> productTypeOptional = productTypeRepository.findById(id);
+
+        if (productTypeOptional.isPresent()) {
+            ProductTypeDto productTypeDto = productTypeMapper.getEntity(productTypeOptional.get());
+            return Optional.of(productTypeDto);
+        }
+
+        return Optional.empty();
     }
 
     public ProductTypeDto createProductType(ProductTypeDto productTypeToCreate) {
         try {
             return productTypeMapper.postEntity(productTypeToCreate);
         } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 
@@ -64,7 +72,7 @@ public final class ProductTypeService {
         try {
             return productTypeMapper.putEntity(productTypeToUpdate);
         } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 
@@ -72,7 +80,7 @@ public final class ProductTypeService {
         try {
             productTypeMapper.deleteEntity(id);
         } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 }

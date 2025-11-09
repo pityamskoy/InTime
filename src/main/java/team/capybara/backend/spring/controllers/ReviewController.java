@@ -1,5 +1,6 @@
 package team.capybara.backend.spring.controllers;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -7,9 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.review.ReviewDto;
 import team.capybara.backend.spring.controllers.services.ReviewService;
-import team.capybara.backend.spring.controllers.services.exceptions.ServiceException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -35,13 +36,10 @@ public final class ReviewController {
     @GetMapping("/{id}")
     public ResponseEntity<ReviewDto> getReviewById(@PathVariable String id) {
         log.info("Called getReviewById; id={}", id);
+        Optional<ReviewDto> reviewDtoOptional = reviewService.getReviewById(UUID.fromString(id));
 
-        try {
-            return ResponseEntity.ok(reviewService.getReviewById(UUID.fromString(id)));
-        } catch (ServiceException e) {
-            log.error(e.getMessage());
-            return ResponseEntity.notFound().build();
-        }
+        return reviewDtoOptional.map(ResponseEntity::ok).orElseGet
+                (() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/create")
@@ -50,7 +48,7 @@ public final class ReviewController {
 
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(reviewService.createReview(reviewToCreate));
-        } catch (ServiceException e) {
+        } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
@@ -62,7 +60,7 @@ public final class ReviewController {
 
         try {
             return ResponseEntity.ok(reviewService.updateReview(reviewToUpdate));
-        } catch (ServiceException e) {
+        } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
@@ -75,7 +73,7 @@ public final class ReviewController {
         try {
             reviewService.deleteReview(UUID.fromString(id));
             return ResponseEntity.noContent().build();
-        } catch (ServiceException e) {
+        } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }

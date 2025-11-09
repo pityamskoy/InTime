@@ -9,7 +9,6 @@ import team.capybara.backend.spring.controllers.mappers.converters.entityconvert
 import team.capybara.backend.spring.controllers.repositories.UserRepository;
 import team.capybara.backend.spring.entities.User;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -71,13 +70,12 @@ public final class UserMapper {
 
         @Override
         public void deleteEntity(UUID id) {
-            Optional<User> user = userRepository.findById(id);
-
-            if (user.isEmpty()) {
-                throw new EntityNotFoundException("Not found user; id=" + id);
+            try {
+                User userDeleted = userConverter.toEntity(id);
+                userRepository.delete(userDeleted);
+            } catch (EntityNotFoundException e) {
+                throw new EntityNotFoundException(e.getMessage());
             }
-
-            userRepository.deleteById(id);
         }
     }
 }

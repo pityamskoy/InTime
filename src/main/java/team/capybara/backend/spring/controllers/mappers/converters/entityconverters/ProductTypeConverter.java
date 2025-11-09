@@ -35,13 +35,13 @@ public final class ProductTypeConverter implements EntityListIdConverter<Product
         List<ProductType> productTypes = new ArrayList<>();
 
         for (UUID id : entitiesId) {
-            Optional<ProductType> productType = productTypeRepository.findById(id);
+            Optional<ProductType> productTypeOptional = productTypeRepository.findById(id);
 
-            if (productType.isEmpty()) {
+            if (productTypeOptional.isEmpty()) {
                 throw new EntityNotFoundException("ProductType not found; id=" + id);
             }
 
-            productTypes.add(productType.get());
+            productTypes.add(productTypeOptional.get());
         }
 
         return productTypes;
@@ -49,12 +49,12 @@ public final class ProductTypeConverter implements EntityListIdConverter<Product
 
     @Override
     public ProductType toEntity(UUID id) {
-        Optional<ProductType> productType = productTypeRepository.findById(id);
+        Optional<ProductType> productTypeOptional = productTypeRepository.findById(id);
 
-        if (productType.isEmpty()) {
+        if (productTypeOptional.isEmpty()) {
             throw new EntityNotFoundException("ProductType not found; id=" + id);
         }
 
-        return productType.get();
+        return productTypeOptional.get();
     }
 }

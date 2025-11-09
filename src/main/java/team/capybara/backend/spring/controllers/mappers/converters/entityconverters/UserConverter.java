@@ -19,12 +19,12 @@ public final class UserConverter implements EntityIdConverter<User> {
 
     @Override
     public User toEntity(UUID id) {
-        Optional<User> user = userRepository.findById(id);
+        Optional<User> userOptional = userRepository.findById(id);
 
-        if (user.isEmpty()) {
+        if (userOptional.isEmpty()) {
             throw new EntityNotFoundException("User not found; id=" + id);
         }
 
-        return user.get();
+        return userOptional.get();
     }
 }

@@ -19,12 +19,12 @@ public final class ReviewConverter implements EntityIdConverter<Review> {
 
     @Override
     public Review toEntity(UUID id) {
-        Optional<Review> review = reviewRepository.findById(id);
+        Optional<Review> reviewOptional = reviewRepository.findById(id);
 
-        if (review.isEmpty()) {
+        if (reviewOptional.isEmpty()) {
             throw new EntityNotFoundException("Review not found; id=" + id);
         }
 
-        return review.get();
+        return reviewOptional.get();
     }
 }

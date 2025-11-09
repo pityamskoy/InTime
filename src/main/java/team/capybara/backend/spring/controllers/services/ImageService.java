@@ -9,10 +9,11 @@ import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ImageConverter;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ImageMapper;
 import team.capybara.backend.spring.controllers.repositories.ImageRepository;
-import team.capybara.backend.spring.controllers.services.exceptions.ServiceException;
+import team.capybara.backend.spring.exceptions.ImageFlowException;
 import team.capybara.backend.spring.entities.Image;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -43,7 +44,7 @@ public final class ImageService {
             fileFromStorageStore.saveFile(imageStorePath,id,imageBase64.image().getBytes());
         }
         catch (Exception e){
-            throw new ServiceException(e.getMessage());
+            throw new ImageFlowException(e.getMessage());
         }
         return success;
     }
@@ -54,7 +55,7 @@ public final class ImageService {
             imageData = fileFromStorageStore.readFile(imageStorePath+id);
         }
         catch (Exception e){
-            throw new ServiceException(e.getMessage());
+            throw new ImageFlowException(e.getMessage());
         }
         return imageData;
     }
@@ -64,12 +65,15 @@ public final class ImageService {
         return images.stream().map(imageMapper::getEntity).toList();
     }
 
-    public ImageDto getImageById(UUID id) {
-        try {
-            return imageMapper.getEntity(imageConverter.toEntity(id));
-        } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+    public Optional<ImageDto> getImageById(UUID id) {
+        Optional<Image> imageOptional = imageRepository.findById(id);
+
+        if (imageOptional.isPresent()) {
+            ImageDto imageDto = imageMapper.getEntity(imageOptional.get());
+            return Optional.of(imageDto);
         }
+
+        return Optional.empty();
     }
 
     //fix soon
@@ -86,7 +90,7 @@ public final class ImageService {
         try {
             return imageMapper.putEntity(imageToUpdate);
         } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 
@@ -94,7 +98,7 @@ public final class ImageService {
         try {
             imageMapper.deleteEntity(id);
         } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 }

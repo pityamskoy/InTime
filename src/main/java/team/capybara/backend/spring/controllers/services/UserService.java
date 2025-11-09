@@ -4,13 +4,12 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.user.UserAuthDto;
 import team.capybara.backend.spring.controllers.dto.user.UserDto;
-import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.UserConverter;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.UserMapper;
 import team.capybara.backend.spring.controllers.repositories.UserRepository;
-import team.capybara.backend.spring.controllers.services.exceptions.ServiceException;
 import team.capybara.backend.spring.entities.User;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -19,18 +18,15 @@ public final class UserService {
     private final UserMapper userMapper;
     private final UserMapper.UserAuthMapper userAuthMapper;
     private final UserRepository userRepository;
-    private final UserConverter userConverter;
 
     public UserService(
             UserMapper userMapper,
             UserMapper.UserAuthMapper userAuthMapper,
-            UserRepository userRepository,
-            UserConverter userConverter
+            UserRepository userRepository
     ) {
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.userAuthMapper = userAuthMapper;
-        this.userConverter = userConverter;
     }
 
     public List<UserDto> getAllUsers() {
@@ -39,13 +35,15 @@ public final class UserService {
         return users.stream().map(userMapper::getEntity).toList();
     }
 
-    public UserDto getUserById(UUID id) {
-        try {
-            User user = userConverter.toEntity(id);
-            return userMapper.getEntity(user);
-        } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+    public Optional<UserDto> getUserById(UUID id) {
+        Optional<User> userOptional = userRepository.findById(id);
+
+        if (userOptional.isPresent()) {
+            UserDto userDto = userMapper.getEntity(userOptional.get());
+            return Optional.of(userDto);
         }
+
+        return Optional.empty();
     }
 
     public UserAuthDto createUser(UserAuthDto userToCreate) {
@@ -56,7 +54,7 @@ public final class UserService {
         try {
             return userAuthMapper.putEntity(userToUpdate);
         } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 
@@ -64,7 +62,7 @@ public final class UserService {
         try {
             userAuthMapper.deleteEntity(id);
         } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 }

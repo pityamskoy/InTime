@@ -3,28 +3,25 @@ package team.capybara.backend.spring.controllers.services;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.review.ReviewDto;
-import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ReviewConverter;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ReviewMapper;
 import team.capybara.backend.spring.controllers.repositories.ReviewRepository;
-import team.capybara.backend.spring.controllers.services.exceptions.ServiceException;
 import team.capybara.backend.spring.entities.Review;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public final class ReviewService {
     private final ReviewMapper reviewMapper;
     private final ReviewRepository reviewRepository;
-    private final ReviewConverter reviewConverter;
 
     public ReviewService(
             ReviewMapper reviewMapper,
-            ReviewRepository reviewRepository,
-            ReviewConverter reviewConverter) {
+            ReviewRepository reviewRepository
+    ) {
         this.reviewMapper = reviewMapper;
         this.reviewRepository = reviewRepository;
-        this.reviewConverter = reviewConverter;
     }
 
     public List<ReviewDto> getAllReviews() {
@@ -33,19 +30,22 @@ public final class ReviewService {
         return reviews.stream().map(reviewMapper::getEntity).toList();
     }
 
-    public ReviewDto getReviewById(UUID id) {
-        try {
-            return reviewMapper.getEntity(reviewConverter.toEntity(id));
-        } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+    public Optional<ReviewDto> getReviewById(UUID id) {
+        Optional<Review> reviewOptional = reviewRepository.findById(id);
+
+        if (reviewOptional.isPresent()) {
+            ReviewDto reviewDto = reviewMapper.getEntity(reviewOptional.get());
+            return Optional.of(reviewDto);
         }
+
+        return Optional.empty();
     }
 
     public ReviewDto createReview(ReviewDto reviewToCreate) {
         try {
             return reviewMapper.postEntity(reviewToCreate);
         } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 
@@ -53,7 +53,7 @@ public final class ReviewService {
         try {
             return reviewMapper.putEntity(reviewToUpdate);
         } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 
@@ -61,7 +61,7 @@ public final class ReviewService {
         try {
             reviewRepository.deleteById(id);
         } catch (EntityNotFoundException e) {
-            throw new ServiceException(e.getMessage());
+            throw new EntityNotFoundException(e.getMessage());
         }
     }
 }

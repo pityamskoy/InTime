@@ -1,12 +1,11 @@
 package team.capybara.backend.spring.controllers;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.spring.controllers.mappers.entitymappers.ProductMapper;
-import team.capybara.backend.spring.controllers.services.exceptions.ServiceException;
 import team.capybara.backend.spring.entities.*;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.services.ProductService;
@@ -21,14 +20,9 @@ public final class FeedController{
     private static final Logger log = LoggerFactory.getLogger(FeedController.class);
 
     private final ProductService productService;
-    private final ProductMapper productMapper;
 
-    public FeedController(
-            ProductService productService,
-            ProductMapper productMapper
-    ) {
+    public FeedController(ProductService productService) {
         this.productService = productService;
-        this.productMapper = productMapper;
     }
 
     @GetMapping
@@ -41,10 +35,10 @@ public final class FeedController{
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable String id) {
         log.info("Called getProduct; id={}", id);
-        Optional<Product> product = productService.getProductById(UUID.fromString(id));
+        Optional<ProductDto> productDtoOptional = productService.getProductById(UUID.fromString(id));
 
-        return product.map(value -> ResponseEntity.ok(productMapper.getEntity(value)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return productDtoOptional.map(ResponseEntity::ok).orElseGet
+                (() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/create")
@@ -54,7 +48,7 @@ public final class FeedController{
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(productService.createProduct(productToCreate));
-        } catch (ServiceException e) {
+        } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
@@ -66,7 +60,7 @@ public final class FeedController{
 
         try {
             return ResponseEntity.ok(productService.updateProduct(productToUpdate));
-        } catch (ServiceException e) {
+        } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
@@ -87,7 +81,7 @@ public final class FeedController{
         try {
             productService.deleteProduct(UUID.fromString(id));
             return ResponseEntity.ok().build();
-        } catch (ServiceException e) {
+        } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }

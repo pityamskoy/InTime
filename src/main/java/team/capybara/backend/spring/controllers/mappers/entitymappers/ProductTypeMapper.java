@@ -13,7 +13,6 @@ import team.capybara.backend.spring.entities.Shop;
 import team.capybara.backend.spring.controllers.dto.producttype.ProductTypeDto;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -92,12 +91,11 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
 
     @Override
     public void deleteEntity(UUID id) {
-        Optional<ProductType> productType = productTypeRepository.findById(id);
-
-        if (productType.isEmpty()) {
-            throw new EntityNotFoundException("Not found product type; id=" + id);
+        try {
+            ProductType productTypeDeleted = productTypeConverter.toEntity(id);
+            productTypeRepository.delete(productTypeDeleted);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         }
-
-        productTypeRepository.deleteById(id);
     }
 }

@@ -19,12 +19,12 @@ public final class ProductConverter implements EntityIdConverter<Product> {
 
     @Override
     public Product toEntity(UUID id) {
-        Optional<Product> product = productRepository.findById(id);
+        Optional<Product> productOptional = productRepository.findById(id);
 
-        if (product.isEmpty()) {
+        if (productOptional.isEmpty()) {
             throw new EntityNotFoundException("Product not found; id=" + id);
         }
 
-        return product.get();
+        return productOptional.get();
     }
 }

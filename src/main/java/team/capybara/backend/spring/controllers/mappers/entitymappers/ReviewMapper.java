@@ -12,7 +12,6 @@ import team.capybara.backend.spring.entities.Review;
 import team.capybara.backend.spring.entities.Shop;
 import team.capybara.backend.spring.entities.User;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -87,12 +86,11 @@ public final class ReviewMapper implements Mapper<Review, ReviewDto> {
 
     @Override
     public void deleteEntity(UUID entityId) {
-        Optional<Review> review = reviewRepository.findById(entityId);
-
-        if (review.isEmpty()) {
-            throw new EntityNotFoundException("Entity not found; id=" + entityId);
+        try {
+            Review reviewDeleted = reviewConverter.toEntity(entityId);
+            reviewRepository.delete(reviewDeleted);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
         }
-
-        reviewRepository.delete(review.get());
     }
 }

@@ -49,12 +49,12 @@ public final class ImageConverter implements EntityListIdConverter<Image> {
 
     @Override
     public Image toEntity(UUID id) {
-        Optional<Image> image = imageRepository.findById(id);
+        Optional<Image> imageOptional = imageRepository.findById(id);
 
-        if (image.isEmpty()) {
+        if (imageOptional.isEmpty()) {
             throw new EntityNotFoundException("Image not found; id=" + id);
         }
 
-        return image.get();
+        return imageOptional.get();
     }
 }
