@@ -19,12 +19,12 @@ public final class FavoriteConverter implements EntityIdConverter<Favorite> {
 
     @Override
     public Favorite toEntity(UUID id) {
-        Optional<Favorite> favorite = favoriteRepository.findById(id);
+        Optional<Favorite> favoriteOptional = favoriteRepository.findById(id);
 
-        if (favorite.isEmpty()) {
+        if (favoriteOptional.isEmpty()) {
             throw new EntityNotFoundException("Favorite not found; id=" + id);
         }
 
-        return favorite.get();
+        return favoriteOptional.get();
     }
 }

@@ -36,9 +36,9 @@ public final class FavoriteController {
     @GetMapping("/{id}")
     public ResponseEntity<FavoriteDto> getFavoriteById(@PathVariable UUID id) {
         log.info("Called getFavoriteById; id={}", id);
-        Optional<FavoriteDto> favoriteDto = favoriteService.getFavoriteById(id);
+        Optional<FavoriteDto> favoriteDtoOptional = favoriteService.getFavoriteById(id);
 
-        return favoriteDto.map(ResponseEntity::ok).orElseGet
+        return favoriteDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
     }
 

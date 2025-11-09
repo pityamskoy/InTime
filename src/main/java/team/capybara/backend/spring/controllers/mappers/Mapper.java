@@ -3,12 +3,12 @@ package team.capybara.backend.spring.controllers.mappers;
 
 import java.util.UUID;
 
-public interface Mapper<EntityObject, DtoObject> {
-    DtoObject getEntity(EntityObject entityObject);
+public interface Mapper<Entity, EntityDto> {
+    EntityDto getEntity(Entity entity);
 
-    DtoObject postEntity(DtoObject dtoObject);
+    EntityDto postEntity(EntityDto entityDtoToCreate);
 
-    DtoObject putEntity(DtoObject dtoObject);
+    EntityDto putEntity(EntityDto entityDtoToUpdate);
 
     void deleteEntity(UUID entityId);
 }
