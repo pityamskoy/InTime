@@ -91,20 +91,31 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
 
     @Override
     public ShopDto putEntity(ShopDto shopToUpdate) {
-        Shop shopUpdated = shopConverter.toEntity(shopToUpdate.id());
-        List<Image> images = imageConverter.toEntityList(shopToUpdate.imagesId());
+        try {
+            Shop shopUpdated = shopConverter.toEntity(shopToUpdate.id());
+            List<Image> images = imageConverter.toEntityList(shopToUpdate.imagesId());
 
-        shopUpdated.setName(shopToUpdate.name());
-        shopUpdated.setDescription(shopToUpdate.description());
-        shopUpdated.setVerifide(shopToUpdate.isVerified());
-        shopUpdated.setMainImagePath(shopToUpdate.mainImagePath());
-        shopUpdated.setImages(images);
-        shopUpdated.setAddress(shopToUpdate.address());
-        shopUpdated.setLat(shopToUpdate.lat());
-        shopUpdated.setLon(shopToUpdate.lon());
-        shopRepository.save(shopUpdated);
+            shopUpdated.setName(shopToUpdate.name());
+            shopUpdated.setTimeOpen(shopToUpdate.timeOpen());
+            shopUpdated.setTimeClose(shopToUpdate.timeClose());
+            shopUpdated.setRegistrationDate(shopToUpdate.registrationDate());
+            shopUpdated.setDescription(shopToUpdate.description());
+            shopUpdated.setVerifide(shopToUpdate.isVerified());
+            shopUpdated.setInn(shopToUpdate.inn());
+            shopUpdated.setMainImagePath(shopToUpdate.mainImagePath());
+            shopUpdated.setImages(images);
+            shopUpdated.setAddress(shopToUpdate.address());
+            shopUpdated.setLat(shopToUpdate.lat());
+            shopUpdated.setLon(shopToUpdate.lon());
+            shopUpdated.setLinksToSocialMedia(shopToUpdate.linksToSocialMedia());
+            shopUpdated.setOwner(userConverter.toEntity(shopToUpdate.owner()));
+            shopUpdated.setCompanyType(shopToUpdate.companyType());
+            shopRepository.save(shopUpdated);
 
-        return getEntity(shopUpdated);
+            return getEntity(shopUpdated);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        }
     }
 
     @Override

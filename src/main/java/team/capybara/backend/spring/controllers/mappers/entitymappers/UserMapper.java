@@ -63,7 +63,9 @@ public final class UserMapper {
 
                 userUpdated.setName(userAuthToUpdate.name());
                 userUpdated.setEmail(userAuthToUpdate.email());
+                userUpdated.setPhoneNumber(userAuthToUpdate.phoneNumber());
                 userUpdated.setPassword(userAuthToUpdate.password());
+                userUpdated.setIsShopOwner(userAuthToUpdate.isShopOwner());
                 userRepository.save(userUpdated);
 
                 return getEntity(userUpdated);

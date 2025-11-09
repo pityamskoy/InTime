@@ -90,6 +90,12 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
 
             productTypeUpdated.setName(productTypeToUpdate.name());
             productTypeUpdated.setDescription(productTypeToUpdate.description());
+            productTypeUpdated.setWeight(productTypeToUpdate.weight());
+            productTypeUpdated.setCalories(productTypeToUpdate.calories());
+            productTypeUpdated.setSquirrels(productTypeToUpdate.squirrels());
+            productTypeUpdated.setFats(productTypeToUpdate.fats());
+            productTypeUpdated.setCarbohydrates(productTypeToUpdate.carbohydrates());
+            productTypeUpdated.setQuantityInOnePackage(productTypeToUpdate.quantityInOnePackage());
             productTypeUpdated.setMainImagePath(productTypeToUpdate.mainImagePath());
             productTypeUpdated.setImages(images);
             productTypeUpdated.setShop(shop);
