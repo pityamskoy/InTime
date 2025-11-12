@@ -20,6 +20,7 @@ public record ShopDto(
         Double lon,
         String linksToSocialMedia,
         UUID owner,
-        String companyType
+        String companyType,
+        Double distance
 ) {
 }

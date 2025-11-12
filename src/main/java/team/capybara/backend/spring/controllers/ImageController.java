@@ -78,6 +78,7 @@ public final class ImageController {
             log.error(e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
+
         //probably switch to .created with body
         return ResponseEntity.noContent().build();
     }

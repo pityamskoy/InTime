@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Date;
 import java.util.UUID;
 
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -52,10 +53,10 @@ public class Shop implements EntityWithId {
     private String address;
 
     @Column(name = "lat", nullable = false)
-    private Double lat; //latitude
+    private double lat; //latitude v gradusah
 
     @Column(name = "lon", nullable = false)
-    private Double lon; //longitude
+    private double lon; //longitude v gradusah
 
     @Column(name = "linksToSocialMedia")
     private String linksToSocialMedia;
@@ -67,9 +68,19 @@ public class Shop implements EntityWithId {
     @Column(name = "companyType")
     private String companyType;
 
+    @Transient
+    private double ditance;
+
     @Override
     public UUID getId() {
         return id;
+    }
+
+    public void getDistanceTo(double objectLat, double objectLon) {
+        //distance in kilometers
+        double kef = 3.14 / 180.0;
+        int earthRadius = 6371;
+        ditance = Math.acos(Math.sin(lat * kef) * Math.sin(objectLat * kef) + Math.cos(lat * kef) * Math.cos(objectLat * kef) * Math.cos((lon * kef) - (objectLon * kef))) * earthRadius;
     }
 
 }
