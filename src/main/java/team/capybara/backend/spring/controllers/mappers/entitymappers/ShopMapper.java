@@ -45,7 +45,7 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
                 shop.getTimeClose(),
                 shop.getRegistrationDate(),
                 shop.getDescription(),
-                shop.isVerifide(),
+                shop.isVerified(),
                 shop.getInn(),
                 shop.getMainImagePath(),
                 imagesId,
@@ -100,7 +100,7 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
             shopUpdated.setTimeClose(shopToUpdate.timeClose());
             shopUpdated.setRegistrationDate(shopToUpdate.registrationDate());
             shopUpdated.setDescription(shopToUpdate.description());
-            shopUpdated.setVerifide(shopToUpdate.isVerified());
+            shopUpdated.setVerified(shopToUpdate.isVerified());
             shopUpdated.setInn(shopToUpdate.inn());
             shopUpdated.setMainImagePath(shopToUpdate.mainImagePath());
             shopUpdated.setImages(images);

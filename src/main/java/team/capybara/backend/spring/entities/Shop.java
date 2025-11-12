@@ -37,7 +37,7 @@ public class Shop implements EntityWithId {
     private String description;
 
     @Column(name = "isVerifide", nullable = false)
-    private boolean isVerifide;
+    private boolean isVerified;
 
     @Column(name = "inn", nullable = false)
     private String inn;

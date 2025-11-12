@@ -9,7 +9,7 @@ public record ProductTypeDto(
         String description,
         Double weight,
         Double calories,
-        Double squirrels,
+        Double protein,
         Double fats,
         Double carbohydrates,
         int quantityInOnePackage,
