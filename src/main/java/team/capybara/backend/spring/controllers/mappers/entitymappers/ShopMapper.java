@@ -54,7 +54,8 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
                 shop.getLon(),
                 shop.getLinksToSocialMedia(),
                 shop.getOwner().getId(),
-                shop.getCompanyType()
+                shop.getCompanyType(),
+                shop.getDitance()
         );
     }
 
@@ -80,7 +81,8 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
                     shopToCreate.lon(),
                     shopToCreate.linksToSocialMedia(),
                     owner,
-                    shopToCreate.companyType()
+                    shopToCreate.companyType(),
+                    0.0
             ));
 
             return getEntity(shopCreated);

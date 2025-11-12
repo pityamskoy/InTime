@@ -5,11 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import team.capybara.Main;
 
 import java.util.List;
 import java.util.Date;
 import java.util.UUID;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -68,16 +68,19 @@ public class Shop implements EntityWithId {
     @Column(name = "companyType")
     private String companyType;
 
+    @Transient
+    private double ditance;
+
     @Override
     public UUID getId() {
         return id;
     }
 
-    public Double getDistanceTo(double objectLat, double objectLon){
+    public void getDistanceTo(double objectLat, double objectLon) {
         //distance in kilometers
-        double kef = 3.14/180.0;
+        double kef = 3.14 / 180.0;
         int earthRadius = 6371;
-        return Math.acos( Math.sin(lat*kef)*Math.sin(objectLat*kef) + Math.cos(lat*kef)*Math.cos(objectLat*kef)*Math.cos((lon*kef)-(objectLon*kef)))*earthRadius;
+        ditance = Math.acos(Math.sin(lat * kef) * Math.sin(objectLat * kef) + Math.cos(lat * kef) * Math.cos(objectLat * kef) * Math.cos((lon * kef) - (objectLon * kef))) * earthRadius;
     }
 
 }
