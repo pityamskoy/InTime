@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import team.capybara.backend.spring.controllers.filters.FeedFilterEntity;
 import team.capybara.backend.spring.entities.*;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.services.ProductService;
@@ -30,6 +31,17 @@ public final class FeedController{
         log.info("Called getAllProducts");
 
         return ResponseEntity.ok(productService.getAllProducts());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ProductDto>> getAllSortedProducts(@RequestParam(required = false) FeedFilterEntity filter) {
+        if (filter == null) {
+            return getAllProducts();
+        }
+
+        log.info("Called getAllSortedProducts; filter={}", filter);
+
+        return ResponseEntity.ok(productService.getAllSortedProducts(filter));
     }
 
     @GetMapping("/{id}")
