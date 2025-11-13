@@ -32,8 +32,8 @@ public class ProductType implements EntityWithId {
     @Column(name = "calories")
     private Double calories;
 
-    @Column(name = "squirrels")
-    private Double squirrels;
+    @Column(name = "protein")
+    private Double protein;
 
     @Column(name = "fats")
     private Double fats;

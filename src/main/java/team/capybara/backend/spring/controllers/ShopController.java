@@ -10,6 +10,7 @@ import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
 import team.capybara.backend.spring.controllers.services.ShopService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,23 +27,44 @@ public final class ShopController {
         this.shopService = shopService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<ShopDto>> getAllShops() {
+    @GetMapping(value = {"", "/{userLat}/{userLon}"})
+    public ResponseEntity<List<ShopDto>> getAllShops(@PathVariable Map<String, String> params) {
         log.info("Called getAllShops");
+        ResponseEntity<List<ShopDto>> response;
 
-        return ResponseEntity.ok(shopService.getAllShops());
+        if (params.isEmpty())
+            response = ResponseEntity.ok(shopService.getAllShops());
+        else {
+            try {
+                return ResponseEntity.ok(shopService.getAllShops(Double.parseDouble(params.get("userLat")), Double.parseDouble(params.get("userLon"))));
+            } catch (Exception e) {
+                response = ResponseEntity.badRequest().build();
+            }
+        }
+
+        return response;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ShopDto> getShopById(@PathVariable String id) {
-        log.info("Called getShopById; id={}", id);
-        Optional<ShopDto> shopDtoOptional = shopService.getShopById(UUID.fromString(id));
+    @GetMapping(value = {"/{id}", "/{id}/{userLat}/{userLon}"})
+    public ResponseEntity<ShopDto> getShopById(@PathVariable Map<String, String> params) {
+        log.info("Called getShopById; id={}", params.get("id"));
 
-        return shopDtoOptional.map(ResponseEntity::ok).orElseGet
-                (() -> ResponseEntity.notFound().build());
+        Optional<ShopDto> shopDtoOptional = Optional.empty();
+
+        if(params.size()==1)
+            shopDtoOptional = shopService.getShopById(UUID.fromString(params.get("id")));
+        else if(params.size()==3){
+            try{
+                shopDtoOptional  = shopService.getShopById(UUID.fromString(params.get("id")),Double.parseDouble(params.get("userLat")),Double.parseDouble(params.get("userLon")));
+            }
+            catch (Exception e){
+                shopDtoOptional = Optional.empty();
+            }
+        }
+
+        return shopDtoOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    //fix soon
     @GetMapping("/shop_stars/{id}")
     public ResponseEntity<Double> getShopStarsById(@PathVariable String id) {
         log.info("Called getShopStarsById; id={}", id);
