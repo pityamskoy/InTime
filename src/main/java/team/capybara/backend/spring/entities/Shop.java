@@ -59,7 +59,7 @@ public class Shop implements EntityWithId {
     private double lon; //longitude v gradusah
 
     @Column(name = "linksToSocialMedia")
-    private String linksToSocialMedia;
+    private String linkToSocialMedia;
 
     @OneToOne
     @JoinColumn(name = "user_id")
