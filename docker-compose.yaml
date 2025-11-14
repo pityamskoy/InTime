@@ -2,7 +2,7 @@ name: vSrok
 services:
   db:
     image: postgres
-    restart: always
+    restart: unless-stopped
     ports:
       - "1234:5432"
     environment:
@@ -15,4 +15,4 @@ services:
       - "1235:80"
     volumes:
       - ./src/main/resources/static:/usr/share/nginx/html:ro
-    restart: always
+    restart: unless-stopped

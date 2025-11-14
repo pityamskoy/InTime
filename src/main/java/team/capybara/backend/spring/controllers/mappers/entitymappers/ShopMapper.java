@@ -52,7 +52,7 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
                 shop.getAddress(),
                 shop.getLat(),
                 shop.getLon(),
-                shop.getLinksToSocialMedia(),
+                shop.getLinkToSocialMedia(),
                 shop.getOwner().getId(),
                 shop.getCompanyType(),
                 shop.getDitance()
@@ -109,7 +109,7 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
             shopUpdated.setAddress(shopToUpdate.address());
             shopUpdated.setLat(shopToUpdate.lat());
             shopUpdated.setLon(shopToUpdate.lon());
-            shopUpdated.setLinksToSocialMedia(shopToUpdate.linksToSocialMedia());
+            shopUpdated.setLinkToSocialMedia(shopToUpdate.linksToSocialMedia());
             shopUpdated.setOwner(userConverter.toEntity(shopToUpdate.owner()));
             shopUpdated.setCompanyType(shopToUpdate.companyType());
             shopRepository.save(shopUpdated);

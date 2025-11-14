@@ -54,15 +54,6 @@ public final class ImageController {
         return ResponseEntity.status(HttpStatus.CREATED).body(imageService.createImage(image.getBytes()));
     }
 
-    @PostMapping("/image_upload1/{id}")
-    public String handle(@RequestPart(value = "image", required = false) MultipartFile image,@PathVariable String id) throws IOException {
-
-        FileFromStorageStore fs = new FileFromStorageStore();
-        fs.saveFile("./src/main/resources/static/",image.getName()+id+".jpg",image.getBytes());
-
-        return image.getName();
-    }
-
     @PutMapping("/update")
     public ResponseEntity<ImageDto> updateImage(@RequestBody ImageDto imageToUpdate) {
         log.info("Called updateImage; imageToUpdate={}", imageToUpdate);
