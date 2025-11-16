@@ -33,7 +33,7 @@ public final class FeedController{
         return ResponseEntity.ok(productService.getAllProducts());
     }
 
-    @GetMapping
+    @GetMapping("/filtered")
     public ResponseEntity<List<ProductDto>> getAllSortedProducts(@RequestParam(required = false) FeedFilterEntity filter) {
         if (filter == null) {
             return getAllProducts();
