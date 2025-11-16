@@ -75,6 +75,8 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
                     shop
             );
 
+            productTypeRepository.save(productTypeCreated);
+
             return getEntity(productTypeCreated);
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());

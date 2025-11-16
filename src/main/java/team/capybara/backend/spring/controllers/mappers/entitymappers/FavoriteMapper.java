@@ -46,7 +46,7 @@ public final class FavoriteMapper implements Mapper<Favorite, FavoriteDto> {
     @Override
     public FavoriteDto postEntity(FavoriteDto favoriteToCreate) {
         try {
-            User user = userConverter.toEntity(favoriteToCreate.id());
+            User user = userConverter.toEntity(favoriteToCreate.userId());
             ProductType productType = productTypeConverter.toEntity(favoriteToCreate.productTypeId());
 
             Favorite favoriteCreated = favoriteRepository.save(new Favorite(
