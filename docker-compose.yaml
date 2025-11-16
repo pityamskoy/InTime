@@ -1,5 +1,6 @@
 name: vSrok
 services:
+
   db:
     image: postgres
     restart: unless-stopped
@@ -9,6 +10,15 @@ services:
       POSTGRES_USERNAME: postgres
       POSTGRES_PASSWORD: root
       POSTGRES_DB: postgres
+
+  db_dev:
+    image: leoagf/devbd:1.7
+    restart: unless-stopped
+    ports:
+      - "1234:5432"
+    #volumes:
+     # - ./bd:/var/lib/postgresql/18
+
   nginx:
     image: nginx:latest
     ports:

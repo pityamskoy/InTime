@@ -53,6 +53,8 @@ public final class UserMapper {
                     userAuthToCreate.isShopOwner()
             );
 
+            userRepository.save(userCreated);
+
             return getEntity(userCreated);
         }
 
