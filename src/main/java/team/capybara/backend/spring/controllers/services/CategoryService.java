@@ -6,7 +6,9 @@ import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.CategoryMapper;
 import team.capybara.backend.spring.controllers.repositories.*;
 import team.capybara.backend.spring.entities.Category;
+import team.capybara.backend.spring.entities.ProductType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,6 +41,22 @@ public final class CategoryService {
         }
 
         return Optional.empty();
+    }
+
+    public List<CategoryDto> getAllCategoriesByProductTypeId(UUID productTypeId) {
+        List<Category> allCategories = categoryRepository.findAll();
+        List<CategoryDto> categories = new ArrayList<>();
+
+        for (Category category : allCategories) {
+            List <ProductType> productTypes = category.getProductTypes();
+            for (ProductType productType : productTypes) {
+                if (productType.getId().equals(productTypeId)) {
+                    categories.add(categoryMapper.getEntity(category));
+                }
+            }
+        }
+
+        return categories;
     }
 
     public CategoryDto createCategory(CategoryDto categoryToCreate) {

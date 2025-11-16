@@ -6,7 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
 import team.capybara.backend.spring.controllers.dto.producttype.ProductTypeDto;
+import team.capybara.backend.spring.controllers.services.CategoryService;
 import team.capybara.backend.spring.controllers.services.ProductTypeService;
 import team.capybara.backend.spring.entities.ProductType;
 
@@ -21,9 +23,14 @@ import java.util.UUID;
 public final class ProductTypeController {
     private static final Logger log = LoggerFactory.getLogger(ProductTypeController.class);
 
+    private final CategoryService categoryService;
     private final ProductTypeService productTypeService;
 
-    public ProductTypeController(ProductTypeService productTypeService){
+    public ProductTypeController(
+            CategoryService categoryService,
+            ProductTypeService productTypeService
+    ){
+        this.categoryService = categoryService;
         this.productTypeService = productTypeService;
     }
 
@@ -34,8 +41,18 @@ public final class ProductTypeController {
         return ResponseEntity.ok(productTypeService.getAllProductTypes());
     }
 
+    @GetMapping("/categories/{productTypeId}")
+    public ResponseEntity<List<CategoryDto>> getAllCategoriesByProductTypeId(@PathVariable String productTypeId) {
+        log.info("Called getAllCategoriesByProductTypeId; id={}", productTypeId);
+
+        List<CategoryDto> categories = categoryService.getAllCategoriesByProductTypeId(UUID.fromString(productTypeId));
+
+        return ResponseEntity.ok(categories);
+    }
+
+    /*
     //fix soon. Make optional instead of ServiceException
-    @GetMapping("/{shopId}")
+    @GetMapping("{shopId}")
     public ResponseEntity<List<ProductTypeDto>> getAllProductTypesByShopId(@PathVariable("shopId") String shopId) {
         log.info("Called getAllProductTypesByShopId; shopId={}", shopId);
 
@@ -45,7 +62,7 @@ public final class ProductTypeController {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
-    }
+    }*/
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductTypeDto> getProductTypeById(@PathVariable("id") String id) {
