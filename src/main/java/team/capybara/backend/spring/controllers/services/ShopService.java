@@ -27,8 +27,15 @@ public final class ShopService {
 
     public List<ShopDto> getAllShops() {
         List<Shop> shops = shopRepository.findAll();
+        List<ShopDto> shopDtos = shops.stream().map(shopMapper::getEntity).toList();
+        return shopDtos;
+    }
 
-        return shops.stream().map(shopMapper::getEntity).toList();
+    public List<ShopDto> getAllShops(double lat,double lon) {
+        List<Shop> shops = shopRepository.findAll();
+        shops.stream().forEach(shop -> shop.getDistanceTo(lat,lon));
+        List<ShopDto> shopDtos = shops.stream().map(shopMapper::getEntity).toList();
+        return shopDtos;
     }
 
     public Optional<ShopDto> getShopById(UUID id) {
@@ -36,6 +43,19 @@ public final class ShopService {
 
         if  (shopOptional.isPresent()) {
             ShopDto shopDto = shopMapper.getEntity(shopOptional.get());
+            return Optional.of(shopDto);
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<ShopDto> getShopById(UUID id, double lat, double lon) {
+        Optional<Shop> shopOptional = shopRepository.findById(id);
+
+        if  (shopOptional.isPresent()) {
+            Shop shop = shopOptional.get();
+            shop.getDistanceTo(lat,lon);
+            ShopDto shopDto = shopMapper.getEntity(shop);
             return Optional.of(shopDto);
         }
 

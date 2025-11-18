@@ -45,16 +45,17 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
                 shop.getTimeClose(),
                 shop.getRegistrationDate(),
                 shop.getDescription(),
-                shop.isVerifide(),
+                shop.isVerified(),
                 shop.getInn(),
                 shop.getMainImagePath(),
                 imagesId,
                 shop.getAddress(),
                 shop.getLat(),
                 shop.getLon(),
-                shop.getLinksToSocialMedia(),
+                shop.getLinkToSocialMedia(),
                 shop.getOwner().getId(),
-                shop.getCompanyType()
+                shop.getCompanyType(),
+                shop.getDitance()
         );
     }
 
@@ -80,7 +81,8 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
                     shopToCreate.lon(),
                     shopToCreate.linksToSocialMedia(),
                     owner,
-                    shopToCreate.companyType()
+                    shopToCreate.companyType(),
+                    0.0
             ));
 
             return getEntity(shopCreated);
@@ -91,20 +93,31 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
 
     @Override
     public ShopDto putEntity(ShopDto shopToUpdate) {
-        Shop shopUpdated = shopConverter.toEntity(shopToUpdate.id());
-        List<Image> images = imageConverter.toEntityList(shopToUpdate.imagesId());
+        try {
+            Shop shopUpdated = shopConverter.toEntity(shopToUpdate.id());
+            List<Image> images = imageConverter.toEntityList(shopToUpdate.imagesId());
 
-        shopUpdated.setName(shopToUpdate.name());
-        shopUpdated.setDescription(shopToUpdate.description());
-        shopUpdated.setVerifide(shopToUpdate.isVerified());
-        shopUpdated.setMainImagePath(shopToUpdate.mainImagePath());
-        shopUpdated.setImages(images);
-        shopUpdated.setAddress(shopToUpdate.address());
-        shopUpdated.setLat(shopToUpdate.lat());
-        shopUpdated.setLon(shopToUpdate.lon());
-        shopRepository.save(shopUpdated);
+            shopUpdated.setName(shopToUpdate.name());
+            shopUpdated.setTimeOpen(shopToUpdate.timeOpen());
+            shopUpdated.setTimeClose(shopToUpdate.timeClose());
+            shopUpdated.setRegistrationDate(shopToUpdate.registrationDate());
+            shopUpdated.setDescription(shopToUpdate.description());
+            shopUpdated.setVerified(shopToUpdate.isVerified());
+            shopUpdated.setInn(shopToUpdate.inn());
+            shopUpdated.setMainImagePath(shopToUpdate.mainImagePath());
+            shopUpdated.setImages(images);
+            shopUpdated.setAddress(shopToUpdate.address());
+            shopUpdated.setLat(shopToUpdate.lat());
+            shopUpdated.setLon(shopToUpdate.lon());
+            shopUpdated.setLinkToSocialMedia(shopToUpdate.linksToSocialMedia());
+            shopUpdated.setOwner(userConverter.toEntity(shopToUpdate.owner()));
+            shopUpdated.setCompanyType(shopToUpdate.companyType());
+            shopRepository.save(shopUpdated);
 
-        return getEntity(shopUpdated);
+            return getEntity(shopUpdated);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        }
     }
 
     @Override

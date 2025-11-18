@@ -3,9 +3,11 @@ package team.capybara.backend.spring.controllers;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import team.capybara.backend.spring.controllers.filters.FeedFilterEntity;
 import team.capybara.backend.spring.entities.*;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.services.ProductService;
@@ -26,10 +28,28 @@ public final class FeedController{
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDto>> getAllProducts() {
+    public ResponseEntity<Page<ProductDto>> getAllProducts(
+            @RequestParam("offset") int offset,
+            @RequestParam("limit") int limit
+    ) {
         log.info("Called getAllProducts");
 
-        return ResponseEntity.ok(productService.getAllProducts());
+        return ResponseEntity.ok(productService.getAllProducts(offset, limit));
+    }
+
+    @GetMapping("/filtered")
+    public ResponseEntity<Page<ProductDto>> getAllSortedProducts(
+            @RequestParam("offset") int offset,
+            @RequestParam("limit") int limit,
+            @RequestParam(required = false) FeedFilterEntity filter
+    ) {
+        if (filter == null) {
+            return getAllProducts(offset, limit);
+        }
+
+        log.info("Called getAllSortedProducts; filter={}", filter);
+
+        return ResponseEntity.ok(productService.getAllSortedProducts(offset, limit, filter));
     }
 
     @GetMapping("/{id}")

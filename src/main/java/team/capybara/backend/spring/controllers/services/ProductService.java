@@ -1,33 +1,123 @@
 package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
+import team.capybara.backend.spring.controllers.filters.FeedFilterEntity;
 import team.capybara.backend.spring.entities.Product;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ProductMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public final class ProductService {
+    private final CategoryService categoryService;
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
 
     public ProductService(
+            CategoryService categoryService,
             ProductMapper productMapper,
             ProductRepository productRepository
     ) {
+        this.categoryService = categoryService;
         this.productMapper = productMapper;
         this.productRepository = productRepository;
     }
 
-    public List<ProductDto> getAllProducts() {
-        List<Product> products = productRepository.findAll();
+    public Page<ProductDto> getAllProducts(int offset, int limit) {
+        Page<Product> products = productRepository.findAll(PageRequest.of(offset, limit));
 
-        return products.stream().map(productMapper::getEntity).toList();
+        return products.map(productMapper::getEntity);
+    }
+
+    public Page<ProductDto> getAllSortedProducts(
+            int offset,
+            int limit,
+            FeedFilterEntity filter
+    ) {
+        Page<Product> productsToSort;
+
+        if (filter.isOnlyFreeProducts()) {
+            productsToSort = new PageImpl<>(getAllFreeProducts(offset, limit));
+        } else {
+            productsToSort = productRepository.findAll(PageRequest.of(offset, limit));
+        }
+
+        if (filter.getCategoriesId() != null && !filter.getCategoriesId().isEmpty()) {
+            productsToSort = new PageImpl<>(sortProductsByCategories(productsToSort, filter.getCategoriesId().stream().map(UUID::fromString).toList()));
+        }
+
+        if (filter.getShopsId() != null && !filter.getShopsId().isEmpty()) {
+            productsToSort = new PageImpl<>(sortProductsByShops(productsToSort, filter.getShopsId().stream().map(UUID::fromString).toList()));
+        }
+
+        //add filterByDistance
+        return productsToSort.map(productMapper::getEntity);
+    }
+
+    private List<Product> getAllFreeProducts(int offset, int limit) {
+        List<Product> freeProducts = new ArrayList<>();
+        Page<Product> products = productRepository.findAll(PageRequest.of(offset, limit));
+
+        while (freeProducts.size() < limit) {
+            if (products.isEmpty()) {
+                break;
+            }
+
+            for (Product product : products) {
+                if (product.getPrice() == 0.0) {
+                    freeProducts.add(product);
+                }
+            }
+
+            products = productRepository.findAll(PageRequest.of(offset + 1, limit));
+        }
+
+        return freeProducts;
+    }
+
+    private List<Product> sortProductsByCategories(Page<Product> productsToSort, List<UUID> categoriesId) {
+        List<UUID> requiresProductTypesId = new ArrayList<>();
+        List<Product> productsSorted = new ArrayList<>();
+
+        for (UUID categoryId : categoriesId) {
+            Optional<CategoryDto> categoryDtoOptional = categoryService.getCategoryById(categoryId);
+
+            //fix check later
+            assert categoryDtoOptional.isPresent();
+            CategoryDto categoryDto = categoryDtoOptional.get();
+
+            requiresProductTypesId.addAll(categoryDto.productTypesId());
+        }
+
+        for (Product product : productsToSort) {
+            if (requiresProductTypesId.contains(product.getProductType().getId())) {
+                productsSorted.add(product);
+            }
+        }
+
+        return productsSorted;
+    }
+
+    private List<Product> sortProductsByShops(Page<Product> productsToSort, List<UUID> shopsId) {
+        List<Product> productsSorted = new ArrayList<>();
+
+        for (Product product : productsToSort) {
+            if (shopsId.contains(product.getProductType().getShop().getId())) {
+                productsSorted.add(product);
+            }
+        }
+
+        return productsSorted;
     }
 
     public Optional<ProductDto> getProductById(UUID id) {

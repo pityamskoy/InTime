@@ -6,11 +6,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.spring.controllers.dto.image.ImageBase64Dto;
+import org.springframework.web.multipart.MultipartFile;
+import team.capybara.backend.spring.FileFromStorageStore;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 import team.capybara.backend.spring.controllers.services.ImageService;
 import team.capybara.backend.spring.exceptions.ImageFlowException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,41 +47,11 @@ public final class ImageController {
                 (() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/image_load/{id}")
-    public ResponseEntity<byte[]> loadImage(@PathVariable String id) {
-        log.info("Called loadImage; id={}", id);
-
-        byte[] imageData;
-        try{
-            imageData = imageService.getImageData(id);
-            return ResponseEntity.ok(imageData);
-        }
-        catch (ImageFlowException e){
-            log.error(e.getMessage());
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
     @PostMapping("/create")
-    public ResponseEntity<ImageDto> createImage(@RequestBody ImageDto imageToCreate) {
-        log.info("Called createImage; imageToCreate={}", imageToCreate);
+    public ResponseEntity<ImageDto> createImage(@RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+        log.info("Called createImage; imageToCreate={}", image.getName());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(imageService.createImage(imageToCreate));
-    }
-
-    //fix soon
-    @PostMapping("/image_upload/{id}")
-    public ResponseEntity<Boolean> uploadImage (@RequestBody ImageBase64Dto imageBase64, @PathVariable String id) {
-        log.info("Called uploadImage; imageBase64={}", imageBase64);
-
-        try{
-            imageService.saveImageData(imageBase64,id);
-        } catch (ImageFlowException e){
-            log.error(e.getMessage());
-            return ResponseEntity.internalServerError().build();
-        }
-        //probably switch to .created with body
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(imageService.createImage(image.getBytes()));
     }
 
     @PutMapping("/update")
