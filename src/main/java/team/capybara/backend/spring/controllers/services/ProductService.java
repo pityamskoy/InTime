@@ -7,10 +7,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
 import team.capybara.backend.spring.controllers.filters.FeedFilterEntity;
+import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
 import team.capybara.backend.spring.entities.Product;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ProductMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
+import team.capybara.backend.spring.entities.ProductType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +24,17 @@ public final class ProductService {
     private final CategoryService categoryService;
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
+    private final ProductTypeRepository productTypeRepository;
 
     public ProductService(
             CategoryService categoryService,
             ProductMapper productMapper,
-            ProductRepository productRepository
+            ProductRepository productRepository, ProductTypeRepository productTypeRepository
     ) {
         this.categoryService = categoryService;
         this.productMapper = productMapper;
         this.productRepository = productRepository;
+        this.productTypeRepository = productTypeRepository;
     }
 
     public Page<ProductDto> getAllProducts(int offset, int limit) {
@@ -129,6 +133,16 @@ public final class ProductService {
         }
 
         return Optional.empty();
+    }
+
+    public List<ProductDto> getProductByName(String name) {
+        List<ProductType>productTypes = productTypeRepository.findByNameContaining(name);
+        List<Product>products = new ArrayList<>();
+        for(ProductType productType : productTypes){
+            products.addAll(productRepository.findByProductType(productType));
+        }
+
+        return products.stream().map(productMapper::getEntity).toList();
     }
 
     public ProductDto createProduct(ProductDto productToCreate) {
