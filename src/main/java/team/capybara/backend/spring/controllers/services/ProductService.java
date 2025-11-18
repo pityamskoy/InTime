@@ -1,6 +1,9 @@
 package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
 import team.capybara.backend.spring.controllers.filters.FeedFilterEntity;
@@ -30,47 +33,59 @@ public final class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<ProductDto> getAllProducts() {
-        List<Product> products = productRepository.findAll();
+    public Page<ProductDto> getAllProducts(int offset, int limit) {
+        Page<Product> products = productRepository.findAll(PageRequest.of(offset, limit));
 
-        return products.stream().map(productMapper::getEntity).toList();
+        return products.map(productMapper::getEntity);
     }
 
-    public List<ProductDto> getAllSortedProducts(FeedFilterEntity filter) {
-        List<Product> productsToSort;
+    public Page<ProductDto> getAllSortedProducts(
+            int offset,
+            int limit,
+            FeedFilterEntity filter
+    ) {
+        Page<Product> productsToSort;
 
         if (filter.isOnlyFreeProducts()) {
-            productsToSort = getAllFreeProducts();
+            productsToSort = new PageImpl<>(getAllFreeProducts(offset, limit));
         } else {
-            productsToSort = productRepository.findAll();
+            productsToSort = productRepository.findAll(PageRequest.of(offset, limit));
         }
 
         if (filter.getCategoriesId() != null && !filter.getCategoriesId().isEmpty()) {
-            productsToSort = sortProductsByCategories(productsToSort, filter.getCategoriesId().stream().map(UUID::fromString).toList());
+            productsToSort = new PageImpl<>(sortProductsByCategories(productsToSort, filter.getCategoriesId().stream().map(UUID::fromString).toList()));
         }
 
         if (filter.getShopsId() != null && !filter.getShopsId().isEmpty()) {
-            productsToSort = sortProductsByShops(productsToSort, filter.getShopsId().stream().map(UUID::fromString).toList());
+            productsToSort = new PageImpl<>(sortProductsByShops(productsToSort, filter.getShopsId().stream().map(UUID::fromString).toList()));
         }
 
         //add filterByDistance
-        return productsToSort.stream().map(productMapper::getEntity).toList();
+        return productsToSort.map(productMapper::getEntity);
     }
 
-    private List<Product> getAllFreeProducts() {
-        List<Product> products = productRepository.findAll();
+    private List<Product> getAllFreeProducts(int offset, int limit) {
         List<Product> freeProducts = new ArrayList<>();
+        Page<Product> products = productRepository.findAll(PageRequest.of(offset, limit));
 
-        for (Product product : products) {
-            if (product.getPrice() == 0.0) {
-                freeProducts.add(product);
+        while (freeProducts.size() < limit) {
+            if (products.isEmpty()) {
+                break;
             }
+
+            for (Product product : products) {
+                if (product.getPrice() == 0.0) {
+                    freeProducts.add(product);
+                }
+            }
+
+            products = productRepository.findAll(PageRequest.of(offset + 1, limit));
         }
 
         return freeProducts;
     }
 
-    private List<Product> sortProductsByCategories(List<Product> productsToSort, List<UUID> categoriesId) {
+    private List<Product> sortProductsByCategories(Page<Product> productsToSort, List<UUID> categoriesId) {
         List<UUID> requiresProductTypesId = new ArrayList<>();
         List<Product> productsSorted = new ArrayList<>();
 
@@ -93,7 +108,7 @@ public final class ProductService {
         return productsSorted;
     }
 
-    private List<Product> sortProductsByShops(List<Product> productsToSort, List<UUID> shopsId) {
+    private List<Product> sortProductsByShops(Page<Product> productsToSort, List<UUID> shopsId) {
         List<Product> productsSorted = new ArrayList<>();
 
         for (Product product : productsToSort) {
