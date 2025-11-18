@@ -30,9 +30,10 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
 
     @Override
     public ImageDto postEntity(ImageDto imageToCreate) {
+        UUID id = UUID.randomUUID();
         Image imageCreated = imageRepository.save(new Image(
-                UUID.randomUUID(),
-                imageToCreate.path()
+                id,
+                imageToCreate.path()+id.toString()+".jpg"
         ));
 
         return getEntity(imageCreated);

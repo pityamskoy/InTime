@@ -44,7 +44,7 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
                 productType.getDescription(),
                 productType.getWeight(),
                 productType.getCalories(),
-                productType.getSquirrels(),
+                productType.getProtein(),
                 productType.getFats(),
                 productType.getCarbohydrates(),
                 productType.getQuantityInOnePackage(),
@@ -66,7 +66,7 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
                     productTypeToCreate.description(),
                     productTypeToCreate.weight(),
                     productTypeToCreate.calories(),
-                    productTypeToCreate.squirrels(),
+                    productTypeToCreate.protein(),
                     productTypeToCreate.fats(),
                     productTypeToCreate.carbohydrates(),
                     productTypeToCreate.quantityInOnePackage(),
@@ -74,6 +74,8 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
                     images,
                     shop
             );
+
+            productTypeRepository.save(productTypeCreated);
 
             return getEntity(productTypeCreated);
         } catch (EntityNotFoundException e) {
@@ -90,6 +92,12 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
 
             productTypeUpdated.setName(productTypeToUpdate.name());
             productTypeUpdated.setDescription(productTypeToUpdate.description());
+            productTypeUpdated.setWeight(productTypeToUpdate.weight());
+            productTypeUpdated.setCalories(productTypeToUpdate.calories());
+            productTypeUpdated.setProtein(productTypeToUpdate.protein());
+            productTypeUpdated.setFats(productTypeToUpdate.fats());
+            productTypeUpdated.setCarbohydrates(productTypeToUpdate.carbohydrates());
+            productTypeUpdated.setQuantityInOnePackage(productTypeToUpdate.quantityInOnePackage());
             productTypeUpdated.setMainImagePath(productTypeToUpdate.mainImagePath());
             productTypeUpdated.setImages(images);
             productTypeUpdated.setShop(shop);
