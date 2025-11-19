@@ -29,8 +29,8 @@ public final class FeedController{
 
     @GetMapping
     public ResponseEntity<Page<ProductDto>> getAllProducts(
-            @RequestParam("offset") int offset,
-            @RequestParam("limit") int limit
+            @RequestParam int offset,
+            @RequestParam int limit
     ) {
         log.info("Called getAllProducts");
 
@@ -39,8 +39,8 @@ public final class FeedController{
 
     @GetMapping("/filtered")
     public ResponseEntity<Page<ProductDto>> getAllSortedProducts(
-            @RequestParam("offset") int offset,
-            @RequestParam("limit") int limit,
+            @RequestParam int offset,
+            @RequestParam int limit,
             @RequestParam(required = false) FeedFilterEntity filter
     ) {
         if (filter == null) {
