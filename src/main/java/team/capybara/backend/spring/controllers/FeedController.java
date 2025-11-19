@@ -20,6 +20,7 @@ import java.util.*;
 @SuppressWarnings(value = {"unused"})
 public final class FeedController{
     private static final Logger log = LoggerFactory.getLogger(FeedController.class);
+    private static final int NUMBER_OF_PRODUCTS_PER_PAGE = 30;
 
     private final ProductService productService;
 
@@ -27,11 +28,11 @@ public final class FeedController{
         this.productService = productService;
     }
 
-    @GetMapping
-    public ResponseEntity<Page<ProductDto>> getAllProducts(@RequestParam FeedFilterEntity feedFilterEntity) {
+    @GetMapping("/{offset}")
+    public ResponseEntity<Page<ProductDto>> getAllProducts(@PathVariable int offset) {
         log.info("Called getAllProducts");
 
-        return ResponseEntity.ok(productService.getAllProducts(feedFilterEntity.getOffset(), feedFilterEntity.getLimit()));
+        return ResponseEntity.ok(productService.getAllProducts(offset, NUMBER_OF_PRODUCTS_PER_PAGE));
     }
 
     @GetMapping("/filtered")
@@ -39,12 +40,12 @@ public final class FeedController{
             @RequestParam FeedFilterEntity filter
     ) {
         if (filter.getShopsId() == null && filter.getCategoriesId() == null && !filter.isOnlyFreeProducts() && filter.getDistance() == 0) {
-            return getAllProducts(filter);
+            return getAllProducts(filter.getOffset());
         }
 
         log.info("Called getAllSortedProducts; filter={}", filter);
 
-        return ResponseEntity.ok(productService.getAllSortedProducts(filter.getOffset(), filter.getLimit(), filter));
+        return ResponseEntity.ok(productService.getAllSortedProducts(filter.getOffset(), NUMBER_OF_PRODUCTS_PER_PAGE, filter));
     }
 
     @GetMapping("/{id}")
