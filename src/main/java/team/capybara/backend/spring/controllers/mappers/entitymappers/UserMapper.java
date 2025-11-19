@@ -16,7 +16,9 @@ public final class UserMapper {
     public UserDto getEntity(User user) {
         return new UserDto(
                 user.getId(),
-                user.getName()
+                user.getName(),
+                user.getEmail(),
+                user.getPhoneNumber()
         );
     }
 
