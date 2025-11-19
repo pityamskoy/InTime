@@ -12,8 +12,6 @@ import java.util.List;
 @Getter
 @Setter
 public final class FeedFilterEntity {
-    private int offset;
-    private int limit;
     private boolean isOnlyFreeProducts;
     private List<String> shopsId;
     private List<String> categoriesId;

@@ -35,17 +35,18 @@ public final class FeedController{
         return ResponseEntity.ok(productService.getAllProducts(offset, NUMBER_OF_PRODUCTS_PER_PAGE));
     }
 
-    @GetMapping("/filtered")
+    @GetMapping("/filtered/{offset}")
     public ResponseEntity<Page<ProductDto>> getAllSortedProducts(
-            @RequestParam FeedFilterEntity filter
+            @PathVariable int offset,
+            @RequestBody FeedFilterEntity filter
     ) {
         if (filter.getShopsId() == null && filter.getCategoriesId() == null && !filter.isOnlyFreeProducts() && filter.getDistance() == 0) {
-            return getAllProducts(filter.getOffset());
+            return getAllProducts(offset);
         }
 
         log.info("Called getAllSortedProducts; filter={}", filter);
 
-        return ResponseEntity.ok(productService.getAllSortedProducts(filter.getOffset(), NUMBER_OF_PRODUCTS_PER_PAGE, filter));
+        return ResponseEntity.ok(productService.getAllSortedProducts(offset, NUMBER_OF_PRODUCTS_PER_PAGE, filter));
     }
 
     @GetMapping("/{id}")
