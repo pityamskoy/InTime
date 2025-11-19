@@ -28,28 +28,23 @@ public final class FeedController{
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProductDto>> getAllProducts(
-            @RequestParam("offset") int offset,
-            @RequestParam("limit") int limit
-    ) {
+    public ResponseEntity<Page<ProductDto>> getAllProducts(@RequestParam FeedFilterEntity feedFilterEntity) {
         log.info("Called getAllProducts");
 
-        return ResponseEntity.ok(productService.getAllProducts(offset, limit));
+        return ResponseEntity.ok(productService.getAllProducts(feedFilterEntity.getOffset(), feedFilterEntity.getLimit()));
     }
 
     @GetMapping("/filtered")
     public ResponseEntity<Page<ProductDto>> getAllSortedProducts(
-            @RequestParam("offset") int offset,
-            @RequestParam("limit") int limit,
-            @RequestParam(required = false) FeedFilterEntity filter
+            @RequestParam FeedFilterEntity filter
     ) {
-        if (filter == null) {
-            return getAllProducts(offset, limit);
+        if (filter.getShopsId() == null && filter.getCategoriesId() == null && !filter.isOnlyFreeProducts() && filter.getDistance() == 0) {
+            return getAllProducts(filter);
         }
 
         log.info("Called getAllSortedProducts; filter={}", filter);
 
-        return ResponseEntity.ok(productService.getAllSortedProducts(offset, limit, filter));
+        return ResponseEntity.ok(productService.getAllSortedProducts(filter.getOffset(), filter.getLimit(), filter));
     }
 
     @GetMapping("/{id}")
