@@ -49,7 +49,7 @@ public final class FeedController{
         return ResponseEntity.ok(productService.getAllSortedProducts(offset, NUMBER_OF_PRODUCTS_PER_PAGE, filter));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("product/{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable String id) {
         log.info("Called getProduct; id={}", id);
         Optional<ProductDto> productDtoOptional = productService.getProductById(UUID.fromString(id));
