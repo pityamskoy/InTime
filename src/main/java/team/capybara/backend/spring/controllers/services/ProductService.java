@@ -39,7 +39,7 @@ public final class ProductService {
 
     public Page<ProductDto> getAllProducts(int offset, int limit) {
         Page<Product> products = productRepository.findAll(PageRequest.of(offset, limit));
-
+        products.stream().forEach(product -> product.calculateScore(1,5));
         return products.map(productMapper::getEntity);
     }
 
@@ -63,7 +63,7 @@ public final class ProductService {
         if (filter.getShopsId() != null && !filter.getShopsId().isEmpty()) {
             productsToSort = new PageImpl<>(sortProductsByShops(productsToSort, filter.getShopsId().stream().map(UUID::fromString).toList()));
         }
-
+        productsToSort.stream().forEach(product -> product.calculateScore(1,5));
         //add filterByDistance
         return productsToSort.map(productMapper::getEntity);
     }
@@ -141,7 +141,7 @@ public final class ProductService {
         for(ProductType productType : productTypes){
             products.addAll(productRepository.findByProductType(productType));
         }
-
+        products.stream().forEach(product -> product.calculateScore(1,5));
         return products.stream().map(productMapper::getEntity).toList();
     }
 

@@ -28,13 +28,20 @@ public class Product implements EntityWithId {
     private Date shelfLife; //last day of life
 
     @Column(name = "price", nullable = false)
-    private int price; // final price of product
+    private int price; // initial price of product
 
     @Column(name = "discount", nullable = false)
     private int discount; // discount amount in monetary units
 
     @Column(name = "is_sold", nullable = false)
     private boolean isSold; //0 - false; 1 - true
+
+    @Transient
+    private double score;
+
+    public void calculateScore(double distance,int raiting){
+        this.score = 100*((price-discount*1.0)/(price*1.0)) + shelfLife.getTime() + (50/distance) + raiting*10;
+    }
 
     @Override
     public UUID getId() {

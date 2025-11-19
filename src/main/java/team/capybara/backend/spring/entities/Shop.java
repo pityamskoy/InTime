@@ -34,7 +34,7 @@ public class Shop implements EntityWithId {
     @Column(name = "registrationDate", nullable = false)
     private Date registrationDate;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "isVerifide", nullable = false)
