@@ -61,6 +61,12 @@ public final class FeedController{
                 (() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/search/{name}")
+    public ResponseEntity<List<ProductDto>> getProductByName(@PathVariable String name) {
+        log.info("Called getProduct; name={}", name);
+        return ResponseEntity.ok(productService.getProductByName(name));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productToCreate) {
         log.info("Called createProduct; productToCreate={}", productToCreate);
