@@ -6,7 +6,9 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-
+/**
+ * {@code Main} class is the entrypoint of the backend, which based on {@link SpringApplication}.
+ */
 @SpringBootApplication
 @ComponentScan(basePackages = {"team.capybara.backend.spring"})
 @EntityScan(basePackages = {"team.capybara.backend.spring.entities"})

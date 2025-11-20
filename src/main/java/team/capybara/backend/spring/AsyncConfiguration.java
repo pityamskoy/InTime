@@ -7,6 +7,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
 
+/**
+ * {@code AsyncConfiguration} is the configuration class, which provides common handler for {@code @Async} methods
+ */
 @Configuration
 @EnableAsync
 public class AsyncConfiguration {
