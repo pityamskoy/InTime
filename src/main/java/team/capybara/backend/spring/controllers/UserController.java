@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.user.UserAuthDto;
 import team.capybara.backend.spring.controllers.dto.user.UserDto;
@@ -28,14 +27,12 @@ public final class UserController {
         this.userService = userService;
     }
 
-    @Async
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
         log.info("Called getAllUsers");
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @Async
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable String id) {
         log.info("Called getUserById; id={}", id);
@@ -45,7 +42,6 @@ public final class UserController {
                 (() -> ResponseEntity.notFound().build());
     }
 
-    @Async
     @PostMapping("/create")
     public ResponseEntity<UserAuthDto> createUser(@RequestBody UserAuthDto userToCreate) {
         log.info("Called createUser; userToCreate={}", userToCreate);
@@ -53,7 +49,6 @@ public final class UserController {
                 .body(userService.createUser(userToCreate));
     }
 
-    @Async
     @PutMapping("/update")
     public ResponseEntity<UserAuthDto> updateUser(@RequestBody UserAuthDto userToUpdate) {
         log.info("Called updateUser; userToUpdate={}", userToUpdate);
@@ -66,7 +61,6 @@ public final class UserController {
         }
     }
 
-    @Async
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteUser(@RequestBody String id) {
         log.info("Called deleteUser; id={}", id);

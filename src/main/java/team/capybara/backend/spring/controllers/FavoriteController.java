@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.favorite.FavoriteDto;
 import team.capybara.backend.spring.controllers.services.FavoriteService;
@@ -27,7 +26,6 @@ public final class FavoriteController {
         this.favoriteService = favoriteService;
     }
 
-    @Async
     @GetMapping
     public ResponseEntity<List<FavoriteDto>> getAllFavorites() {
         log.info("Called getAllFavorites");
@@ -35,7 +33,6 @@ public final class FavoriteController {
         return ResponseEntity.ok(favoriteService.getAllFavorites());
     }
 
-    @Async
     @GetMapping("/{id}")
     public ResponseEntity<FavoriteDto> getFavoriteById(@PathVariable UUID id) {
         log.info("Called getFavoriteById; id={}", id);
@@ -45,7 +42,6 @@ public final class FavoriteController {
                 (() -> ResponseEntity.notFound().build());
     }
 
-    @Async
     @PostMapping("/create")
     public ResponseEntity<FavoriteDto> createFavorite(@RequestBody FavoriteDto favoriteToCreate) {
         log.info("Called createFavorite; favoriteToCreate={}", favoriteToCreate);
@@ -59,7 +55,6 @@ public final class FavoriteController {
         }
     }
 
-    @Async
     @PutMapping("/update")
     public ResponseEntity<FavoriteDto> updateFavorite(@RequestBody FavoriteDto favoriteToUpdate) {
         log.info("Called updateFavorite; favoriteToUpdate={}", favoriteToUpdate);
@@ -73,7 +68,6 @@ public final class FavoriteController {
         }
     }
 
-    @Async
     @DeleteMapping("/delete")
     public ResponseEntity<FavoriteDto> deleteFavorite(@RequestBody UUID id) {
         log.info("Called deleteFavorite; id={}", id);

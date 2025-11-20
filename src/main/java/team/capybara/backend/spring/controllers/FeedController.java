@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.filters.FeedFilterEntity;
 import team.capybara.backend.spring.entities.*;
@@ -29,7 +28,6 @@ public final class FeedController{
         this.productService = productService;
     }
 
-    @Async
     @GetMapping("/{offset}")
     public ResponseEntity<Page<ProductDto>> getAllProducts(@PathVariable int offset) {
         log.info("Called getAllProducts");
@@ -37,7 +35,6 @@ public final class FeedController{
         return ResponseEntity.ok(productService.getAllProducts(offset, NUMBER_OF_PRODUCTS_PER_PAGE));
     }
 
-    @Async
     @GetMapping("/filtered/{offset}")
     public ResponseEntity<Page<ProductDto>> getAllSortedProducts(
             @PathVariable int offset,
@@ -52,7 +49,6 @@ public final class FeedController{
         return ResponseEntity.ok(productService.getAllSortedProducts(offset, NUMBER_OF_PRODUCTS_PER_PAGE, filter));
     }
 
-    @Async
     @GetMapping("product/{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable String id) {
         log.info("Called getProduct; id={}", id);
@@ -62,14 +58,12 @@ public final class FeedController{
                 (() -> ResponseEntity.notFound().build());
     }
 
-    @Async
     @GetMapping("/search/{name}")
     public ResponseEntity<List<ProductDto>> getProductByName(@PathVariable String name) {
         log.info("Called getProduct; name={}", name);
         return ResponseEntity.ok(productService.getProductByName(name));
     }
 
-    @Async
     @PostMapping("/create")
     public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productToCreate) {
         log.info("Called createProduct; productToCreate={}", productToCreate);
@@ -83,7 +77,6 @@ public final class FeedController{
         }
     }
 
-    @Async
     @PutMapping("/update")
     public ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto productToUpdate) {
         log.info("Called updateProduct; productToUpdate={}", productToUpdate);
@@ -104,7 +97,6 @@ public final class FeedController{
         return null;
     }
 
-    @Async
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteProduct(@RequestBody String id) {
         log.info("Called deleteProduct; id={}", id);

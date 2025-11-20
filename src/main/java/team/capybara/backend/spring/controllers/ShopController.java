@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
 import team.capybara.backend.spring.controllers.services.ShopService;
@@ -28,7 +27,6 @@ public final class ShopController {
         this.shopService = shopService;
     }
 
-    @Async
     @GetMapping(value = {"", "/{userLat}/{userLon}"})
     public ResponseEntity<List<ShopDto>> getAllShops(@PathVariable Map<String, String> params) {
         log.info("Called getAllShops");
@@ -47,7 +45,6 @@ public final class ShopController {
         return response;
     }
 
-    @Async
     @GetMapping(value = {"/{id}", "/{id}/{userLat}/{userLon}"})
     public ResponseEntity<ShopDto> getShopById(@PathVariable Map<String, String> params) {
         log.info("Called getShopById; id={}", params.get("id"));
@@ -68,7 +65,6 @@ public final class ShopController {
         return shopDtoOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @Async
     @GetMapping("/shop_stars/{id}")
     public ResponseEntity<Double> getShopStarsById(@PathVariable String id) {
         log.info("Called getShopStarsById; id={}", id);
@@ -77,7 +73,6 @@ public final class ShopController {
         return ResponseEntity.status(HttpStatus.CREATED).body(shopOptional.get());
     }
 
-    @Async
     @PostMapping("/create")
     public ResponseEntity<ShopDto> createShop(@RequestBody ShopDto shopToCreate) {
         log.info("Called createShop; shopToCreate={}", shopToCreate);
@@ -90,7 +85,6 @@ public final class ShopController {
         }
     }
 
-    @Async
     @PutMapping("/update")
     public ResponseEntity<ShopDto> updateShop(@RequestBody ShopDto shopToUpdate) {
         log.info("Called updateShop; shopToUpdate={}", shopToUpdate);
@@ -103,7 +97,6 @@ public final class ShopController {
         }
     }
 
-    @Async
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteProduct(@RequestBody String id) {
         log.info("Called deleteShop; id={}", id);

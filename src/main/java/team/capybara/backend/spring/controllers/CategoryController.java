@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
 import team.capybara.backend.spring.controllers.services.CategoryService;
@@ -27,13 +26,12 @@ public final class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @Async
+
     @GetMapping
     public ResponseEntity<List<CategoryDto>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
-    @Async
     @GetMapping("/{id}")
     public ResponseEntity<CategoryDto> getCategoryById(@PathVariable String id) {
         log.info("Called getCategoryById; id={}", id);
@@ -43,7 +41,6 @@ public final class CategoryController {
                 (() -> ResponseEntity.notFound().build());
     }
 
-    @Async
     @PostMapping("/create")
     public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto categoryToCreate) {
         log.info("Called createCategory; categoryToCreate={}", categoryToCreate);
@@ -57,7 +54,6 @@ public final class CategoryController {
         }
     }
 
-    @Async
     @PutMapping("/update")
     public ResponseEntity<CategoryDto> updateCategory(@RequestBody CategoryDto categoryToUpdate) {
         log.info("Called updateCategory; categoryToUpdate={}", categoryToUpdate);
@@ -70,7 +66,6 @@ public final class CategoryController {
         }
     }
 
-    @Async
     @DeleteMapping("/delete")
     public ResponseEntity<CategoryDto> deleteCategory(@RequestBody String id) {
         log.info("Called deleteCategory; id={}", id);

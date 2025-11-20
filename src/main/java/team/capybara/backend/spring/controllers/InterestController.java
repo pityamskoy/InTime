@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.interest.InterestDto;
 import team.capybara.backend.spring.controllers.services.InterestService;
@@ -27,7 +26,6 @@ public final class InterestController {
         this.interestService = interestService;
     }
 
-    @Async
     @GetMapping
     public ResponseEntity<List<InterestDto>> getAllInterests() {
         log.info("Called getAllInterests");
@@ -35,7 +33,6 @@ public final class InterestController {
         return ResponseEntity.ok(interestService.getAllInterests());
     }
 
-    @Async
     @GetMapping("/{id}")
     public ResponseEntity<InterestDto> getInterestById(@PathVariable String id) {
         log.info("Called getInterestById; id={}", id);
@@ -45,7 +42,6 @@ public final class InterestController {
                 (() -> ResponseEntity.notFound().build());
     }
 
-    @Async
     @PostMapping("/create")
     public ResponseEntity<InterestDto> createInterest(@RequestBody InterestDto interestToCreate) {
         log.info("Called createInterest; interestToCreate={}", interestToCreate);
@@ -58,7 +54,6 @@ public final class InterestController {
         }
     }
 
-    @Async
     @PutMapping("/update")
     public ResponseEntity<InterestDto> updateInterest(@RequestBody InterestDto interestToUpdate) {
         log.info("Called updateInterest; interestToUpdate={}", interestToUpdate);
@@ -71,7 +66,6 @@ public final class InterestController {
         }
     }
 
-    @Async
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteInterest(@RequestBody String id) {
         log.info("Called deleteInterest; id={}", id);

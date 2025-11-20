@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.review.ReviewDto;
 import team.capybara.backend.spring.controllers.services.ReviewService;
@@ -27,7 +26,6 @@ public final class ReviewController {
         this.reviewService = reviewService;
     }
 
-    @Async
     @GetMapping
     public ResponseEntity<List<ReviewDto>> getAllReviews() {
         log.info("Called getAllReviews");
@@ -35,7 +33,6 @@ public final class ReviewController {
         return ResponseEntity.ok(reviewService.getAllReviews());
     }
 
-    @Async
     @GetMapping("/{id}")
     public ResponseEntity<ReviewDto> getReviewById(@PathVariable String id) {
         log.info("Called getReviewById; id={}", id);
@@ -45,7 +42,6 @@ public final class ReviewController {
                 (() -> ResponseEntity.notFound().build());
     }
 
-    @Async
     @PostMapping("/create")
     public ResponseEntity<ReviewDto> createReview(@RequestBody ReviewDto reviewToCreate) {
         log.info("Called createReview, reviewToCreate={}", reviewToCreate);
@@ -58,7 +54,6 @@ public final class ReviewController {
         }
     }
 
-    @Async
     @PutMapping("/update")
     public ResponseEntity<ReviewDto> updateReview(@RequestBody ReviewDto reviewToUpdate) {
         log.info("Called updateReview, reviewToUpdate={}", reviewToUpdate);
@@ -71,7 +66,6 @@ public final class ReviewController {
         }
     }
 
-    @Async
     @DeleteMapping("/delete")
     public ResponseEntity<ReviewDto> deleteReview(@RequestBody String id) {
         log.info("Called deleteReview, id={}", id);
