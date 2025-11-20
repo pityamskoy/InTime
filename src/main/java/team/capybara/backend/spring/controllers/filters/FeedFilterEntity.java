@@ -12,8 +12,8 @@ import java.util.List;
 @Getter
 @Setter
 public final class FeedFilterEntity {
-    private boolean isOnlyFreeProducts;
+    private Boolean isOnlyFreeProducts;
     private List<String> shopsId;
     private List<String> categoriesId;
-    private int distance;
+    private Double distance;
 }
