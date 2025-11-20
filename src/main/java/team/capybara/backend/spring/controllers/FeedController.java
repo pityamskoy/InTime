@@ -35,6 +35,14 @@ public final class FeedController{
         return ResponseEntity.ok(productService.getAllProducts(offset, NUMBER_OF_PRODUCTS_PER_PAGE));
     }
 
+    //will be replace
+    @GetMapping("/products_by_shop/{shop}/{offset}")
+    public ResponseEntity<Page<ProductDto>> getProductsByShopId(@PathVariable String shop,@PathVariable int offset) {
+        log.info("Called getAllProducts");
+
+        return ResponseEntity.ok(productService.getProductByShop(offset, NUMBER_OF_PRODUCTS_PER_PAGE,shop));
+    }
+
     @GetMapping("/filtered/{offset}")
     public ResponseEntity<Page<ProductDto>> getAllSortedProducts(
             @PathVariable int offset,
