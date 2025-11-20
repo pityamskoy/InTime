@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
 import team.capybara.backend.spring.controllers.dto.producttype.ProductTypeDto;
@@ -34,6 +35,7 @@ public final class ProductTypeController {
         this.productTypeService = productTypeService;
     }
 
+    @Async
     @GetMapping
     public ResponseEntity<List<ProductTypeDto>> getAllProductTypes() {
         log.info("Called getAllProductTypes");
@@ -41,6 +43,7 @@ public final class ProductTypeController {
         return ResponseEntity.ok(productTypeService.getAllProductTypes());
     }
 
+    @Async
     @GetMapping("/categories/{productTypeId}")
     public ResponseEntity<List<CategoryDto>> getAllCategoriesByProductTypeId(@PathVariable String productTypeId) {
         log.info("Called getAllCategoriesByProductTypeId; id={}", productTypeId);
@@ -64,6 +67,7 @@ public final class ProductTypeController {
         }
     }*/
 
+    @Async
     @GetMapping("/{id}")
     public ResponseEntity<ProductTypeDto> getProductTypeById(@PathVariable("id") String id) {
         log.info("Called getProductTypeById; id={}", id);
@@ -73,6 +77,7 @@ public final class ProductTypeController {
                 (() -> ResponseEntity.notFound().build());
     }
 
+    @Async
     @PostMapping("/create")
     public ResponseEntity<ProductTypeDto> createProductType(@RequestBody ProductTypeDto productToCreate) {
         log.info("Called createProductType; productTypeToCreate={}", productToCreate);
@@ -85,6 +90,7 @@ public final class ProductTypeController {
         }
     }
 
+    @Async
     @PutMapping("/update")
     public ResponseEntity<ProductTypeDto> updateProductType(@RequestBody ProductTypeDto productTypeToUpdate) {
         log.info("Called updateProductType; productTypeToUpdate={}", productTypeToUpdate);
@@ -97,6 +103,7 @@ public final class ProductTypeController {
         }
     }
 
+    @Async
     @DeleteMapping("/delete")
     public ResponseEntity<ProductType> deleteProductType(@RequestBody String id) {
         log.info("Called deleteProductType; id={}", id);

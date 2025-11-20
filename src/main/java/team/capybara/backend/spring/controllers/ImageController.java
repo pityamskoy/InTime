@@ -5,12 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import team.capybara.backend.spring.FileFromStorageStore;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
 import team.capybara.backend.spring.controllers.services.ImageService;
-import team.capybara.backend.spring.exceptions.ImageFlowException;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,6 +30,7 @@ public final class ImageController {
         this.imageService = imageService;
     }
 
+    @Async
     @GetMapping
     public ResponseEntity<List<ImageDto>> getAllImages() {
         log.info("Called getAllImages");
@@ -38,6 +38,7 @@ public final class ImageController {
         return ResponseEntity.ok(imageService.getAllImages());
     }
 
+    @Async
     @GetMapping("/{id}")
     public ResponseEntity<ImageDto> getImageById(@PathVariable String id) {
         log.info("Called getImageById; id={}", id);
@@ -47,6 +48,7 @@ public final class ImageController {
                 (() -> ResponseEntity.notFound().build());
     }
 
+    @Async
     @PostMapping("/create")
     public ResponseEntity<ImageDto> createImage(@RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
         log.info("Called createImage; imageToCreate={}", image.getName());
@@ -54,6 +56,7 @@ public final class ImageController {
         return ResponseEntity.status(HttpStatus.CREATED).body(imageService.createImage(image.getBytes()));
     }
 
+    @Async
     @PutMapping("/update")
     public ResponseEntity<ImageDto> updateImage(@RequestBody ImageDto imageToUpdate) {
         log.info("Called updateImage; imageToUpdate={}", imageToUpdate);
@@ -66,6 +69,7 @@ public final class ImageController {
         }
     }
 
+    @Async
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteImage(@RequestBody String id) {
         log.info("Called deleteImage; id={}", id);
