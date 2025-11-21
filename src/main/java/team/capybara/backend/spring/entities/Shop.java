@@ -69,7 +69,7 @@ public class Shop implements EntityWithId {
     private String companyType;
 
     @Transient
-    private double ditance;
+    private double distance;
 
     @Override
     public UUID getId() {
@@ -80,7 +80,7 @@ public class Shop implements EntityWithId {
         //distance in kilometers
         double kef = 3.14 / 180.0;
         int earthRadius = 6371;
-        ditance = Math.acos(Math.sin(lat * kef) * Math.sin(objectLat * kef) + Math.cos(lat * kef) * Math.cos(objectLat * kef) * Math.cos((lon * kef) - (objectLon * kef))) * earthRadius;
+        distance = Math.acos(Math.sin(lat * kef) * Math.sin(objectLat * kef) + Math.cos(lat * kef) * Math.cos(objectLat * kef) * Math.cos((lon * kef) - (objectLon * kef))) * earthRadius;
     }
 
 }

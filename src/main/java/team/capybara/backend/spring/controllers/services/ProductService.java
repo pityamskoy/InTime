@@ -8,13 +8,17 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
 import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
+import team.capybara.backend.spring.controllers.dto.user.UserDto;
 import team.capybara.backend.spring.controllers.filters.FeedFilterEntity;
+import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.UserConverter;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
+import team.capybara.backend.spring.entities.Favorite;
 import team.capybara.backend.spring.entities.Product;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ProductMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 import team.capybara.backend.spring.entities.ProductType;
+import team.capybara.backend.spring.entities.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,22 +29,31 @@ import java.util.UUID;
 public final class ProductService {
     private final ShopService shopService;
     private final CategoryService categoryService;
+    private final UserService userService;
+    private final FavoriteService favoriteService;
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
     private final ProductTypeRepository productTypeRepository;
+    private final UserConverter userConverter;
 
     public ProductService(
             ShopService shopService,
             CategoryService categoryService,
+            UserService userService,
+            FavoriteService favoriteService,
             ProductMapper productMapper,
             ProductRepository productRepository,
-            ProductTypeRepository productTypeRepository
+            ProductTypeRepository productTypeRepository,
+            UserConverter userConverter
     ) {
         this.shopService = shopService;
         this.categoryService = categoryService;
+        this.userService = userService;
+        this.favoriteService = favoriteService;
         this.productMapper = productMapper;
         this.productRepository = productRepository;
         this.productTypeRepository = productTypeRepository;
+        this.userConverter = userConverter;
     }
 
     public Page<ProductDto> getAllProducts(int offset, int limit) {
@@ -74,6 +87,10 @@ public final class ProductService {
             productsToSort = new PageImpl<>(sortProductsByDistance(productsToSort, filter.getShopsId(), filter.getDistance()));
         }
 
+        if (filter.getUserId() != null && !filter.getUserId().isEmpty()) {
+            productsToSort = new PageImpl<>(recommendProducts(productsToSort, filter.getShopsId(), UUID.fromString(filter.getUserId())));
+        }
+
         productsToSort.stream().forEach(product -> product.calculateScore(1,5));
 
         return productsToSort.map(productMapper::getEntity);
@@ -82,20 +99,21 @@ public final class ProductService {
 
     private List<Product> getAllFreeProducts(int offset, int limit) {
         List<Product> freeProducts = new ArrayList<>();
-        Page<Product> products = productRepository.findAll(PageRequest.of(offset, limit));
-
         while (freeProducts.size() < limit) {
-            if (products.isEmpty()) {
-                break;
-            }
+            Page<Product> productsOfPreviousPage = productRepository.findAll(PageRequest.of(offset, limit));
+            Page<Product> productsOfNextPage = productRepository.findAll(PageRequest.of(offset + 1, limit));
 
-            for (Product product : products) {
+            for (Product product : productsOfPreviousPage.getContent()) {
                 if (product.getPrice() == 0.0) {
                     freeProducts.add(product);
                 }
             }
 
-            products = productRepository.findAll(PageRequest.of(offset + 1, limit));
+            if (productsOfPreviousPage.getContent().size() < limit && productsOfNextPage.getContent().size() < limit) {
+                break;
+            }
+
+            offset += 1;
         }
 
         return freeProducts;
@@ -112,7 +130,7 @@ public final class ProductService {
                     requiresProductTypesId.addAll(categoryDto.productTypesId()));
         }
 
-        for (Product product : productsToSort) {
+        for (Product product : productsToSort.getContent()) {
             if (requiresProductTypesId.contains(product.getProductType().getId())) {
                 productsSorted.add(product);
             }
@@ -124,7 +142,7 @@ public final class ProductService {
     private List<Product> sortProductsByShops(Page<Product> productsToSort, List<UUID> shopsId) {
         List<Product> productsSorted = new ArrayList<>();
 
-        for (Product product : productsToSort) {
+        for (Product product : productsToSort.getContent()) {
             if (shopsId.contains(product.getProductType().getShop().getId())) {
                 productsSorted.add(product);
             }
@@ -147,8 +165,44 @@ public final class ProductService {
             shopsId = shopService.sortShopsByDistance(List.of(), distance).stream().map(ShopDto::id).toList();
         }
 
-        for (Product product : productsToSort) {
+        for (Product product : productsToSort.getContent()) {
             if (shopsId.contains(product.getProductType().getShop().getId())) {
+                productsSorted.add(product);
+            }
+        }
+
+        return productsSorted;
+    }
+
+    private List<Product> recommendProducts(
+            Page<Product> productsToSort,
+            @Nullable List<String> shopsIdToSortProducts,
+            UUID userId
+    ) {
+        Optional<UserDto> userDtoOptional = userService.getUserById(userId);
+
+        if (userDtoOptional.isEmpty()) {
+            return productsToSort.getContent();
+        }
+
+        User user = userConverter.toEntity(userId);
+        List<Favorite> favoritesOfUser = favoriteService.getFavoritesByUser(user);
+
+        List<Double> distances = new ArrayList<>();
+        for (Favorite favorite : favoritesOfUser) {
+            distances.add(favorite.getProductType().getShop().getDistance());
+        }
+
+        Double sumOfDistances = 0.0;
+        for (Double distance : distances) {
+            sumOfDistances += distance;
+        }
+
+        Double mediumDistance = sumOfDistances / distances.size();
+
+        List<Product> productsSorted = sortProductsByDistance(productsToSort, shopsIdToSortProducts, mediumDistance);
+        for (Product product : productsToSort.getContent()) {
+            if (!productsSorted.contains(product)) {
                 productsSorted.add(product);
             }
         }
@@ -173,7 +227,7 @@ public final class ProductService {
         for(ProductType productType : productTypes){
             products.addAll(productRepository.findByProductType(productType));
         }
-        products.stream().forEach(product -> product.calculateScore(1,5));
+        products.forEach(product -> product.calculateScore(1,5));
         return products.stream().map(productMapper::getEntity).toList();
     }
 

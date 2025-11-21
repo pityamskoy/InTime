@@ -64,10 +64,10 @@ public final class ShopService {
         return Optional.empty();
     }
 
-    public List<ShopDto> sortShopsByDistance(List<UUID> shopsDto, Double distance) {
+    public List<ShopDto> sortShopsByDistance(List<UUID> shopsId, Double distance) {
         List<ShopDto> shopsWithAppropriateDistance = new ArrayList<>();
 
-        for (UUID shopId : shopsDto) {
+        for (UUID shopId : shopsId) {
             Optional<ShopDto> shopDtoOptional = getShopById(shopId);
             if (shopDtoOptional.isPresent()) {
                 ShopDto shopDto = shopDtoOptional.get();
