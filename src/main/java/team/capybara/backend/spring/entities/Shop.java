@@ -1,10 +1,7 @@
 package team.capybara.backend.spring.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 import java.util.Date;
@@ -12,9 +9,7 @@ import java.util.UUID;
 
 
 @NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "Shops")
 public class Shop implements EntityWithId {
