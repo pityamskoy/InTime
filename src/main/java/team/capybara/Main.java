@@ -14,7 +14,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan(basePackages = {"team.capybara.backend.spring.entities"})
 @EnableJpaRepositories(basePackages = {"team.capybara.backend.spring.controllers.repositories"})
 public class Main {
-    static void main(String[] args) {
+    public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
     }
 }
