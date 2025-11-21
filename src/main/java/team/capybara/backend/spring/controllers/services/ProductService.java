@@ -145,6 +145,19 @@ public final class ProductService {
         return products.stream().map(productMapper::getEntity).toList();
     }
 
+    public Page<ProductDto> getProductByShop(int offset, int limit,String id) {
+
+        List<ProductType>productTypes = productTypeRepository.findAll();
+        List<ProductType>productTypesWithNeededShop = new ArrayList<>();
+        for(ProductType productType : productTypes){
+            if(productType.getShop().getId().equals(UUID.fromString(id)))
+                productTypesWithNeededShop.add(productType);
+        }
+        Page<Product> products = productRepository.findByProductTypeIn(productTypesWithNeededShop,PageRequest.of(offset, limit));
+        products.stream().forEach(product -> product.calculateScore(1,5));
+        return products.map(productMapper::getEntity);
+    }
+
     public ProductDto createProduct(ProductDto productToCreate) {
         return productMapper.postEntity(productToCreate);
     }
