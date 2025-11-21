@@ -2,6 +2,7 @@ package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import team.capybara.backend.spring.controllers.dto.login.LoginResultDto;
 import team.capybara.backend.spring.controllers.dto.user.UserAuthDto;
 import team.capybara.backend.spring.controllers.dto.user.UserDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.UserMapper;
@@ -46,7 +47,7 @@ public final class UserService {
         return Optional.empty();
     }
 
-    public Boolean login(String login, String password) {
+    public LoginResultDto login(String login, String password) {
         User user;
 
         if (login.contains("@")) {
@@ -55,7 +56,7 @@ public final class UserService {
             user = userRepository.findUserByPhoneNumber(login);
         }
 
-        return user.getPassword().equals(password);
+        return new LoginResultDto(user.getPassword().equals(password), user.getId().toString());
     }
 
     public UserAuthDto createUser(UserAuthDto userToCreate) {
