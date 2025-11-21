@@ -81,6 +81,10 @@ public final class ShopService {
     }
 
     public ShopDto createShop(ShopDto shopToCreate) {
+        if (shopToCreate.name().isEmpty()) {
+            throw new IllegalArgumentException("Shop name cannot be empty");
+        }
+
         return shopMapper.postEntity(shopToCreate);
     }
 

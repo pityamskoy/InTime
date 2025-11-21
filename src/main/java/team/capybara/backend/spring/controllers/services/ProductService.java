@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+
 @Service
 public final class ProductService {
     private final ShopService shopService;
@@ -66,20 +67,24 @@ public final class ProductService {
             int offset,
             int limit,
             FeedFilterEntity filter
-    ) {
+            ) {
         Page<Product> productsToSort;
 
-        if (filter.getIsOnlyFreeProducts() != null && filter.getIsOnlyFreeProducts()) {
+        if (filter.getIsOnlyFreeProducts() != null) {
             productsToSort = new PageImpl<>(getAllFreeProducts(offset, limit));
         } else {
-            productsToSort = productRepository.findAll(PageRequest.of(offset, limit));
+            if (filter.getName() != null) {
+                productsToSort = new PageImpl<>(sortProductsByName(filter.getName(), limit));
+            } else {
+                productsToSort = productRepository.findAll(PageRequest.of(offset, limit));
+            }
         }
 
-        if (filter.getCategoriesId() != null && !filter.getCategoriesId().isEmpty()) {
+        if (filter.getCategoriesId() != null) {
             productsToSort = new PageImpl<>(sortProductsByCategories(productsToSort, filter.getCategoriesId().stream().map(UUID::fromString).toList()));
         }
 
-        if (filter.getShopsId() != null && !filter.getShopsId().isEmpty()) {
+        if (filter.getShopsId() != null) {
             productsToSort = new PageImpl<>(sortProductsByShops(productsToSort, filter.getShopsId().stream().map(UUID::fromString).toList()));
         }
 
@@ -87,7 +92,7 @@ public final class ProductService {
             productsToSort = new PageImpl<>(sortProductsByDistance(productsToSort, filter.getShopsId(), filter.getDistance()));
         }
 
-        if (filter.getUserId() != null && !filter.getUserId().isEmpty()) {
+        if (filter.getUserId() != null) {
             productsToSort = new PageImpl<>(recommendProducts(productsToSort, filter.getShopsId(), UUID.fromString(filter.getUserId())));
         }
 
@@ -174,6 +179,23 @@ public final class ProductService {
         return productsSorted;
     }
 
+    private List<Product> sortProductsByName(
+            String name,
+            int limit
+    ) {
+        List<ProductType> productTypes = productTypeRepository.findByNameContaining(name);
+        List<Product> products = new ArrayList<>();
+
+        for (ProductType productType : productTypes) {
+            if (products.size() >= limit) break;
+            products.addAll(productRepository.findByProductType(productType));
+        }
+
+        products.forEach(product -> product.calculateScore(1,5));
+
+        return products;
+    }
+
     private List<Product> recommendProducts(
             Page<Product> productsToSort,
             @Nullable List<String> shopsIdToSortProducts,
@@ -219,16 +241,6 @@ public final class ProductService {
         }
 
         return Optional.empty();
-    }
-
-    public List<ProductDto> getProductByName(String name) {
-        List<ProductType>productTypes = productTypeRepository.findByNameContaining(name);
-        List<Product>products = new ArrayList<>();
-        for(ProductType productType : productTypes){
-            products.addAll(productRepository.findByProductType(productType));
-        }
-        products.forEach(product -> product.calculateScore(1,5));
-        return products.stream().map(productMapper::getEntity).toList();
     }
 
     public Page<ProductDto> getProductByShop(int offset, int limit, String id) {

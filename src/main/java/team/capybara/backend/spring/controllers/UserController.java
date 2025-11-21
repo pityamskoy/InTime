@@ -6,7 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.spring.controllers.dto.user.LoginDto;
+import team.capybara.backend.spring.controllers.dto.login.LoginDto;
+import team.capybara.backend.spring.controllers.dto.login.LoginResultDto;
 import team.capybara.backend.spring.controllers.dto.user.UserAuthDto;
 import team.capybara.backend.spring.controllers.dto.user.UserDto;
 import team.capybara.backend.spring.controllers.services.UserService;
@@ -44,7 +45,7 @@ public final class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Boolean> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<LoginResultDto> login(@RequestBody LoginDto loginDto) {
         String login = loginDto.login();
         String password = loginDto.password();
         log.info("Called login; login={}, password={}", login, password);
