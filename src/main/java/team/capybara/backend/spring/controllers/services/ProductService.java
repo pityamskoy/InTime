@@ -70,7 +70,7 @@ public final class ProductService {
             ) {
         Page<Product> productsToSort;
 
-        if (filter.getIsOnlyFreeProducts() != null) {
+        if (filter.getIsOnlyFreeProducts() != null && filter.getIsOnlyFreeProducts()) {
             productsToSort = new PageImpl<>(getAllFreeProducts(offset, limit));
         } else {
             if (filter.getName() != null) {
