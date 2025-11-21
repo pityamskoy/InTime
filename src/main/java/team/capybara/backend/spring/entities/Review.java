@@ -27,7 +27,7 @@ public class Review implements EntityWithId {
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
-    @Column(name = "text", nullable = false)
+    @Column(name = "text", nullable = false, columnDefinition = "TEXT")
     private String text;
 
     @Column(name = "stars", nullable = false)

@@ -5,10 +5,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.FileFromStorageStore;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
-import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ImageConverter;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ImageMapper;
 import team.capybara.backend.spring.controllers.repositories.ImageRepository;
-import team.capybara.backend.spring.exceptions.ImageFlowException;
 import team.capybara.backend.spring.entities.Image;
 
 import java.io.IOException;
@@ -21,20 +19,17 @@ import java.util.UUID;
 public final class ImageService {
     private final ImageMapper imageMapper;
     private final ImageRepository imageRepository;
-    private final String imageStorePath = "./src/main/resources/static/";
-    private final String imagePath = "http://127.0.0.1:1235/";
+    private static final String imageStorePath = "./src/main/resources/static/";
+    private static final String imagePath = "http://127.0.0.1:1235/";
     private final FileFromStorageStore fileFromStorageStore;
-    private final ImageConverter imageConverter;
 
     public ImageService(
             ImageMapper imageMapper,
-            ImageRepository imageRepository,
-            ImageConverter imageConverter
+            ImageRepository imageRepository
     ) {
         this.imageRepository = imageRepository;
         this.imageMapper = imageMapper;
         fileFromStorageStore = new FileFromStorageStore();
-        this.imageConverter = imageConverter;
     }
 
     public List<ImageDto> getAllImages() {

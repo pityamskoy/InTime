@@ -6,6 +6,7 @@ import team.capybara.backend.spring.controllers.dto.favorite.FavoriteDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.FavoriteMapper;
 import team.capybara.backend.spring.controllers.repositories.*;
 import team.capybara.backend.spring.entities.Favorite;
+import team.capybara.backend.spring.entities.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +41,14 @@ public final class FavoriteService {
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * {@code getFavoritesByUserId} should be package-private because it returns {@code Favorite}, not {@code FavoriteDto}.
+     * This method is supposed to be used only in services to get auxiliary information.
+     */
+    List<Favorite> getFavoritesByUser(User user) {
+        return favoriteRepository.findFavoritesByUser(user);
     }
 
     public FavoriteDto createFavorite(FavoriteDto favoriteToCreate) {

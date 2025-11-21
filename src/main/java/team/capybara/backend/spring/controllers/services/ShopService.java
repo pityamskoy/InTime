@@ -6,6 +6,8 @@ import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ShopMapper;
 import team.capybara.backend.spring.controllers.repositories.ReviewRepository;
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -60,6 +62,22 @@ public final class ShopService {
         }
 
         return Optional.empty();
+    }
+
+    public List<ShopDto> sortShopsByDistance(List<UUID> shopsId, Double distance) {
+        List<ShopDto> shopsWithAppropriateDistance = new ArrayList<>();
+
+        for (UUID shopId : shopsId) {
+            Optional<ShopDto> shopDtoOptional = getShopById(shopId);
+            if (shopDtoOptional.isPresent()) {
+                ShopDto shopDto = shopDtoOptional.get();
+                if (shopDto.distance() <= distance) {
+                    shopsWithAppropriateDistance.add(shopDto);
+                }
+            }
+        }
+
+        return shopsWithAppropriateDistance;
     }
 
     public ShopDto createShop(ShopDto shopToCreate) {

@@ -20,6 +20,7 @@ import java.util.*;
 @SuppressWarnings(value = {"unused"})
 public final class FeedController{
     private static final Logger log = LoggerFactory.getLogger(FeedController.class);
+    private static final int NUMBER_OF_PRODUCTS_PER_PAGE = 30;
 
     private final ProductService productService;
 
@@ -27,38 +28,49 @@ public final class FeedController{
         this.productService = productService;
     }
 
-    @GetMapping
-    public ResponseEntity<Page<ProductDto>> getAllProducts(
-            @RequestParam("offset") int offset,
-            @RequestParam("limit") int limit
-    ) {
+    @GetMapping("/{offset}")
+    public ResponseEntity<Page<ProductDto>> getAllProducts(@PathVariable int offset) {
         log.info("Called getAllProducts");
 
-        return ResponseEntity.ok(productService.getAllProducts(offset, limit));
+        return ResponseEntity.ok(productService.getAllProducts(offset, NUMBER_OF_PRODUCTS_PER_PAGE));
     }
 
-    @GetMapping("/filtered")
+    //will be replaced
+    @GetMapping("/products_by_shop/{shop}/{offset}")
+    public ResponseEntity<Page<ProductDto>> getProductsByShopId(@PathVariable String id,@PathVariable int offset) {
+        log.info("Called getProductsByShopId");
+
+        return ResponseEntity.ok(productService.getProductByShop(offset, NUMBER_OF_PRODUCTS_PER_PAGE, id));
+    }
+
+    @GetMapping("/filtered/{offset}")
     public ResponseEntity<Page<ProductDto>> getAllSortedProducts(
-            @RequestParam("offset") int offset,
-            @RequestParam("limit") int limit,
-            @RequestParam(required = false) FeedFilterEntity filter
+            @PathVariable int offset,
+            @RequestBody FeedFilterEntity filter
     ) {
-        if (filter == null) {
-            return getAllProducts(offset, limit);
+        if (filter.getShopsId() == null && filter.getCategoriesId() == null && filter.getIsOnlyFreeProducts() == null
+                && filter.getDistance() == null && filter.getUserId() == null) {
+            return getAllProducts(offset);
         }
 
         log.info("Called getAllSortedProducts; filter={}", filter);
 
-        return ResponseEntity.ok(productService.getAllSortedProducts(offset, limit, filter));
+        return ResponseEntity.ok(productService.getAllSortedProducts(offset, NUMBER_OF_PRODUCTS_PER_PAGE, filter));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/product/{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable String id) {
         log.info("Called getProduct; id={}", id);
         Optional<ProductDto> productDtoOptional = productService.getProductById(UUID.fromString(id));
 
         return productDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/search/{name}")
+    public ResponseEntity<List<ProductDto>> getProductByName(@PathVariable String name) {
+        log.info("Called getProduct; name={}", name);
+        return ResponseEntity.ok(productService.getProductByName(name));
     }
 
     @PostMapping("/create")

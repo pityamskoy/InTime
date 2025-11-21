@@ -54,7 +54,8 @@ public final class ProductMapper implements Mapper<Product, ProductDto> {
                     productToCreate.shelfLife(),
                     productToCreate.price(),
                     productToCreate.discount(),
-                    productToCreate.isSold()
+                    productToCreate.isSold(),
+                    0
             ));
 
             return getEntity(productCreated);

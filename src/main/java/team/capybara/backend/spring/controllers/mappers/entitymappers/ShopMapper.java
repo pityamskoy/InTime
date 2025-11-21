@@ -55,7 +55,7 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
                 shop.getLinkToSocialMedia(),
                 shop.getOwner().getId(),
                 shop.getCompanyType(),
-                shop.getDitance()
+                shop.getDistance()
         );
     }
 
