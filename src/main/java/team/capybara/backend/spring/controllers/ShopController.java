@@ -82,6 +82,9 @@ public final class ShopController {
         } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().build();
         }
     }
 
