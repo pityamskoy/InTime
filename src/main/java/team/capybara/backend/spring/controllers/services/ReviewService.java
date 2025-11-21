@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.review.ReviewDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ReviewMapper;
 import team.capybara.backend.spring.controllers.repositories.ReviewRepository;
+import team.capybara.backend.spring.controllers.repositories.ShopRepository;
 import team.capybara.backend.spring.entities.Review;
+import team.capybara.backend.spring.entities.Shop;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,18 +17,25 @@ import java.util.UUID;
 public final class ReviewService {
     private final ReviewMapper reviewMapper;
     private final ReviewRepository reviewRepository;
+    private final ShopRepository shopRepository;
 
     public ReviewService(
             ReviewMapper reviewMapper,
-            ReviewRepository reviewRepository
+            ReviewRepository reviewRepository, ShopRepository shopRepository
     ) {
         this.reviewMapper = reviewMapper;
         this.reviewRepository = reviewRepository;
+        this.shopRepository = shopRepository;
     }
 
     public List<ReviewDto> getAllReviews() {
         List<Review> reviews = reviewRepository.findAll();
 
+        return reviews.stream().map(reviewMapper::getEntity).toList();
+    }
+
+    public List<ReviewDto> getReviewsByShop(UUID id) {
+        List<Review> reviews = reviewRepository.findByShop(shopRepository.getById(id));
         return reviews.stream().map(reviewMapper::getEntity).toList();
     }
 

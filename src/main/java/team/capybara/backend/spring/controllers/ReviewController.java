@@ -42,6 +42,12 @@ public final class ReviewController {
                 (() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/get_review_by_shop/{id}")
+    public ResponseEntity<List<ReviewDto>> getReviewsByShop(@PathVariable String id) {
+        log.info("Called getReviewsByShop; id={}", id);
+        return ResponseEntity.ok(reviewService.getReviewsByShop(UUID.fromString(id)));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<ReviewDto> createReview(@RequestBody ReviewDto reviewToCreate) {
         log.info("Called createReview, reviewToCreate={}", reviewToCreate);
