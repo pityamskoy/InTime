@@ -43,7 +43,7 @@ public final class UserController {
                 (() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<Boolean> login(@RequestBody LoginDto loginDto) {
         String login = loginDto.login();
         String password = loginDto.password();

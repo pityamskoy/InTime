@@ -43,7 +43,7 @@ public final class FeedController{
         return ResponseEntity.ok(productService.getProductByShop(offset, NUMBER_OF_PRODUCTS_PER_PAGE, id));
     }
 
-    @GetMapping("/filtered/{offset}")
+    @PostMapping("/filtered/{offset}")
     public ResponseEntity<Page<ProductDto>> getAllSortedProducts(
             @PathVariable int offset,
             @RequestBody FeedFilterEntity filter

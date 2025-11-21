@@ -18,7 +18,7 @@ public record ShopDto(
         String address,
         Double lat,
         Double lon,
-        String linksToSocialMedia,
+        String linkToSocialMedia,
         UUID owner,
         String companyType,
         Double distance
