@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.filters.FeedFilterEntity;
+import team.capybara.backend.spring.controllers.services.FilteredProductService;
 import team.capybara.backend.spring.entities.*;
 import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.services.ProductService;
@@ -23,9 +24,14 @@ public final class FeedController{
     private static final int NUMBER_OF_PRODUCTS_PER_PAGE = 30;
 
     private final ProductService productService;
+    private final FilteredProductService filteredProductService;
 
-    public FeedController(ProductService productService) {
+    public FeedController(
+            ProductService productService,
+            FilteredProductService filteredProductService
+    ) {
         this.productService = productService;
+        this.filteredProductService = filteredProductService;
     }
 
     @GetMapping("/{offset}")
@@ -55,7 +61,7 @@ public final class FeedController{
 
         log.info("Called getAllSortedProducts; filter={}", filter);
 
-        return ResponseEntity.ok(productService.getAllSortedProducts(offset, NUMBER_OF_PRODUCTS_PER_PAGE, filter));
+        return ResponseEntity.ok(filteredProductService.getAllSortedProducts(offset, NUMBER_OF_PRODUCTS_PER_PAGE, filter));
     }
 
     @GetMapping("/product/{id}")
@@ -65,12 +71,6 @@ public final class FeedController{
 
         return productDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
-    }
-
-    @GetMapping("/search/{name}")
-    public ResponseEntity<List<ProductDto>> getProductByName(@PathVariable String name) {
-        log.info("Called getProduct; name={}", name);
-        return ResponseEntity.ok(productService.getProductByName(name));
     }
 
     @PostMapping("/create")
