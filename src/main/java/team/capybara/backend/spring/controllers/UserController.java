@@ -34,11 +34,11 @@ public final class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable String id) {
+    public ResponseEntity<UserAuthDto> getUserById(@PathVariable String id) {
         log.info("Called getUserById; id={}", id);
-        Optional<UserDto> userDtoOptional = userService.getUserById(UUID.fromString(id));
+        Optional<UserAuthDto> userAuthDtoOptional = userService.getUserById(UUID.fromString(id));
 
-        return userDtoOptional.map(ResponseEntity::ok).orElseGet
+        return userAuthDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
     }
 
