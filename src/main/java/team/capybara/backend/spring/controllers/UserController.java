@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import team.capybara.backend.spring.controllers.dto.user.LoginDto;
 import team.capybara.backend.spring.controllers.dto.user.UserAuthDto;
 import team.capybara.backend.spring.controllers.dto.user.UserDto;
 import team.capybara.backend.spring.controllers.services.UserService;
@@ -34,19 +35,18 @@ public final class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable String id) {
+    public ResponseEntity<UserAuthDto> getUserById(@PathVariable String id) {
         log.info("Called getUserById; id={}", id);
-        Optional<UserDto> userDtoOptional = userService.getUserById(UUID.fromString(id));
+        Optional<UserAuthDto> userAuthDtoOptional = userService.getUserById(UUID.fromString(id));
 
-        return userDtoOptional.map(ResponseEntity::ok).orElseGet
+        return userAuthDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/login")
-    public ResponseEntity<Boolean> login(
-            @RequestParam String login,
-            @RequestParam String password
-    ) {
+    public ResponseEntity<Boolean> login(@RequestBody LoginDto loginDto) {
+        String login = loginDto.login();
+        String password = loginDto.password();
         log.info("Called login; login={}, password={}", login, password);
 
         if (login.isEmpty() || password.isEmpty()) {

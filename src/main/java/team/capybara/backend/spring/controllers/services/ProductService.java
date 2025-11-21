@@ -8,7 +8,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
 import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
-import team.capybara.backend.spring.controllers.dto.user.UserDto;
+import team.capybara.backend.spring.controllers.dto.user.UserAuthDto;
 import team.capybara.backend.spring.controllers.filters.FeedFilterEntity;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.UserConverter;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
@@ -104,7 +104,7 @@ public final class ProductService {
             Page<Product> productsOfNextPage = productRepository.findAll(PageRequest.of(offset + 1, limit));
 
             for (Product product : productsOfPreviousPage.getContent()) {
-                if (product.getPrice() - product.getDiscount() >= 0.0) {
+                if (product.getPrice() - product.getDiscount() <= 0.0) {
                     freeProducts.add(product);
                 }
             }
@@ -179,7 +179,7 @@ public final class ProductService {
             @Nullable List<String> shopsIdToSortProducts,
             UUID userId
     ) {
-        Optional<UserDto> userDtoOptional = userService.getUserById(userId);
+        Optional<UserAuthDto> userDtoOptional = userService.getUserById(userId);
 
         if (userDtoOptional.isEmpty()) {
             return productsToSort.getContent();

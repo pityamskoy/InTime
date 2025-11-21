@@ -35,12 +35,12 @@ public final class UserService {
         return users.stream().map(userMapper::getEntity).toList();
     }
 
-    public Optional<UserDto> getUserById(UUID id) {
+    public Optional<UserAuthDto> getUserById(UUID id) {
         Optional<User> userOptional = userRepository.findById(id);
 
         if (userOptional.isPresent()) {
-            UserDto userDto = userMapper.getEntity(userOptional.get());
-            return Optional.of(userDto);
+            UserAuthDto userAuthDto = userAuthMapper.getEntity(userOptional.get());
+            return Optional.of(userAuthDto);
         }
 
         return Optional.empty();
