@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Entity
 @Table(name = "Interests")
