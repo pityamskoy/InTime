@@ -46,6 +46,18 @@ public final class UserService {
         return Optional.empty();
     }
 
+    public Boolean login(String login, String password) {
+        User user;
+
+        if (login.contains("@")) {
+            user = userRepository.findUserByEmail(login);
+        } else {
+            user = userRepository.findUserByPhoneNumber(login);
+        }
+
+        return user.getPassword().equals(password);
+    }
+
     public UserAuthDto createUser(UserAuthDto userToCreate) {
         return userAuthMapper.postEntity(userToCreate);
     }

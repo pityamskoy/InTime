@@ -42,6 +42,20 @@ public final class UserController {
                 (() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/login")
+    public ResponseEntity<Boolean> login(
+            @RequestParam String login,
+            @RequestParam String password
+    ) {
+        log.info("Called login; login={}, password={}", login, password);
+
+        if (login.isEmpty() || password.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.LENGTH_REQUIRED).build();
+        }
+
+        return ResponseEntity.ok(userService.login(login, password));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<UserAuthDto> createUser(@RequestBody UserAuthDto userToCreate) {
         log.info("Called createUser; userToCreate={}", userToCreate);

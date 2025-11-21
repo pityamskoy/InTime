@@ -48,7 +48,8 @@ public final class FeedController{
             @PathVariable int offset,
             @RequestBody FeedFilterEntity filter
     ) {
-        if (filter.getShopsId() == null && filter.getCategoriesId() == null && !filter.isOnlyFreeProducts() && filter.getDistance() == 0) {
+        if (filter.getShopsId() == null && filter.getCategoriesId() == null && filter.getIsOnlyFreeProducts() == null
+                && filter.getDistance() == null && filter.getUserId() == null) {
             return getAllProducts(offset);
         }
 
