@@ -104,7 +104,7 @@ public final class ProductService {
             Page<Product> productsOfNextPage = productRepository.findAll(PageRequest.of(offset + 1, limit));
 
             for (Product product : productsOfPreviousPage.getContent()) {
-                if (product.getPrice() - product.getDiscount() >= 0.0) {
+                if (product.getPrice() - product.getDiscount() <= 0.0) {
                     freeProducts.add(product);
                 }
             }
