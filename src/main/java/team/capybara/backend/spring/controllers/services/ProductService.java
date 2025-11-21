@@ -141,11 +141,11 @@ public final class ProductService {
         for(ProductType productType : productTypes){
             products.addAll(productRepository.findByProductType(productType));
         }
-        products.stream().forEach(product -> product.calculateScore(1,5));
+        products.forEach(product -> product.calculateScore(1,5));
         return products.stream().map(productMapper::getEntity).toList();
     }
 
-    public Page<ProductDto> getProductByShop(int offset, int limit,String id) {
+    public Page<ProductDto> getProductByShop(int offset, int limit, String id) {
 
         List<ProductType>productTypes = productTypeRepository.findAll();
         List<ProductType>productTypesWithNeededShop = new ArrayList<>();
