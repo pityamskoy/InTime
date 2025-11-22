@@ -7,7 +7,6 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 @Entity
 @Table(name = "Images")
