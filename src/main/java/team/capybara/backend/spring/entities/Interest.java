@@ -6,6 +6,7 @@ import lombok.*;
 import java.util.Date;
 import java.util.UUID;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity

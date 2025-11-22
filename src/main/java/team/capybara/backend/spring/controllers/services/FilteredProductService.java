@@ -52,7 +52,6 @@ public final class FilteredProductService {
         this.productMapper = productMapper;
         this.productRepository = productRepository;
         this.productTypeRepository = productTypeRepository;
-
         this.userConverter = userConverter;
     }
 
