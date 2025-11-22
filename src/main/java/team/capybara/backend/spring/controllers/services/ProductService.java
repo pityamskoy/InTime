@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
 import team.capybara.backend.spring.entities.Product;
-import team.capybara.backend.spring.controllers.dto.product.ProductDto;
+import team.capybara.backend.spring.controllers.dto.product.ProductWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ProductMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 import team.capybara.backend.spring.entities.ProductType;
@@ -33,24 +33,24 @@ public final class ProductService {
         this.productTypeRepository = productTypeRepository;
     }
 
-    public Page<ProductDto> getAllProducts(int offset, int limit) {
+    public Page<ProductWithIdDto> getAllProducts(int offset, int limit) {
         Page<Product> products = productRepository.findAll(PageRequest.of(offset, limit));
         products.stream().forEach(product -> product.calculateScore(1, 5));
         return products.map(productMapper::getEntity);
     }
 
-    public Optional<ProductDto> getProductById(UUID id) {
+    public Optional<ProductWithIdDto> getProductById(UUID id) {
         Optional<Product> productOptional = productRepository.findById(id);
 
         if (productOptional.isPresent()) {
-            ProductDto productDto = productMapper.getEntity(productOptional.get());
-            return Optional.of(productDto);
+            ProductWithIdDto productWithIdDto = productMapper.getEntity(productOptional.get());
+            return Optional.of(productWithIdDto);
         }
 
         return Optional.empty();
     }
 
-    public Page<ProductDto> getProductByShop(int offset, int limit, String id) {
+    public Page<ProductWithIdDto> getProductByShop(int offset, int limit, String id) {
 
         List<ProductType>productTypes = productTypeRepository.findAll();
         List<ProductType>productTypesWithNeededShop = new ArrayList<>();
@@ -63,11 +63,11 @@ public final class ProductService {
         return products.map(productMapper::getEntity);
     }
 
-    public ProductDto createProduct(ProductDto productToCreate) {
+    public ProductWithIdDto createProduct(ProductWithIdDto productToCreate) {
         return productMapper.postEntity(productToCreate);
     }
 
-    public ProductDto updateProduct(ProductDto productToUpdate) {
+    public ProductWithIdDto updateProduct(ProductWithIdDto productToUpdate) {
         try {
             return productMapper.putEntity(productToUpdate);
         } catch (EntityNotFoundException e) {

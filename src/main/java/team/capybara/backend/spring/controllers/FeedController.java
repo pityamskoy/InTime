@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.filters.FeedFilterEntity;
 import team.capybara.backend.spring.controllers.services.FilteredProductService;
 import team.capybara.backend.spring.entities.*;
-import team.capybara.backend.spring.controllers.dto.product.ProductDto;
+import team.capybara.backend.spring.controllers.dto.product.ProductWithIdDto;
 import team.capybara.backend.spring.controllers.services.ProductService;
 
 import java.util.*;
@@ -35,7 +35,7 @@ public final class FeedController{
     }
 
     @GetMapping("/{offset}")
-    public ResponseEntity<Page<ProductDto>> getAllProducts(@PathVariable int offset) {
+    public ResponseEntity<Page<ProductWithIdDto>> getAllProducts(@PathVariable int offset) {
         log.info("Called getAllProducts");
 
         return ResponseEntity.ok(productService.getAllProducts(offset, NUMBER_OF_PRODUCTS_PER_PAGE));
@@ -43,14 +43,14 @@ public final class FeedController{
 
     //will be replaced
     @GetMapping("/products_by_shop/{shop}/{offset}")
-    public ResponseEntity<Page<ProductDto>> getProductsByShopId(@PathVariable String id,@PathVariable int offset) {
+    public ResponseEntity<Page<ProductWithIdDto>> getProductsByShopId(@PathVariable String id, @PathVariable int offset) {
         log.info("Called getProductsByShopId");
 
         return ResponseEntity.ok(productService.getProductByShop(offset, NUMBER_OF_PRODUCTS_PER_PAGE, id));
     }
 
     @PostMapping("/filtered/{offset}")
-    public ResponseEntity<Page<ProductDto>> getAllSortedProducts(
+    public ResponseEntity<Page<ProductWithIdDto>> getAllSortedProducts(
             @PathVariable int offset,
             @RequestBody FeedFilterEntity filter
     ) {
@@ -65,16 +65,16 @@ public final class FeedController{
     }
 
     @GetMapping("/product/{id}")
-    public ResponseEntity<ProductDto> getProductById(@PathVariable String id) {
+    public ResponseEntity<ProductWithIdDto> getProductById(@PathVariable String id) {
         log.info("Called getProduct; id={}", id);
-        Optional<ProductDto> productDtoOptional = productService.getProductById(UUID.fromString(id));
+        Optional<ProductWithIdDto> productDtoOptional = productService.getProductById(UUID.fromString(id));
 
         return productDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productToCreate) {
+    public ResponseEntity<ProductWithIdDto> createProduct(@RequestBody ProductWithIdDto productToCreate) {
         log.info("Called createProduct; productToCreate={}", productToCreate);
 
         try {
@@ -87,7 +87,7 @@ public final class FeedController{
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto productToUpdate) {
+    public ResponseEntity<ProductWithIdDto> updateProduct(@RequestBody ProductWithIdDto productToUpdate) {
         log.info("Called updateProduct; productToUpdate={}", productToUpdate);
 
         try {
