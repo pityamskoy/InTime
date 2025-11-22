@@ -6,6 +6,7 @@ import lombok.*;
 import java.util.List;
 import java.util.UUID;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
