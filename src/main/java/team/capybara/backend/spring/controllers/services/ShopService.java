@@ -95,16 +95,7 @@ public final class ShopService {
             throw new EntityNotFoundException("Shop not found; id=" + id);
         }
 
-        List<Review> reviews = reviewRepository.findByShop(shop.get());
-        double sumOfStarsValue = 0.0;
-        double colOfReview = 0.0;
-
-        for (Review review:reviews) {
-            sumOfStarsValue+=review.getStars();
-            colOfReview++;
-        }
-
-        return Optional.of(sumOfStarsValue / colOfReview);
+        return Optional.of(reviewRepository.calculateStoreRating(shop.get().getId()));
     }
 
     public ShopDto updateShop(ShopDto shopToUpdate){
