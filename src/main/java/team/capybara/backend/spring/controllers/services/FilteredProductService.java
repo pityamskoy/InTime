@@ -6,7 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
-import team.capybara.backend.spring.controllers.dto.product.ProductDto;
+import team.capybara.backend.spring.controllers.dto.product.ProductWithIdDto;
 import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
 import team.capybara.backend.spring.controllers.dto.user.UserAuthDto;
 import team.capybara.backend.spring.controllers.filters.FeedFilterEntity;
@@ -52,11 +52,10 @@ public final class FilteredProductService {
         this.productMapper = productMapper;
         this.productRepository = productRepository;
         this.productTypeRepository = productTypeRepository;
-
         this.userConverter = userConverter;
     }
 
-    public Page<ProductDto> getAllSortedProducts(
+    public Page<ProductWithIdDto> getAllSortedProducts(
             int offset,
             int limit,
             FeedFilterEntity filter
@@ -101,7 +100,7 @@ public final class FilteredProductService {
             Page<Product> productsOfNextPage = productRepository.findAll(PageRequest.of(offset + 1, limit));
 
             for (Product product : productsOfPreviousPage.getContent()) {
-                if (product.getPrice() - product.getDiscount() <= 0.0) {
+                if (product.getPrice() - product.getDiscount() <= 0) {
                     freeProducts.add(product);
                 }
             }

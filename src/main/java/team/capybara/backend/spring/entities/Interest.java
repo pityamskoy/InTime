@@ -6,8 +6,8 @@ import lombok.*;
 import java.util.Date;
 import java.util.UUID;
 
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Entity
 @Table(name = "Interests")

@@ -7,9 +7,8 @@ import java.util.List;
 import java.util.Date;
 import java.util.UUID;
 
-
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Entity
 @Table(name = "Shops")
