@@ -3,6 +3,7 @@ package team.capybara.backend.spring.controllers.services;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.interest.InterestDto;
+import team.capybara.backend.spring.controllers.dto.interest.InterestWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.InterestMapper;
 import team.capybara.backend.spring.controllers.repositories.*;
 import team.capybara.backend.spring.entities.Interest;
@@ -27,31 +28,31 @@ public final class InterestService {
         this.productRepository = productRepository;
     }
 
-    public List<InterestDto> getAllInterests() {
+    public List<InterestWithIdDto> getAllInterests() {
         List<Interest> interests = interestRepository.findAll();
 
         return interests.stream().map(interestMapper::getEntity).toList();
     }
 
-    public List<InterestDto> getAllInterestsByProduct(UUID id) {
+    public List<InterestWithIdDto> getAllInterestsByProduct(UUID id) {
         Optional<Product> product = productRepository.findById(id);
         List<Interest> interests = interestRepository.findByProduct(product.get());
 
         return interests.stream().map(interestMapper::getEntity).toList();
     }
 
-    public Optional<InterestDto> getInterestById(UUID id) {
+    public Optional<InterestWithIdDto> getInterestById(UUID id) {
         Optional<Interest> interestOptional = interestRepository.findById(id);
 
         if (interestOptional.isPresent()) {
-            InterestDto interestDto = interestMapper.getEntity(interestOptional.get());
-            return Optional.of(interestDto);
+            InterestWithIdDto interestWithIdDto = interestMapper.getEntity(interestOptional.get());
+            return Optional.of(interestWithIdDto);
         }
 
         return Optional.empty();
     }
 
-    public InterestDto createInterest(InterestDto interestToCreate) {
+    public InterestWithIdDto createInterest(InterestDto interestToCreate) {
         try {
             return interestMapper.postEntity(interestToCreate);
         } catch (EntityNotFoundException e) {
@@ -59,7 +60,7 @@ public final class InterestService {
         }
     }
 
-    public InterestDto updateInterest(InterestDto interestToUpdate) {
+    public InterestWithIdDto updateInterest(InterestWithIdDto interestToUpdate) {
         try {
             return interestMapper.putEntity(interestToUpdate);
         } catch (EntityNotFoundException e) {

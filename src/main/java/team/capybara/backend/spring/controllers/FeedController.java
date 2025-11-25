@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.filters.FeedFilterEntity;
 import team.capybara.backend.spring.controllers.services.FilteredProductService;
 import team.capybara.backend.spring.entities.*;
@@ -74,7 +75,7 @@ public final class FeedController{
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ProductWithIdDto> createProduct(@RequestBody ProductWithIdDto productToCreate) {
+    public ResponseEntity<ProductWithIdDto> createProduct(@RequestBody ProductDto productToCreate) {
         log.info("Called createProduct; productToCreate={}", productToCreate);
 
         try {

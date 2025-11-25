@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.login.LoginDto;
 import team.capybara.backend.spring.controllers.dto.login.LoginResultDto;
 import team.capybara.backend.spring.controllers.dto.user.UserAuthDto;
+import team.capybara.backend.spring.controllers.dto.user.UserAuthWithIdDto;
 import team.capybara.backend.spring.controllers.dto.user.UserDto;
 import team.capybara.backend.spring.controllers.services.UserService;
 
@@ -36,9 +37,9 @@ public final class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserAuthDto> getUserById(@PathVariable String id) {
+    public ResponseEntity<UserAuthWithIdDto> getUserById(@PathVariable String id) {
         log.info("Called getUserById; id={}", id);
-        Optional<UserAuthDto> userAuthDtoOptional = userService.getUserById(UUID.fromString(id));
+        Optional<UserAuthWithIdDto> userAuthDtoOptional = userService.getUserById(UUID.fromString(id));
 
         return userAuthDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
@@ -58,14 +59,14 @@ public final class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<UserAuthDto> createUser(@RequestBody UserAuthDto userToCreate) {
+    public ResponseEntity<UserAuthWithIdDto> createUser(@RequestBody UserAuthDto userToCreate) {
         log.info("Called createUser; userToCreate={}", userToCreate);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userService.createUser(userToCreate));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<UserAuthDto> updateUser(@RequestBody UserAuthDto userToUpdate) {
+    public ResponseEntity<UserAuthWithIdDto> updateUser(@RequestBody UserAuthWithIdDto userToUpdate) {
         log.info("Called updateUser; userToUpdate={}", userToUpdate);
 
         try {

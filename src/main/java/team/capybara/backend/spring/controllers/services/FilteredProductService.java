@@ -7,8 +7,8 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
 import team.capybara.backend.spring.controllers.dto.product.ProductWithIdDto;
-import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
-import team.capybara.backend.spring.controllers.dto.user.UserAuthDto;
+import team.capybara.backend.spring.controllers.dto.shop.ShopWithIdDto;
+import team.capybara.backend.spring.controllers.dto.user.UserAuthWithIdDto;
 import team.capybara.backend.spring.controllers.filters.FeedFilterEntity;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.UserConverter;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ProductMapper;
@@ -156,9 +156,9 @@ public final class FilteredProductService {
         List<Product> productsSorted = new ArrayList<>();
 
         if (shopsIdToSortProducts == null || shopsIdToSortProducts.isEmpty()) {
-            shopsId = shopService.getAllShops().stream().map(ShopDto::id).toList();
+            shopsId = shopService.getAllShops().stream().map(ShopWithIdDto::id).toList();
         } else {
-            shopsId = shopService.sortShopsByDistance(List.of(), distance).stream().map(ShopDto::id).toList();
+            shopsId = shopService.sortShopsByDistance(List.of(), distance).stream().map(ShopWithIdDto::id).toList();
         }
 
         for (Product product : productsToSort.getContent()) {
@@ -192,7 +192,7 @@ public final class FilteredProductService {
             @Nullable List<String> shopsIdToSortProducts,
             UUID userId
     ) {
-        Optional<UserAuthDto> userDtoOptional = userService.getUserById(userId);
+        Optional<UserAuthWithIdDto> userDtoOptional = userService.getUserById(userId);
 
         if (userDtoOptional.isEmpty()) {
             return productsToSort.getContent();

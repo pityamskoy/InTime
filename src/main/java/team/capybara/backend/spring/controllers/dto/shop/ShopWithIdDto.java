@@ -4,7 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public record ShopDto(
+public record ShopWithIdDto(
+        UUID id,
         String name,
         Date timeOpen,
         Date timeClose,

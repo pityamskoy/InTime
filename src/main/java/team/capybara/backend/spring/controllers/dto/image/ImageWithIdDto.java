@@ -1,6 +1,9 @@
 package team.capybara.backend.spring.controllers.dto.image;
 
-public record ImageDto(
+import java.util.UUID;
+
+public record ImageWithIdDto(
+        UUID id,
         String path
 ) {
 }

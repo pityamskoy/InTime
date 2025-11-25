@@ -5,6 +5,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.FileFromStorageStore;
 import team.capybara.backend.spring.controllers.dto.image.ImageDto;
+import team.capybara.backend.spring.controllers.dto.image.ImageWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ImageMapper;
 import team.capybara.backend.spring.controllers.repositories.ImageRepository;
 import team.capybara.backend.spring.entities.Image;
@@ -32,29 +33,29 @@ public final class ImageService {
         fileFromStorageStore = new FileFromStorageStore();
     }
 
-    public List<ImageDto> getAllImages() {
+    public List<ImageWithIdDto> getAllImages() {
         List<Image> images = imageRepository.findAll();
         return images.stream().map(imageMapper::getEntity).toList();
     }
 
-    public Optional<ImageDto> getImageById(UUID id) {
+    public Optional<ImageWithIdDto> getImageById(UUID id) {
         Optional<Image> imageOptional = imageRepository.findById(id);
 
         if (imageOptional.isPresent()) {
-            ImageDto imageDto = imageMapper.getEntity(imageOptional.get());
-            return Optional.of(imageDto);
+            ImageWithIdDto imageWithIdDto = imageMapper.getEntity(imageOptional.get());
+            return Optional.of(imageWithIdDto);
         }
 
         return Optional.empty();
     }
 
-    public ImageDto createImage(byte[] imageToCreate) throws IOException {
-        ImageDto imageCreated = imageMapper.postEntity(new ImageDto(UUID.randomUUID(),imagePath));
+    public ImageWithIdDto createImage(byte[] imageToCreate) throws IOException {
+        ImageWithIdDto imageCreated = imageMapper.postEntity(new ImageDto(imagePath));
         fileFromStorageStore.saveFile(imageStorePath,imageCreated.id().toString()+".jpg",imageToCreate);
         return imageCreated;
     }
 
-    public ImageDto updateImage(ImageDto imageToUpdate) {
+    public ImageWithIdDto updateImage(ImageWithIdDto imageToUpdate) {
         try {
             return imageMapper.putEntity(imageToUpdate);
         } catch (EntityNotFoundException e) {

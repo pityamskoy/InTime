@@ -6,8 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
+import team.capybara.backend.spring.controllers.dto.category.CategoryWithIdDto;
 import team.capybara.backend.spring.controllers.dto.producttype.ProductTypeDto;
+import team.capybara.backend.spring.controllers.dto.producttype.ProductTypeWithIdDto;
 import team.capybara.backend.spring.controllers.services.CategoryService;
 import team.capybara.backend.spring.controllers.services.ProductTypeService;
 import team.capybara.backend.spring.entities.ProductType;
@@ -35,17 +36,17 @@ public final class ProductTypeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductTypeDto>> getAllProductTypes() {
+    public ResponseEntity<List<ProductTypeWithIdDto>> getAllProductTypes() {
         log.info("Called getAllProductTypes");
 
         return ResponseEntity.ok(productTypeService.getAllProductTypes());
     }
 
     @GetMapping("/categories/{productTypeId}")
-    public ResponseEntity<List<CategoryDto>> getAllCategoriesByProductTypeId(@PathVariable String productTypeId) {
+    public ResponseEntity<List<CategoryWithIdDto>> getAllCategoriesByProductTypeId(@PathVariable String productTypeId) {
         log.info("Called getAllCategoriesByProductTypeId; id={}", productTypeId);
 
-        List<CategoryDto> categories = categoryService.getAllCategoriesByProductTypeId(UUID.fromString(productTypeId));
+        List<CategoryWithIdDto> categories = categoryService.getAllCategoriesByProductTypeId(UUID.fromString(productTypeId));
 
         return ResponseEntity.ok(categories);
     }
@@ -65,16 +66,16 @@ public final class ProductTypeController {
     }*/
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductTypeDto> getProductTypeById(@PathVariable("id") String id) {
+    public ResponseEntity<ProductTypeWithIdDto> getProductTypeById(@PathVariable("id") String id) {
         log.info("Called getProductTypeById; id={}", id);
-        Optional<ProductTypeDto> productTypeDtoOptional = productTypeService.getProductTypeById(UUID.fromString(id));
+        Optional<ProductTypeWithIdDto> productTypeDtoOptional = productTypeService.getProductTypeById(UUID.fromString(id));
 
         return productTypeDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ProductTypeDto> createProductType(@RequestBody ProductTypeDto productToCreate) {
+    public ResponseEntity<ProductTypeWithIdDto> createProductType(@RequestBody ProductTypeDto productToCreate) {
         log.info("Called createProductType; productTypeToCreate={}", productToCreate);
 
         try {
@@ -86,7 +87,7 @@ public final class ProductTypeController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ProductTypeDto> updateProductType(@RequestBody ProductTypeDto productTypeToUpdate) {
+    public ResponseEntity<ProductTypeWithIdDto> updateProductType(@RequestBody ProductTypeWithIdDto productTypeToUpdate) {
         log.info("Called updateProductType; productTypeToUpdate={}", productTypeToUpdate);
 
         try {
@@ -98,7 +99,7 @@ public final class ProductTypeController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<ProductType> deleteProductType(@RequestBody String id) {
+    public ResponseEntity<Void> deleteProductType(@RequestBody String id) {
         log.info("Called deleteProductType; id={}", id);
 
         try {
