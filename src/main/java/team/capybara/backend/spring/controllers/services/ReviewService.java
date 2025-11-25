@@ -3,11 +3,11 @@ package team.capybara.backend.spring.controllers.services;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.review.ReviewDto;
+import team.capybara.backend.spring.controllers.dto.review.ReviewWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ReviewMapper;
 import team.capybara.backend.spring.controllers.repositories.ReviewRepository;
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
 import team.capybara.backend.spring.entities.Review;
-import team.capybara.backend.spring.entities.Shop;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,29 +28,29 @@ public final class ReviewService {
         this.shopRepository = shopRepository;
     }
 
-    public List<ReviewDto> getAllReviews() {
+    public List<ReviewWithIdDto> getAllReviews() {
         List<Review> reviews = reviewRepository.findAll();
 
         return reviews.stream().map(reviewMapper::getEntity).toList();
     }
 
-    public List<ReviewDto> getReviewsByShop(UUID id) {
+    public List<ReviewWithIdDto> getReviewsByShop(UUID id) {
         List<Review> reviews = reviewRepository.findByShop(shopRepository.getById(id));
         return reviews.stream().map(reviewMapper::getEntity).toList();
     }
 
-    public Optional<ReviewDto> getReviewById(UUID id) {
+    public Optional<ReviewWithIdDto> getReviewById(UUID id) {
         Optional<Review> reviewOptional = reviewRepository.findById(id);
 
         if (reviewOptional.isPresent()) {
-            ReviewDto reviewDto = reviewMapper.getEntity(reviewOptional.get());
-            return Optional.of(reviewDto);
+            ReviewWithIdDto reviewWithIdDto = reviewMapper.getEntity(reviewOptional.get());
+            return Optional.of(reviewWithIdDto);
         }
 
         return Optional.empty();
     }
 
-    public ReviewDto createReview(ReviewDto reviewToCreate) {
+    public ReviewWithIdDto createReview(ReviewDto reviewToCreate) {
         try {
             return reviewMapper.postEntity(reviewToCreate);
         } catch (EntityNotFoundException e) {
@@ -58,7 +58,7 @@ public final class ReviewService {
         }
     }
 
-    public ReviewDto updateReview(ReviewDto reviewToUpdate) {
+    public ReviewWithIdDto updateReview(ReviewWithIdDto reviewToUpdate) {
         try {
             return reviewMapper.putEntity(reviewToUpdate);
         } catch (EntityNotFoundException e) {

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import team.capybara.backend.spring.controllers.dto.favorite.FavoriteWithIdDto;
 import team.capybara.backend.spring.controllers.dto.favorite.FavoriteDto;
 import team.capybara.backend.spring.controllers.services.FavoriteService;
 
@@ -27,23 +28,23 @@ public final class FavoriteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FavoriteDto>> getAllFavorites() {
+    public ResponseEntity<List<FavoriteWithIdDto>> getAllFavorites() {
         log.info("Called getAllFavorites");
 
         return ResponseEntity.ok(favoriteService.getAllFavorites());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FavoriteDto> getFavoriteById(@PathVariable UUID id) {
+    public ResponseEntity<FavoriteWithIdDto> getFavoriteById(@PathVariable UUID id) {
         log.info("Called getFavoriteById; id={}", id);
-        Optional<FavoriteDto> favoriteDtoOptional = favoriteService.getFavoriteById(id);
+        Optional<FavoriteWithIdDto> favoriteDtoOptional = favoriteService.getFavoriteById(id);
 
         return favoriteDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/create")
-    public ResponseEntity<FavoriteDto> createFavorite(@RequestBody FavoriteDto favoriteToCreate) {
+    public ResponseEntity<FavoriteWithIdDto> createFavorite(@RequestBody FavoriteDto favoriteToCreate) {
         log.info("Called createFavorite; favoriteToCreate={}", favoriteToCreate);
 
         try {
@@ -56,7 +57,7 @@ public final class FavoriteController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<FavoriteDto> updateFavorite(@RequestBody FavoriteDto favoriteToUpdate) {
+    public ResponseEntity<FavoriteWithIdDto> updateFavorite(@RequestBody FavoriteWithIdDto favoriteToUpdate) {
         log.info("Called updateFavorite; favoriteToUpdate={}", favoriteToUpdate);
 
         try {
@@ -69,7 +70,7 @@ public final class FavoriteController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<FavoriteDto> deleteFavorite(@RequestBody UUID id) {
+    public ResponseEntity<Void> deleteFavorite(@RequestBody UUID id) {
         log.info("Called deleteFavorite; id={}", id);
 
         try {

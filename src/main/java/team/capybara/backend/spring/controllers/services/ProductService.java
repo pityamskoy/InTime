@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
 import team.capybara.backend.spring.entities.Product;
 import team.capybara.backend.spring.controllers.dto.product.ProductWithIdDto;
@@ -63,7 +64,7 @@ public final class ProductService {
         return products.map(productMapper::getEntity);
     }
 
-    public ProductWithIdDto createProduct(ProductWithIdDto productToCreate) {
+    public ProductWithIdDto createProduct(ProductDto productToCreate) {
         return productMapper.postEntity(productToCreate);
     }
 

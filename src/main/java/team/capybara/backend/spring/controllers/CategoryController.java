@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
+import team.capybara.backend.spring.controllers.dto.category.CategoryWithIdDto;
 import team.capybara.backend.spring.controllers.services.CategoryService;
 
 import java.util.List;
@@ -28,21 +29,22 @@ public final class CategoryController {
 
 
     @GetMapping
-    public ResponseEntity<List<CategoryDto>> getAllCategories() {
+    public ResponseEntity<List<CategoryWithIdDto>> getAllCategories() {
+        log.info("Called getAllCategories");
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable String id) {
+    public ResponseEntity<CategoryWithIdDto> getCategoryById(@PathVariable String id) {
         log.info("Called getCategoryById; id={}", id);
-        Optional<CategoryDto> categoryDtoOptional = categoryService.getCategoryById(UUID.fromString(id));
+        Optional<CategoryWithIdDto> categoryWithIdDtoOptional = categoryService.getCategoryById(UUID.fromString(id));
 
-        return categoryDtoOptional.map(ResponseEntity::ok).orElseGet
+        return categoryWithIdDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto categoryToCreate) {
+    public ResponseEntity<CategoryWithIdDto> createCategory(@RequestBody CategoryDto categoryToCreate) {
         log.info("Called createCategory; categoryToCreate={}", categoryToCreate);
 
         try {
@@ -55,7 +57,7 @@ public final class CategoryController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<CategoryDto> updateCategory(@RequestBody CategoryDto categoryToUpdate) {
+    public ResponseEntity<CategoryWithIdDto> updateCategory(@RequestBody CategoryWithIdDto categoryToUpdate) {
         log.info("Called updateCategory; categoryToUpdate={}", categoryToUpdate);
 
         try {
@@ -67,7 +69,7 @@ public final class CategoryController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<CategoryDto> deleteCategory(@RequestBody String id) {
+    public ResponseEntity<Void> deleteCategory(@RequestBody String id) {
         log.info("Called deleteCategory; id={}", id);
 
         try {

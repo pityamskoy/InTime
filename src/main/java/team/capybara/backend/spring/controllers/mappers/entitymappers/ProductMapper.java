@@ -2,6 +2,7 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
+import team.capybara.backend.spring.controllers.dto.product.ProductDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ProductConverter;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ProductTypeConverter;
@@ -14,7 +15,7 @@ import java.util.UUID;
 
 
 @Component
-public final class ProductMapper implements Mapper<Product, ProductWithIdDto> {
+public final class ProductMapper implements Mapper<Product, ProductWithIdDto, ProductDto> {
     private final ProductRepository productRepository;
     private final ProductConverter productConverter;
     private final ProductTypeConverter productTypeConverter;
@@ -44,9 +45,9 @@ public final class ProductMapper implements Mapper<Product, ProductWithIdDto> {
     }
 
     @Override
-    public ProductWithIdDto postEntity(ProductWithIdDto productToCreate) {
+    public ProductWithIdDto postEntity(ProductDto productToCreate) {
         try {
-            ProductType productType = productTypeConverter.toEntity(productToCreate.id());
+            ProductType productType = productTypeConverter.toEntity(productToCreate.productTypeId());
 
             Product productCreated = productRepository.save(new Product(
                     UUID.randomUUID(),

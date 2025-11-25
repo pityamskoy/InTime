@@ -3,6 +3,7 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
 import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
+import team.capybara.backend.spring.controllers.dto.category.CategoryWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.CategoryConverter;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ProductTypeConverter;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-public final class CategoryMapper implements Mapper<Category, CategoryDto> {
+public final class CategoryMapper implements Mapper<Category, CategoryWithIdDto, CategoryDto> {
     private final CategoryRepository categoryRepository;
     private final CategoryConverter categoryConverter;
     private final ProductTypeConverter productTypeConverter;
@@ -30,8 +31,8 @@ public final class CategoryMapper implements Mapper<Category, CategoryDto> {
     }
 
     @Override
-    public CategoryDto getEntity(Category category) {
-        return new CategoryDto(
+    public CategoryWithIdDto getEntity(Category category) {
+        return new CategoryWithIdDto(
                 category.getId(),
                 category.getName(),
                 category.getDescription(),
@@ -40,7 +41,7 @@ public final class CategoryMapper implements Mapper<Category, CategoryDto> {
     }
 
     @Override
-    public CategoryDto postEntity(CategoryDto categoryToCreate) {
+    public CategoryWithIdDto postEntity(CategoryDto categoryToCreate) {
         try {
             List<ProductType> productTypes = productTypeConverter.toEntityList(categoryToCreate.productTypesId());
 
@@ -58,7 +59,7 @@ public final class CategoryMapper implements Mapper<Category, CategoryDto> {
     }
 
     @Override
-    public CategoryDto putEntity(CategoryDto categoryToUpdate) {
+    public CategoryWithIdDto putEntity(CategoryWithIdDto categoryToUpdate) {
         try {
             Category categoryUpdated = categoryConverter.toEntity(categoryToUpdate.id());
             List<ProductType> productTypes = productTypeConverter.toEntityList(categoryToUpdate.productTypesId());

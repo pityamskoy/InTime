@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.review.ReviewDto;
+import team.capybara.backend.spring.controllers.dto.review.ReviewWithIdDto;
 import team.capybara.backend.spring.controllers.services.ReviewService;
 
 import java.util.List;
@@ -27,29 +28,29 @@ public final class ReviewController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ReviewDto>> getAllReviews() {
+    public ResponseEntity<List<ReviewWithIdDto>> getAllReviews() {
         log.info("Called getAllReviews");
 
         return ResponseEntity.ok(reviewService.getAllReviews());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReviewDto> getReviewById(@PathVariable String id) {
+    public ResponseEntity<ReviewWithIdDto> getReviewById(@PathVariable String id) {
         log.info("Called getReviewById; id={}", id);
-        Optional<ReviewDto> reviewDtoOptional = reviewService.getReviewById(UUID.fromString(id));
+        Optional<ReviewWithIdDto> reviewDtoOptional = reviewService.getReviewById(UUID.fromString(id));
 
         return reviewDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/get_review_by_shop/{id}")
-    public ResponseEntity<List<ReviewDto>> getReviewsByShop(@PathVariable String id) {
+    public ResponseEntity<List<ReviewWithIdDto>> getReviewsByShop(@PathVariable String id) {
         log.info("Called getReviewsByShop; id={}", id);
         return ResponseEntity.ok(reviewService.getReviewsByShop(UUID.fromString(id)));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ReviewDto> createReview(@RequestBody ReviewDto reviewToCreate) {
+    public ResponseEntity<ReviewWithIdDto> createReview(@RequestBody ReviewDto reviewToCreate) {
         log.info("Called createReview, reviewToCreate={}", reviewToCreate);
 
         try {
@@ -61,7 +62,7 @@ public final class ReviewController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ReviewDto> updateReview(@RequestBody ReviewDto reviewToUpdate) {
+    public ResponseEntity<ReviewWithIdDto> updateReview(@RequestBody ReviewWithIdDto reviewToUpdate) {
         log.info("Called updateReview, reviewToUpdate={}", reviewToUpdate);
 
         try {
@@ -73,7 +74,7 @@ public final class ReviewController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<ReviewDto> deleteReview(@RequestBody String id) {
+    public ResponseEntity<Void> deleteReview(@RequestBody String id) {
         log.info("Called deleteReview, id={}", id);
 
         try {
