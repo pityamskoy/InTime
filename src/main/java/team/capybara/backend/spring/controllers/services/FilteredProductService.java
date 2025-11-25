@@ -5,7 +5,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
+import team.capybara.backend.spring.controllers.dto.category.CategoryWithIdDto;
 import team.capybara.backend.spring.controllers.dto.product.ProductWithIdDto;
 import team.capybara.backend.spring.controllers.dto.shop.ShopWithIdDto;
 import team.capybara.backend.spring.controllers.dto.user.UserAuthWithIdDto;
@@ -120,7 +120,7 @@ public final class FilteredProductService {
         List<Product> productsSorted = new ArrayList<>();
 
         for (UUID categoryId : categoriesId) {
-            Optional<CategoryDto> categoryDtoOptional = categoryService.getCategoryById(categoryId);
+            Optional<CategoryWithIdDto> categoryDtoOptional = categoryService.getCategoryById(categoryId);
 
             categoryDtoOptional.ifPresent(categoryDto ->
                     requiresProductTypesId.addAll(categoryDto.productTypesId()));
