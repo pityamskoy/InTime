@@ -2,8 +2,8 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
-import team.capybara.backend.spring.controllers.dto.favorite.FavoriteDto;
-import team.capybara.backend.spring.controllers.dto.favorite.FavoriteWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.favorite.FavoriteDto;
+import team.capybara.backend.spring.controllers.dto.entities.favorite.FavoriteWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.FavoriteConverter;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ProductTypeConverter;

@@ -3,14 +3,15 @@ package team.capybara.backend.spring.controllers;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.spring.controllers.dto.review.ReviewDto;
-import team.capybara.backend.spring.controllers.dto.review.ReviewWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.review.ReviewDto;
+import team.capybara.backend.spring.controllers.dto.entities.review.ReviewWithIdDto;
+import team.capybara.backend.spring.controllers.dto.other.pagination.PaginationLimit;
 import team.capybara.backend.spring.controllers.services.ReviewService;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,11 +28,14 @@ public final class ReviewController {
         this.reviewService = reviewService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<ReviewWithIdDto>> getAllReviews() {
-        log.info("Called getAllReviews");
+    @PostMapping("/{offset}")
+    public ResponseEntity<Page<ReviewWithIdDto>> getAllReviews(
+            @PathVariable int offset,
+            @RequestBody PaginationLimit limit
+    ) {
+        log.info("Called getAllReviews; offset={}, limit={}", offset, limit.getLimit());
 
-        return ResponseEntity.ok(reviewService.getAllReviews());
+        return ResponseEntity.ok(reviewService.getAllReviews(offset, limit.getLimit()));
     }
 
     @GetMapping("/{id}")
@@ -43,10 +47,14 @@ public final class ReviewController {
                 (() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/get_review_by_shop/{id}")
-    public ResponseEntity<List<ReviewWithIdDto>> getReviewsByShop(@PathVariable String id) {
+    @PostMapping("/get_review_by_shop/{id/{offset}")
+    public ResponseEntity<Page<ReviewWithIdDto>> getReviewsByShop(
+            @PathVariable String id,
+            @PathVariable int offset,
+            @RequestBody PaginationLimit limit
+    ) {
         log.info("Called getReviewsByShop; id={}", id);
-        return ResponseEntity.ok(reviewService.getReviewsByShop(UUID.fromString(id)));
+        return ResponseEntity.ok(reviewService.getReviewsByShop(UUID.fromString(id), offset, limit.getLimit()));
     }
 
     @PostMapping("/create")

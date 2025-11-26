@@ -2,14 +2,14 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
-import team.capybara.backend.spring.controllers.dto.product.ProductDto;
+import team.capybara.backend.spring.controllers.dto.entities.product.ProductDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ProductConverter;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ProductTypeConverter;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 import team.capybara.backend.spring.entities.Product;
 import team.capybara.backend.spring.entities.ProductType;
-import team.capybara.backend.spring.controllers.dto.product.ProductWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.product.ProductWithIdDto;
 
 import java.util.UUID;
 

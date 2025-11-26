@@ -2,8 +2,8 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
-import team.capybara.backend.spring.controllers.dto.interest.InterestDto;
-import team.capybara.backend.spring.controllers.dto.interest.InterestWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.interest.InterestDto;
+import team.capybara.backend.spring.controllers.dto.entities.interest.InterestWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.InterestConverter;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ProductConverter;

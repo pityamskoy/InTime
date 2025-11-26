@@ -2,9 +2,9 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
-import team.capybara.backend.spring.controllers.dto.user.UserAuthDto;
-import team.capybara.backend.spring.controllers.dto.user.UserAuthWithIdDto;
-import team.capybara.backend.spring.controllers.dto.user.UserDto;
+import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthDto;
+import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.user.UserDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.UserConverter;
 import team.capybara.backend.spring.controllers.repositories.UserRepository;

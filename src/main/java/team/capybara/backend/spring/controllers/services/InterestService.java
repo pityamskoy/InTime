@@ -2,8 +2,8 @@ package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.controllers.dto.interest.InterestDto;
-import team.capybara.backend.spring.controllers.dto.interest.InterestWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.interest.InterestDto;
+import team.capybara.backend.spring.controllers.dto.entities.interest.InterestWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.InterestMapper;
 import team.capybara.backend.spring.controllers.repositories.*;
 import team.capybara.backend.spring.entities.Interest;

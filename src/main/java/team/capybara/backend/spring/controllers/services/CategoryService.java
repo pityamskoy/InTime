@@ -2,8 +2,8 @@ package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
-import team.capybara.backend.spring.controllers.dto.category.CategoryWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.category.CategoryDto;
+import team.capybara.backend.spring.controllers.dto.entities.category.CategoryWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.CategoryMapper;
 import team.capybara.backend.spring.controllers.repositories.*;
 import team.capybara.backend.spring.entities.Category;

@@ -6,8 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
-import team.capybara.backend.spring.controllers.dto.category.CategoryWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.category.CategoryDto;
+import team.capybara.backend.spring.controllers.dto.entities.category.CategoryWithIdDto;
 import team.capybara.backend.spring.controllers.services.CategoryService;
 
 import java.util.List;

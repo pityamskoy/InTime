@@ -2,8 +2,8 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
-import team.capybara.backend.spring.controllers.dto.review.ReviewDto;
-import team.capybara.backend.spring.controllers.dto.review.ReviewWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.review.ReviewDto;
+import team.capybara.backend.spring.controllers.dto.entities.review.ReviewWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ReviewConverter;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ShopConverter;
