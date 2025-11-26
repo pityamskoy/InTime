@@ -5,11 +5,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.controllers.dto.category.CategoryWithIdDto;
-import team.capybara.backend.spring.controllers.dto.product.ProductWithIdDto;
-import team.capybara.backend.spring.controllers.dto.shop.ShopWithIdDto;
-import team.capybara.backend.spring.controllers.dto.user.UserAuthWithIdDto;
-import team.capybara.backend.spring.controllers.filters.FeedFilterEntity;
+import team.capybara.backend.spring.controllers.dto.entities.category.CategoryWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.product.ProductWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.shop.ShopWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthWithIdDto;
+import team.capybara.backend.spring.controllers.dto.other.filters.FeedFilterEntity;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.UserConverter;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ProductMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
@@ -57,9 +57,9 @@ public final class FilteredProductService {
 
     public Page<ProductWithIdDto> getAllSortedProducts(
             int offset,
-            int limit,
             FeedFilterEntity filter
     ) {
+        int limit = filter.getLimit();
         Page<Product> productsToSort;
 
         if (filter.getIsOnlyFreeProducts() != null && filter.getIsOnlyFreeProducts()) {

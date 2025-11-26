@@ -6,8 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.spring.controllers.dto.favorite.FavoriteWithIdDto;
-import team.capybara.backend.spring.controllers.dto.favorite.FavoriteDto;
+import team.capybara.backend.spring.controllers.dto.entities.favorite.FavoriteWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.favorite.FavoriteDto;
 import team.capybara.backend.spring.controllers.services.FavoriteService;
 
 import java.util.List;

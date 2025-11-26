@@ -6,12 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.spring.controllers.dto.category.CategoryWithIdDto;
-import team.capybara.backend.spring.controllers.dto.producttype.ProductTypeDto;
-import team.capybara.backend.spring.controllers.dto.producttype.ProductTypeWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.category.CategoryWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.producttype.ProductTypeDto;
+import team.capybara.backend.spring.controllers.dto.entities.producttype.ProductTypeWithIdDto;
 import team.capybara.backend.spring.controllers.services.CategoryService;
 import team.capybara.backend.spring.controllers.services.ProductTypeService;
-import team.capybara.backend.spring.entities.ProductType;
 
 import java.util.List;
 import java.util.Optional;

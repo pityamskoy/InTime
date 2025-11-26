@@ -2,7 +2,7 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
-import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
+import team.capybara.backend.spring.controllers.dto.entities.shop.ShopDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ImageConverter;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ShopConverter;
@@ -10,7 +10,7 @@ import team.capybara.backend.spring.controllers.mappers.converters.entityconvert
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
 import team.capybara.backend.spring.entities.Image;
 import team.capybara.backend.spring.entities.Shop;
-import team.capybara.backend.spring.controllers.dto.shop.ShopWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.shop.ShopWithIdDto;
 import team.capybara.backend.spring.entities.User;
 
 import java.util.List;

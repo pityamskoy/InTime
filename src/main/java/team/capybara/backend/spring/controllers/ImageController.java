@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import team.capybara.backend.spring.controllers.dto.image.ImageWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.image.ImageWithIdDto;
 import team.capybara.backend.spring.controllers.services.ImageService;
 
 import java.io.IOException;

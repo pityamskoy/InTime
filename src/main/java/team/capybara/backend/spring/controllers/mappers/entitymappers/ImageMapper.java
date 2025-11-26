@@ -2,12 +2,12 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
-import team.capybara.backend.spring.controllers.dto.image.ImageDto;
+import team.capybara.backend.spring.controllers.dto.entities.image.ImageDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ImageConverter;
 import team.capybara.backend.spring.controllers.repositories.ImageRepository;
 import team.capybara.backend.spring.entities.Image;
-import team.capybara.backend.spring.controllers.dto.image.ImageWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.image.ImageWithIdDto;
 
 import java.util.*;
 

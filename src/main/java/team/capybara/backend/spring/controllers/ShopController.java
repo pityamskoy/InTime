@@ -6,8 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
-import team.capybara.backend.spring.controllers.dto.shop.ShopWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.shop.ShopDto;
+import team.capybara.backend.spring.controllers.dto.entities.shop.ShopWithIdDto;
 import team.capybara.backend.spring.controllers.services.ShopService;
 
 import java.util.List;

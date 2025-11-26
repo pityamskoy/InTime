@@ -1,9 +1,11 @@
 package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.controllers.dto.review.ReviewDto;
-import team.capybara.backend.spring.controllers.dto.review.ReviewWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.review.ReviewDto;
+import team.capybara.backend.spring.controllers.dto.entities.review.ReviewWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ReviewMapper;
 import team.capybara.backend.spring.controllers.repositories.ReviewRepository;
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
@@ -28,15 +30,14 @@ public final class ReviewService {
         this.shopRepository = shopRepository;
     }
 
-    public List<ReviewWithIdDto> getAllReviews() {
-        List<Review> reviews = reviewRepository.findAll();
-
-        return reviews.stream().map(reviewMapper::getEntity).toList();
+    public Page<ReviewWithIdDto> getAllReviews(int offset, int limit) {
+        Page<Review> reviews = reviewRepository.findAll(PageRequest.of(offset, limit));
+        return reviews.map(reviewMapper::getEntity);
     }
 
-    public List<ReviewWithIdDto> getReviewsByShop(UUID id) {
-        List<Review> reviews = reviewRepository.findByShop(shopRepository.getById(id));
-        return reviews.stream().map(reviewMapper::getEntity).toList();
+    public Page<ReviewWithIdDto> getReviewsByShop(UUID id, int offset, int limit) {
+        Page<Review> reviews = reviewRepository.findByShop(shopRepository.getById(id), PageRequest.of(offset, limit));
+        return reviews.map(reviewMapper::getEntity);
     }
 
     public Optional<ReviewWithIdDto> getReviewById(UUID id) {

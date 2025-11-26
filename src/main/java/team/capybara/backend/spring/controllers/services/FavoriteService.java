@@ -2,8 +2,8 @@ package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.controllers.dto.favorite.FavoriteDto;
-import team.capybara.backend.spring.controllers.dto.favorite.FavoriteWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.favorite.FavoriteDto;
+import team.capybara.backend.spring.controllers.dto.entities.favorite.FavoriteWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.FavoriteMapper;
 import team.capybara.backend.spring.controllers.repositories.*;
 import team.capybara.backend.spring.entities.Favorite;

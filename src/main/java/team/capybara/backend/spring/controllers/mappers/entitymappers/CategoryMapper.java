@@ -2,8 +2,8 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
-import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
-import team.capybara.backend.spring.controllers.dto.category.CategoryWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.category.CategoryDto;
+import team.capybara.backend.spring.controllers.dto.entities.category.CategoryWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.CategoryConverter;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ProductTypeConverter;
