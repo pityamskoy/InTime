@@ -13,6 +13,8 @@ import java.util.Objects;
 @Getter
 @Setter
 public final class FeedFilterEntity {
+    @NonNull
+    private Integer limit;
     @Nullable
     private String name;
     @Nullable
@@ -25,18 +27,16 @@ public final class FeedFilterEntity {
     private Double distance;
     @Nullable
     private String userId;
-    @NonNull
-    private Integer limit;
 
     @SuppressWarnings(value = {"unused", "DataFlowIssue"})
     public FeedFilterEntity (
+            @Nullable Integer limit,
             @Nullable String name,
             @Nullable Boolean isOnlyFreeProducts,
             @Nullable List<String> shopsId,
             @Nullable List<String> categoriesId,
             @Nullable Double Distance,
-            @Nullable String userId,
-            @Nullable Integer limit
+            @Nullable String userId
     ) {
         try {
             if (name.isEmpty()) {
@@ -59,12 +59,12 @@ public final class FeedFilterEntity {
             }
         } catch (NullPointerException _) {}
 
+        this.limit = Objects.requireNonNullElse(limit, 30);
         this.name = name;
         this.isOnlyFreeProducts = isOnlyFreeProducts;
         this.shopsId = shopsId;
         this.categoriesId = categoriesId;
         this.distance = Distance;
         this.userId = userId;
-        this.limit = Objects.requireNonNullElse(limit, 30);
     }
 }
