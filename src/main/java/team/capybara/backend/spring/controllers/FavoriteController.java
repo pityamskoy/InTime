@@ -35,12 +35,24 @@ public final class FavoriteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FavoriteWithIdDto> getFavoriteById(@PathVariable UUID id) {
+    public ResponseEntity<FavoriteWithIdDto> getFavoriteById(@PathVariable String id) {
         log.info("Called getFavoriteById; id={}", id);
-        Optional<FavoriteWithIdDto> favoriteDtoOptional = favoriteService.getFavoriteById(id);
+        Optional<FavoriteWithIdDto> favoriteDtoOptional = favoriteService.getFavoriteById(UUID.fromString(id));
 
         return favoriteDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<FavoriteWithIdDto>> getFavoriteByUserId(@PathVariable String id) {
+        log.info("Called getFavoriteByUserId; id={}", id);
+
+        try {
+            return ResponseEntity.ok(favoriteService.getFavoritesByUserId(UUID.fromString(id)));
+        } catch (EntityNotFoundException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("/create")

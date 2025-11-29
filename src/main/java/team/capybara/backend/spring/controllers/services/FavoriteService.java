@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.entities.favorite.FavoriteDto;
 import team.capybara.backend.spring.controllers.dto.entities.favorite.FavoriteWithIdDto;
+import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.UserConverter;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.FavoriteMapper;
 import team.capybara.backend.spring.controllers.repositories.*;
 import team.capybara.backend.spring.entities.Favorite;
@@ -17,13 +18,16 @@ import java.util.UUID;
 @Service
 public final class FavoriteService {
     private final FavoriteMapper favoriteMapper;
+    private final UserConverter userConverter;
     private final FavoriteRepository favoriteRepository;
 
     public FavoriteService(
             FavoriteMapper favoriteMapper,
+            UserConverter userConverter,
             FavoriteRepository favoriteRepository
     ) {
         this.favoriteMapper = favoriteMapper;
+        this.userConverter = userConverter;
         this.favoriteRepository = favoriteRepository;
     }
 
@@ -50,6 +54,16 @@ public final class FavoriteService {
      */
     List<Favorite> getFavoritesByUser(User user) {
         return favoriteRepository.findFavoritesByUser(user);
+    }
+
+    public List<FavoriteWithIdDto> getFavoritesByUserId(UUID id) {
+        User user = userConverter.toEntity(id);
+        try {
+            return favoriteRepository.findFavoritesByUser(user).
+                    stream().map(favoriteMapper::getEntity).toList();
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        }
     }
 
     public FavoriteWithIdDto createFavorite(FavoriteDto favoriteToCreate) {
