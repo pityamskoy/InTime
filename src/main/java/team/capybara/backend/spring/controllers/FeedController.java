@@ -45,8 +45,7 @@ public final class FeedController{
         return ResponseEntity.ok(productService.getAllProducts(offset, limit.getLimit()));
     }
 
-    //will be replaced
-    @PostMapping("/products_by_shop/{shop}/{offset}")
+    @PostMapping("/products_by_shop/{id}/{offset}")
     public ResponseEntity<Page<ProductWithIdDto>> getProductsByShopId(
             @PathVariable String id,
             @PathVariable int offset,

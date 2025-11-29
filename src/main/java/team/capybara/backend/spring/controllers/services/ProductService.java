@@ -52,13 +52,14 @@ public final class ProductService {
     }
 
     public Page<ProductWithIdDto> getProductByShop(int offset, int limit, String id) {
+        List<ProductType> productTypes = productTypeRepository.findAll();
+        List<ProductType> productTypesWithNeededShop = new ArrayList<>();
 
-        List<ProductType>productTypes = productTypeRepository.findAll();
-        List<ProductType>productTypesWithNeededShop = new ArrayList<>();
-        for(ProductType productType : productTypes){
-            if(productType.getShop().getId().equals(UUID.fromString(id)))
+        for (ProductType productType : productTypes) {
+            if (productType.getShop().getId().equals(UUID.fromString(id)))
                 productTypesWithNeededShop.add(productType);
         }
+
         Page<Product> products = productRepository.findByProductTypeIn(productTypesWithNeededShop,PageRequest.of(offset, limit));
         products.stream().forEach(product -> product.calculateScore(1,5));
         return products.map(productMapper::getEntity);
