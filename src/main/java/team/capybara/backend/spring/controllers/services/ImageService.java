@@ -10,6 +10,12 @@ import team.capybara.backend.spring.controllers.mappers.entitymappers.ImageMappe
 import team.capybara.backend.spring.controllers.repositories.ImageRepository;
 import team.capybara.backend.spring.entities.Image;
 
+import org.apache.commons.imaging.ImageFormats;
+import org.apache.commons.imaging.Imaging;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -49,9 +55,12 @@ public final class ImageService {
         return Optional.empty();
     }
 
-    public ImageWithIdDto createImage(byte[] imageToCreate) throws IOException {
+    public ImageWithIdDto createImage(byte[] imageToCreate) throws Exception {
         ImageWithIdDto imageCreated = imageMapper.postEntity(new ImageDto(imagePath));
-        fileFromStorageStore.saveFile(imageStorePath,imageCreated.id().toString()+".jpg",imageToCreate);
+
+        //byte[] convertedImageData = convertToWebP(imageToCreate);
+
+        fileFromStorageStore.saveFile(imageStorePath,imageCreated.id().toString()+".webp",imageToCreate);
         return imageCreated;
     }
 
