@@ -34,7 +34,7 @@ public final class ImageMapper implements Mapper<Image, ImageWithIdDto, ImageDto
         UUID id = UUID.randomUUID();
         Image imageCreated = imageRepository.save(new Image(
                 id,
-                imageToCreate.path() + id + ".jpg"
+                imageToCreate.path() + id + ".webp"
         ));
 
         return getEntity(imageCreated);

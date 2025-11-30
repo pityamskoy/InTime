@@ -61,7 +61,7 @@ public final class ProductService {
         }
 
         Page<Product> products = productRepository.findByProductTypeIn(productTypesWithNeededShop,PageRequest.of(offset, limit));
-        products.stream().forEach(product -> product.calculateScore(1,5));
+        //products.stream().forEach(product -> product.calculateScore(1,5));
         return products.map(productMapper::getEntity);
     }
 
