@@ -48,13 +48,14 @@ public final class ShopMapper implements Mapper<Shop, ShopWithIdDto, ShopDto> {
                 shop.getDescription(),
                 shop.isVerified(),
                 shop.getInn(),
-                shop.getMainImagePath(),
+                shop.getMainImage().getId(),
                 imagesId,
                 shop.getAddress(),
                 shop.getLat(),
                 shop.getLon(),
                 shop.getLinkToSocialMedia(),
                 shop.getOwner().getId(),
+                shop.getOrganizationPhoneNumber(),
                 shop.getCompanyType(),
                 shop.getDistance()
         );
@@ -68,6 +69,7 @@ public final class ShopMapper implements Mapper<Shop, ShopWithIdDto, ShopDto> {
 
         try {
             List<Image> images = imageConverter.toEntityList(shopToCreate.imagesId());
+            Image mainImage = imageConverter.toEntity(shopToCreate.mainImage());
             User owner = userConverter.toEntity(shopToCreate.owner());
 
             Shop shopCreated = shopRepository.save(new Shop(
@@ -79,13 +81,14 @@ public final class ShopMapper implements Mapper<Shop, ShopWithIdDto, ShopDto> {
                     shopToCreate.description(),
                     shopToCreate.isVerified(),
                     shopToCreate.inn(),
-                    shopToCreate.mainImagePath(),
+                    mainImage,
                     images,
                     shopToCreate.address(),
                     shopToCreate.lat(),
                     shopToCreate.lon(),
                     shopToCreate.linkToSocialMedia(),
                     owner,
+                    shopToCreate.organizationPhoneNumber(),
                     shopToCreate.companyType(),
                     0.0
             ));
@@ -101,6 +104,7 @@ public final class ShopMapper implements Mapper<Shop, ShopWithIdDto, ShopDto> {
         try {
             Shop shopUpdated = shopConverter.toEntity(shopToUpdate.id());
             List<Image> images = imageConverter.toEntityList(shopToUpdate.imagesId());
+            Image mainImage = imageConverter.toEntity(shopToUpdate.mainImage());
 
             shopUpdated.setName(shopToUpdate.name());
             shopUpdated.setTimeOpen(shopToUpdate.timeOpen());
@@ -109,7 +113,7 @@ public final class ShopMapper implements Mapper<Shop, ShopWithIdDto, ShopDto> {
             shopUpdated.setDescription(shopToUpdate.description());
             shopUpdated.setVerified(shopToUpdate.isVerified());
             shopUpdated.setInn(shopToUpdate.inn());
-            shopUpdated.setMainImagePath(shopToUpdate.mainImagePath());
+            shopUpdated.setMainImage(mainImage);
             shopUpdated.setImages(images);
             shopUpdated.setAddress(shopToUpdate.address());
             shopUpdated.setLat(shopToUpdate.lat());

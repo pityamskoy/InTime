@@ -3,6 +3,7 @@ package team.capybara.backend.spring.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.sql.Time;
 import java.util.List;
 import java.util.Date;
 import java.util.UUID;
@@ -20,26 +21,27 @@ public class Shop implements EntityWithId {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "openTime", nullable = false)
-    private Date timeOpen;
+    @Column(name = "open_time", nullable = false)
+    private Time timeOpen;
 
-    @Column(name = "closeTime", nullable = false)
-    private Date timeClose;
+    @Column(name = "close_time", nullable = false)
+    private Time timeClose;
 
-    @Column(name = "registrationDate", nullable = false)
+    @Column(name = "registration_date", nullable = false)
     private Date registrationDate;
 
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "isVerifide", nullable = false)
+    @Column(name = "is_Verifide", nullable = false)
     private boolean isVerified;
 
     @Column(name = "inn", nullable = false)
     private String inn;
 
-    @Column(name = "mainImagePath", nullable = false)
-    private String mainImagePath;
+    @OneToOne
+    @JoinColumn(name = "main_image_id")
+    private Image mainImage;
 
     @OneToMany(fetch = FetchType.EAGER)
     private List<Image> images;
@@ -53,12 +55,15 @@ public class Shop implements EntityWithId {
     @Column(name = "lon", nullable = false)
     private double lon; //longitude v gradusah
 
-    @Column(name = "linksToSocialMedia")
+    @Column(name = "linkToSocialMedia")
     private String linkToSocialMedia;
 
     @OneToOne
     @JoinColumn(name = "user_id")
     private User owner;
+
+    @Column(name = "phone_number")
+    private String organizationPhoneNumber;
 
     @Column(name = "companyType")
     private String companyType;

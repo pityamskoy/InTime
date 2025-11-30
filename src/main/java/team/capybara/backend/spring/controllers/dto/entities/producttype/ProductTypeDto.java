@@ -12,7 +12,7 @@ public record ProductTypeDto(
         Double fats,
         Double carbohydrates,
         int quantityInOnePackage,
-        String mainImagePath,
+        UUID mainImage,
         List<UUID> imagesId,
         UUID shopId
 ) {

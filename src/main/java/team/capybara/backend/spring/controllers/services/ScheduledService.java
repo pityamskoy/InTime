@@ -11,30 +11,27 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class ScheduledService{
+public class ScheduledService {
     private final ProductRepository productRepository;
     private final InterestRepository interestRepository;
 
-    public ScheduledService(
-
-            ProductRepository productRepository, InterestRepository interestRepository) {
-
+    public ScheduledService(ProductRepository productRepository, InterestRepository interestRepository) {
         this.productRepository = productRepository;
         this.interestRepository = interestRepository;
-        new Thread(this::clean).start();
+        //new Thread(this::clean).start();
     }
 
-    private void clean(){
+    private void clean() {
         long nowTime = new Date().getTime();
-        List<Product>products = productRepository.findAll();
-        for(Product el:products){
-            if(el.getShelfLife().getTime()<nowTime){
-                List<Interest>interests = interestRepository.findByProduct(el);
-                for(Interest interest:interests){
+        List<Product> products = productRepository.findAll();
+        for (Product el : products) {
+            if (el.getShelfLife().getTime() < nowTime) {
+                List<Interest> interests = interestRepository.findByProduct(el);
+                for (Interest interest : interests) {
                     interestRepository.delete(interest);
                 }
                 productRepository.delete(el);
-                System.out.println("Delete product with id="+el.getId().toString());
+                System.out.println("Delete product with id=" + el.getId().toString());
             }
         }
     }

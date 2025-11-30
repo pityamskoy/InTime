@@ -49,7 +49,7 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeW
                 productType.getFats(),
                 productType.getCarbohydrates(),
                 productType.getQuantityInOnePackage(),
-                productType.getMainImagePath(),
+                productType.getMainImage().getId(),
                 imagesId,
                 productType.getShop().getId()
         );
@@ -60,6 +60,7 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeW
         try {
             Shop shop = shopConverter.toEntity(productTypeToCreate.shopId());
             List<Image> images = imageConverter.toEntityList(productTypeToCreate.imagesId());
+            Image mainImage = imageConverter.toEntity(productTypeToCreate.mainImage());
 
             ProductType productTypeCreated = new ProductType(
                     UUID.randomUUID(),
@@ -71,7 +72,7 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeW
                     productTypeToCreate.fats(),
                     productTypeToCreate.carbohydrates(),
                     productTypeToCreate.quantityInOnePackage(),
-                    productTypeToCreate.mainImagePath(),
+                    mainImage,
                     images,
                     shop
             );
@@ -90,6 +91,7 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeW
             ProductType productTypeUpdated = productTypeConverter.toEntity(productTypeToUpdate.id());
             Shop shop = shopConverter.toEntity(productTypeToUpdate.shopId());
             List<Image> images = imageConverter.toEntityList(productTypeToUpdate.imagesId());
+            Image mainImage = imageConverter.toEntity(productTypeToUpdate.mainImage());
 
             productTypeUpdated.setName(productTypeToUpdate.name());
             productTypeUpdated.setDescription(productTypeToUpdate.description());
@@ -99,7 +101,7 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeW
             productTypeUpdated.setFats(productTypeToUpdate.fats());
             productTypeUpdated.setCarbohydrates(productTypeToUpdate.carbohydrates());
             productTypeUpdated.setQuantityInOnePackage(productTypeToUpdate.quantityInOnePackage());
-            productTypeUpdated.setMainImagePath(productTypeToUpdate.mainImagePath());
+            productTypeUpdated.setMainImage(mainImage);
             productTypeUpdated.setImages(images);
             productTypeUpdated.setShop(shop);
             productTypeRepository.save(productTypeUpdated);

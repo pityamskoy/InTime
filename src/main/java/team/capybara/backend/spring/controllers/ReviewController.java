@@ -47,7 +47,7 @@ public final class ReviewController {
                 (() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/get_review_by_shop/{id/{offset}")
+    @PostMapping("/get_review_by_shop/{id}/{offset}")
     public ResponseEntity<Page<ReviewWithIdDto>> getReviewsByShop(
             @PathVariable String id,
             @PathVariable int offset,
