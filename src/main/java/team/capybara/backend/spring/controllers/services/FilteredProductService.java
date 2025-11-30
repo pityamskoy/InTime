@@ -107,7 +107,7 @@ public final class FilteredProductService {
     }
 
     private List<Product> sortProductsByName(String name) {
-        List<ProductType> productTypes = productTypeRepository.findByNameContaining(name);
+        List<ProductType> productTypes = productTypeRepository.findByNameContainingIgnoreCase(name);
         List<Product> products = new ArrayList<>();
 
         for (ProductType productType : productTypes) {

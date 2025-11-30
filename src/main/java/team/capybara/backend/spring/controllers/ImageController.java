@@ -46,7 +46,7 @@ public final class ImageController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ImageWithIdDto> createImage(@RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+    public ResponseEntity<ImageWithIdDto> createImage(@RequestPart(value = "image", required = false) MultipartFile image) throws Exception {
         log.info("Called createImage; imageToCreate={}", image.getName());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(imageService.createImage(image.getBytes()));

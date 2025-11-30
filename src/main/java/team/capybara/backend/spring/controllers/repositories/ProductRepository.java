@@ -15,4 +15,5 @@ import java.util.UUID;
 public interface ProductRepository extends JpaRepository<Product, UUID> {
     List<Product> findByProductType(ProductType productType );
     Page<Product> findByProductTypeIn(List<ProductType> productTypes, Pageable pageable);
+    List<Product> findByProductType_Shop_Id(UUID shopId);
 }
