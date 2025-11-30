@@ -61,11 +61,6 @@ public final class FeedController{
             @PathVariable int offset,
             @RequestBody FeedFilterEntity filter
     ) {
-        if (filter.getShopsId() == null && filter.getCategoriesId() == null && filter.getIsOnlyFreeProducts() == null
-                && filter.getDistance() == null && filter.getUserId() == null) {
-            return getAllProducts(offset, new PaginationLimit(filter.getLimit()));
-        }
-
         log.info("Called getAllSortedProducts; filter={}", filter);
 
         return ResponseEntity.ok(filteredProductService.getAllSortedProducts(offset, filter));
