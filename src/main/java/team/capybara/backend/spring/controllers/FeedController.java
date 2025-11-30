@@ -43,6 +43,10 @@ public final class FeedController{
     ) {
         log.info("Called getAllProducts; offset={}, limit={}", offset, limit.getLimit());
 
+        if (offset < 1) {
+            return ResponseEntity.badRequest().build();
+        }
+
         return ResponseEntity.ok(productService.getAllProducts(offset, limit.getLimit()));
     }
 
@@ -54,6 +58,10 @@ public final class FeedController{
     ) {
         log.info("Called getProductsByShopId; id={}, offset={}, limit={}", id, offset, limit.getLimit());
 
+        if (offset < 1) {
+            return ResponseEntity.badRequest().build();
+        }
+
         return ResponseEntity.ok(productService.getProductByShop(offset, limit.getLimit(), id));
     }
 
@@ -62,7 +70,11 @@ public final class FeedController{
             @PathVariable int offset,
             @RequestBody FeedFilterEntity filter
     ) {
-        log.info("Called getAllSortedProducts; filter={}", filter);
+        log.info("Called getAllSortedProducts; offset={}; filter={}", offset, filter);
+
+        if (offset < 1) {
+            return ResponseEntity.badRequest().build();
+        }
 
         return ResponseEntity.ok(filteredProductService.getAllSortedProducts(offset, filter));
     }
