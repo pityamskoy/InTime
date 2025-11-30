@@ -50,8 +50,18 @@ public final class FilteredProductService {
             int offset,
             FeedFilterEntity filter
     ) {
+        filter.makeAllEmptyFieldsEquivalentToNull(
+                filter.getLimit(),
+                filter.getName(),
+                filter.getIsOnlyFreeProducts(),
+                filter.getShopsId(),
+                filter.getCategoriesId(),
+                filter.getDistance(),
+                filter.getUserId());
+
         int limit = filter.getLimit();
         List<Product> productsToSort;
+
 
         if (filter.getName() != null) {
             productsToSort = sortProductsByName(filter.getName());
@@ -76,10 +86,21 @@ public final class FilteredProductService {
         }
 
         if (filter.getUserId() != null) {
-            productsToSort = recommendProducts(productsToSort, UUID.fromString(filter.getUserId()));
+            productsToSort = recommendProducts(productsToSort, filter.getUserId());
         }
 
-        List<Product> slice = productsToSort.subList(limit * (offset - 1), limit * (offset));
+        List<Product> slice = new ArrayList<>();
+        if (!productsToSort.isEmpty()) {
+            try {
+                slice = productsToSort.subList(limit * (offset - 1), limit * (offset));
+            } catch (IndexOutOfBoundsException _) {
+                if (limit * (offset - 1) == productsToSort.size()) {
+                    slice.add(productsToSort.get(limit * (offset - 1)));
+                } else if (limit * (offset - 1) < productsToSort.size()) {
+                    slice = productsToSort.subList(limit * (offset - 1), productsToSort.size());
+                }
+            }
+        }
         slice.forEach(product -> product.calculateScore(1, 5));
 
         return new PageImpl<>(slice.stream().map(productMapper::getEntity).toList());
@@ -159,15 +180,19 @@ public final class FilteredProductService {
     // Also add quicksort algorithm for all criteria
     private List<Product> recommendProducts(
             List<Product> productsToSort,
-            UUID userId
+            String userId
     ) {
-        Optional<UserAuthWithIdDto> userDtoOptional = userService.getUserById(userId);
+        if (userId == null) {
+            return productsToSort;
+        }
+
+        Optional<UserAuthWithIdDto> userDtoOptional = userService.getUserById(UUID.fromString(userId));
 
         if (userDtoOptional.isEmpty()) {
             return productsToSort;
         }
 
-        User user = userConverter.toEntity(userId);
+        User user = userConverter.toEntity(UUID.fromString(userId));
         List<Favorite> favoritesOfUser = favoriteService.getFavoritesByUser(user);
 
         List<Double> distances = new ArrayList<>();

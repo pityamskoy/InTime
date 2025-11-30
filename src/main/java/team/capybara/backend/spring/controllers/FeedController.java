@@ -35,6 +35,7 @@ public final class FeedController{
         this.filteredProductService = filteredProductService;
     }
 
+    @Deprecated(forRemoval = true)
     @PostMapping("/{offset}")
     public ResponseEntity<Page<ProductWithIdDto>> getAllProducts(
             @PathVariable int offset,
