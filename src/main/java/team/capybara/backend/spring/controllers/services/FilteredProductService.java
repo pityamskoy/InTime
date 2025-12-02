@@ -3,6 +3,7 @@ package team.capybara.backend.spring.controllers.services;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
+import team.capybara.backend.spring.controllers.PaginationHandler;
 import team.capybara.backend.spring.controllers.dto.entities.category.CategoryWithIdDto;
 import team.capybara.backend.spring.controllers.dto.entities.product.ProductWithIdDto;
 import team.capybara.backend.spring.controllers.dto.other.filters.FeedFilterEntity;
@@ -17,24 +18,24 @@ import java.util.stream.Stream;
 
 @Service
 public final class FilteredProductService {
-    private final ShopService shopService;
     private final CategoryService categoryService;
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
     private final ProductTypeRepository productTypeRepository;
+    private final PaginationHandler<Product> paginationHandler;
 
     public FilteredProductService(
-            ShopService shopService,
             CategoryService categoryService,
             ProductMapper productMapper,
             ProductRepository productRepository,
-            ProductTypeRepository productTypeRepository
+            ProductTypeRepository productTypeRepository,
+            PaginationHandler<Product> paginationHandler
     ) {
-        this.shopService = shopService;
         this.categoryService = categoryService;
         this.productMapper = productMapper;
         this.productRepository = productRepository;
         this.productTypeRepository = productTypeRepository;
+        this.paginationHandler = paginationHandler;
     }
 
     public Page<ProductWithIdDto> getAllSortedProducts(
@@ -80,19 +81,7 @@ public final class FilteredProductService {
             }
         }
 
-        List<Product> slice = new ArrayList<>();
-        //make separate method
-        if (!productsToSort.isEmpty()) {
-            try {
-                slice = productsToSort.subList(limit * (offset - 1), limit * (offset));
-            } catch (IndexOutOfBoundsException _) {
-                if (limit * (offset - 1) == productsToSort.size()) {
-                    slice.add(productsToSort.get(limit * (offset - 1)));
-                } else if (limit * (offset - 1) < productsToSort.size()) {
-                    slice = productsToSort.subList(limit * (offset - 1), productsToSort.size());
-                }
-            }
-        }
+        List<Product> slice = paginationHandler.makeSliceFromList(productsToSort, offset, limit);
         slice.forEach(product -> product.calculateScore(1, 5));
 
         return new PageImpl<>(slice.stream().map(productMapper::getEntity).toList());

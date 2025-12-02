@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import team.capybara.backend.spring.controllers.PaginationHandler;
 import team.capybara.backend.spring.controllers.dto.entities.product.ProductDto;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
 import team.capybara.backend.spring.entities.Product;
@@ -24,15 +25,18 @@ public final class ProductService {
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
     private final ProductTypeRepository productTypeRepository;
+    private final PaginationHandler<Product> paginationHandler;
 
     public ProductService(
             ProductMapper productMapper,
             ProductRepository productRepository,
-            ProductTypeRepository productTypeRepository
+            ProductTypeRepository productTypeRepository,
+            PaginationHandler<Product> paginationHandler
     ) {
         this.productMapper = productMapper;
         this.productRepository = productRepository;
         this.productTypeRepository = productTypeRepository;
+        this.paginationHandler = paginationHandler;
     }
 
     public Page<ProductWithIdDto> getAllProducts(int offset, int limit) {
@@ -66,19 +70,7 @@ public final class ProductService {
             products.addAll(productRepository.findByProductType(productType));
         }
 
-        List<Product> slice = new ArrayList<>();
-        //make separate method
-        if (!products.isEmpty()) {
-            try {
-                slice = products.subList(limit * (offset - 1), limit * (offset));
-            } catch (IndexOutOfBoundsException _) {
-                if (limit * (offset - 1) == products.size()) {
-                    slice.add(products.get(limit * (offset - 1)));
-                } else if (limit * (offset - 1) < products.size()) {
-                    slice = products.subList(limit * (offset - 1), products.size());
-                }
-            }
-        }
+        List<Product> slice = paginationHandler.makeSliceFromList(products, offset, limit);
 
         if (slice.isEmpty()) {
             return new PageImpl<>(new ArrayList<>());
