@@ -1,9 +1,8 @@
 FROM amazoncorretto:25-headless
 LABEL authors="ASKekishev and LAGuryanov"
 
-WORKDIR /app
-COPY out/artifacts/vSrok_jar ./
+COPY out/artifacts/vSrok_jar2 .
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "/app/vSrok.jar"]
+ENTRYPOINT ["java", "-jar", "./vSrok.jar"]

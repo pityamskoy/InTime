@@ -1,0 +1,30 @@
+name: vSrok
+services:
+
+  backend:
+    image: leoagf/devback:1.0
+    depends_on:
+      - db_dev
+      - nginx
+    restart: unless-stopped
+    ports:
+      - "1236:8080"
+    volumes:
+      - app-volume:/static
+
+  db_dev:
+    image: leoagf/devbd:2.0
+    restart: unless-stopped
+    ports:
+      - "1234:5432"
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "1235:80"
+    volumes:
+      - app-volume:/usr/share/nginx/html:ro
+    restart: unless-stopped
+
+volumes:
+  app-volume:
