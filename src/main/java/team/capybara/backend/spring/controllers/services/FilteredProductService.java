@@ -179,7 +179,7 @@ public final class FilteredProductService {
         List<Product> left = new ArrayList<>();
         List<Product> right = new ArrayList<>();
 
-        for (int i = 0; i <= productsToSort.size(); i++) {
+        for (int i = 0; i < productsToSort.size(); i++) {
             if (productsToSort.get(i).getProductType().getShop().getDistance() <= pivot.getDistance() && i != 0) {
                 left.add(productsToSort.get(i));
             } else if (productsToSort.get(i).getProductType().getShop().getDistance() > pivot.getDistance()) {
