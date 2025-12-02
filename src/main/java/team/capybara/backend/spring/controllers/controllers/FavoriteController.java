@@ -1,4 +1,4 @@
-package team.capybara.backend.spring.controllers;
+package team.capybara.backend.spring.controllers.controllers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package team.capybara.backend.spring.controllers;
+package team.capybara.backend.spring.controllers.controllers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import team.capybara.backend.spring.controllers.dto.entities.image.ImageWithIdDto;
 import team.capybara.backend.spring.controllers.services.ImageService;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
