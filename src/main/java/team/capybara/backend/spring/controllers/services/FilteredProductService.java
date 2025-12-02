@@ -11,15 +11,13 @@ import team.capybara.backend.spring.controllers.mappers.converters.entityconvert
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ProductMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
-import team.capybara.backend.spring.entities.Favorite;
-import team.capybara.backend.spring.entities.Product;
-import team.capybara.backend.spring.entities.ProductType;
-import team.capybara.backend.spring.entities.User;
+import team.capybara.backend.spring.entities.*;
 
 import java.util.*;
 
 @Service
 public final class FilteredProductService {
+    private final ShopService shopService;
     private final CategoryService categoryService;
     private final FavoriteService favoriteService;
     private final UserService userService;
@@ -29,6 +27,7 @@ public final class FilteredProductService {
     private final UserConverter userConverter;
 
     public FilteredProductService(
+            ShopService shopService,
             CategoryService categoryService,
             FavoriteService favoriteService,
             UserService userService,
@@ -37,6 +36,7 @@ public final class FilteredProductService {
             ProductTypeRepository productTypeRepository,
             UserConverter userConverter
     ) {
+        this.shopService = shopService;
         this.categoryService = categoryService;
         this.favoriteService = favoriteService;
         this.userService = userService;
@@ -57,11 +57,11 @@ public final class FilteredProductService {
                 filter.getShopsId(),
                 filter.getCategoriesId(),
                 filter.getDistance(),
-                filter.getUserId());
+                filter.getUserLat(),
+                filter.getUserLon());
 
         int limit = filter.getLimit();
         List<Product> productsToSort;
-
 
         if (filter.getName() != null) {
             productsToSort = sortProductsByName(filter.getName());
@@ -81,15 +81,16 @@ public final class FilteredProductService {
             productsToSort = sortProductsByShops(productsToSort, filter.getShopsId().stream().map(UUID::fromString).toList());
         }
 
-        if (filter.getDistance() != null) {
-            productsToSort = sortProductsByDistance(productsToSort, filter.getDistance());
-        }
+        if (filter.getUserLat() != null && filter.getUserLon() != null) {
+            shopService.getAllShops(filter.getUserLat(), filter.getUserLon());
 
-        if (filter.getUserId() != null) {
-            productsToSort = recommendProducts(productsToSort, filter.getUserId());
+            if (filter.getDistance() != null) {
+                productsToSort = sortProductsByDistance(productsToSort, filter.getDistance());
+            }
         }
 
         List<Product> slice = new ArrayList<>();
+        //make separate method
         if (!productsToSort.isEmpty()) {
             try {
                 slice = productsToSort.subList(limit * (offset - 1), limit * (offset));
@@ -166,12 +167,13 @@ public final class FilteredProductService {
     //add quicksort exactly in this method
     private List<Product> sortProductsByDistance(List<Product> productsToSort, Double distance) {
         List<Product> productsSorted = new ArrayList<>();
+        List<Shop> shopsToSort = new ArrayList<>();
 
         for (Product product : productsToSort) {
-            if (product.getProductType().getShop().getDistance() <= distance) {
-                productsSorted.add(product);
-            }
+            shopsToSort.add(product.getProductType().getShop());
         }
+
+
 
         return productsSorted;
     }
@@ -200,14 +202,6 @@ public final class FilteredProductService {
         for (Favorite favorite : favoritesOfUser) {
             productTypes.add(favorite.getProductType());
             distances.add(favorite.getProductType().getShop().getDistance());
-        }
-
-        //how to compare dates?
-        List<Date> dates = new ArrayList<>();
-        for (Product product : productsToSort) {
-            if (productTypes.contains(product.getProductType())) {
-                dates.add(product.getShelfLife());
-            }
         }
 
         Double sumOfDistances = 0.0;

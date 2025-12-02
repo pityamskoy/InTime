@@ -113,4 +113,29 @@ public final class ShopService {
             throw new EntityNotFoundException(e.getMessage());
         }
     }
+
+    /**
+     * {@code quickSortShopsByDistance} should be package-private because it returns {@code Shop}, not {@code ShopWithIdDto}.
+     * This method is supposed to be used only in services to get auxiliary information.
+     */
+    List<Shop> quickSortShopsByDistance(List<Shop> shopsToSort) {
+        if (shopsToSort.size() <= 1) {
+            return shopsToSort;
+        }
+
+        Shop pivot = shopsToSort.getFirst();
+        List<Shop> left = new ArrayList<>();
+        List<Shop> right = new ArrayList<>();
+
+        for (int i = 0; i <= shopsToSort.size(); i++) {
+            if (shopsToSort.get(i).getDistance() <= pivot.getDistance() && i != 0) {
+                left.add(shopsToSort.get(i));
+            } else if (shopsToSort.get(i).getDistance() > pivot.getDistance()) {
+                right.add(shopsToSort.get(i));
+            }
+        }
+        return List.of(pivot);
+
+        //return quickSortShopsByDistance(left) + List.of(pivot) + quickSortShopsByDistance(right);
+    }
 }
