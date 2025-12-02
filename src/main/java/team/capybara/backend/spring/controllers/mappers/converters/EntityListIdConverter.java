@@ -19,13 +19,13 @@ public interface EntityListIdConverter<Entity> extends EntityIdConverter<Entity>
      * in new {@code EntityNotFoundException} in {@link Mapper}
      *
      * @param entities the {@code List} of {@code entities}
-     * @return {@code List}<{@code UUID}> of {@code entities}
+     * @return {@code List} {@link UUID} of {@code entities}
      */
     List<UUID> toIdList(List<Entity> entities);
 
     /**
      *
-     * @param entitiesId the {@code List}<{@code UUID}> of {@code entities}
+     * @param entitiesId the {@code List} {@link UUID} of {@code entities}
      * @return {@code List} of all entities, which have been found by provided {@code entitiesId}
      */
     List<Entity> toEntityList(List<UUID> entitiesId);
