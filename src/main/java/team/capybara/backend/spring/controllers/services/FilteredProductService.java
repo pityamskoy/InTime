@@ -72,10 +72,8 @@ public final class FilteredProductService {
             productsToSort = sortProductsByShops(productsToSort, filter.getShopsId().stream().map(UUID::fromString).toList());
         }
 
-        productsToSort = quickSortProductsByShopDistance(productsToSort);
-
         if (filter.getUserLat() != null && filter.getUserLon() != null) {
-            shopService.getAllShops(filter.getUserLat(), filter.getUserLon());
+            productsToSort = quickSortProductsByShopDistance(productsToSort, filter.getUserLat(), filter.getUserLon());
 
             if (filter.getDistance() != null) {
                 productsToSort = filterProductsByDistance(productsToSort, filter.getDistance());
@@ -170,7 +168,7 @@ public final class FilteredProductService {
         return productsSorted;
     }
 
-    private List<Product> quickSortProductsByShopDistance(List<Product> productsToSort) {
+    private List<Product> quickSortProductsByShopDistance(List<Product> productsToSort, Double userLat, Double userLon) {
         if (productsToSort.size() <= 1) {
             return productsToSort;
         }
@@ -180,14 +178,14 @@ public final class FilteredProductService {
         List<Product> right = new ArrayList<>();
 
         for (int i = 0; i < productsToSort.size(); i++) {
-            if (productsToSort.get(i).getProductType().getShop().getDistance() <= pivot.getDistance() && i != 0) {
+            if (productsToSort.get(i).getProductType().getShop().getDistanceTo(userLat, userLon) <= pivot.getDistanceTo(userLat, userLon) && i != 0) {
                 left.add(productsToSort.get(i));
-            } else if (productsToSort.get(i).getProductType().getShop().getDistance() > pivot.getDistance()) {
+            } else if (productsToSort.get(i).getProductType().getShop().getDistanceTo(userLat, userLon) > pivot.getDistanceTo(userLat, userLon)) {
                 right.add(productsToSort.get(i));
             }
         }
 
-        return Stream.of(quickSortProductsByShopDistance(left), List.of(productsToSort.getFirst()), quickSortProductsByShopDistance(right))
+        return Stream.of(quickSortProductsByShopDistance(left, userLat, userLon), List.of(productsToSort.getFirst()), quickSortProductsByShopDistance(right, userLat, userLon))
                 .flatMap(List::stream).collect(Collectors.toList());
     }
 }

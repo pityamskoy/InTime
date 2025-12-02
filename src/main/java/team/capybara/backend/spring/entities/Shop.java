@@ -76,11 +76,12 @@ public class Shop implements EntityWithId {
         return id;
     }
 
-    public void getDistanceTo(double objectLat, double objectLon) {
+    public Double getDistanceTo(double objectLat, double objectLon) {
         //distance in kilometers
         double kef = Math.PI / 180.0;
         int earthRadius = 6371;
         distance = Math.acos(Math.sin(lat * kef) * Math.sin(objectLat * kef) + Math.cos(lat * kef) * Math.cos(objectLat * kef) * Math.cos((lon * kef) - (objectLon * kef))) * earthRadius;
+        return distance;
     }
 
 }
