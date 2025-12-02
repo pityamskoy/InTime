@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import team.capybara.backend.spring.controllers.dto.image.ImageDto;
+import team.capybara.backend.spring.controllers.dto.entities.image.ImageWithIdDto;
 import team.capybara.backend.spring.controllers.services.ImageService;
 
 import java.io.IOException;
@@ -30,30 +30,30 @@ public final class ImageController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ImageDto>> getAllImages() {
+    public ResponseEntity<List<ImageWithIdDto>> getAllImages() {
         log.info("Called getAllImages");
 
         return ResponseEntity.ok(imageService.getAllImages());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ImageDto> getImageById(@PathVariable String id) {
+    public ResponseEntity<ImageWithIdDto> getImageById(@PathVariable String id) {
         log.info("Called getImageById; id={}", id);
-        Optional<ImageDto> imageDtoOptional = imageService.getImageById(UUID.fromString(id));
+        Optional<ImageWithIdDto> imageDtoOptional = imageService.getImageById(UUID.fromString(id));
 
         return imageDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ImageDto> createImage(@RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+    public ResponseEntity<ImageWithIdDto> createImage(@RequestPart(value = "image", required = false) MultipartFile image) throws Exception {
         log.info("Called createImage; imageToCreate={}", image.getName());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(imageService.createImage(image.getBytes()));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ImageDto> updateImage(@RequestBody ImageDto imageToUpdate) {
+    public ResponseEntity<ImageWithIdDto> updateImage(@RequestBody ImageWithIdDto imageToUpdate) {
         log.info("Called updateImage; imageToUpdate={}", imageToUpdate);
 
         try {

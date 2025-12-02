@@ -2,7 +2,8 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
-import team.capybara.backend.spring.controllers.dto.interest.InterestDto;
+import team.capybara.backend.spring.controllers.dto.entities.interest.InterestDto;
+import team.capybara.backend.spring.controllers.dto.entities.interest.InterestWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.InterestConverter;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ProductConverter;
@@ -15,7 +16,7 @@ import team.capybara.backend.spring.entities.User;
 import java.util.UUID;
 
 @Component
-public final class InterestMapper implements Mapper<Interest, InterestDto> {
+public final class InterestMapper implements Mapper<Interest, InterestWithIdDto, InterestDto> {
     private final InterestRepository interestRepository;
     private final InterestConverter interestConverter;
     private final UserConverter userConverter;
@@ -34,8 +35,8 @@ public final class InterestMapper implements Mapper<Interest, InterestDto> {
     }
 
     @Override
-    public InterestDto getEntity(Interest interest) {
-        return new InterestDto(
+    public InterestWithIdDto getEntity(Interest interest) {
+        return new InterestWithIdDto(
                 interest.getId(),
                 interest.getUser().getId(),
                 interest.getProduct().getId(),
@@ -44,7 +45,7 @@ public final class InterestMapper implements Mapper<Interest, InterestDto> {
     }
 
     @Override
-    public InterestDto postEntity(InterestDto interestToCreate) {
+    public InterestWithIdDto postEntity(InterestDto interestToCreate) {
         try {
             User user = userConverter.toEntity(interestToCreate.userId());
             Product product = productConverter.toEntity(interestToCreate.productId());
@@ -63,7 +64,7 @@ public final class InterestMapper implements Mapper<Interest, InterestDto> {
     }
 
     @Override
-    public InterestDto putEntity(InterestDto interestToUpdate) {
+    public InterestWithIdDto putEntity(InterestWithIdDto interestToUpdate) {
         try {
             Interest interestUpdated = interestConverter.toEntity(interestToUpdate.id());
             User user = userConverter.toEntity(interestToUpdate.userId());

@@ -1,4 +1,4 @@
-package team.capybara.backend.spring.controllers.dto.user;
+package team.capybara.backend.spring.controllers.dto.entities.user;
 
 import java.util.UUID;
 

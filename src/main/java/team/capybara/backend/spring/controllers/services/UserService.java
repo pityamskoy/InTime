@@ -2,9 +2,10 @@ package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.controllers.dto.login.LoginResultDto;
-import team.capybara.backend.spring.controllers.dto.user.UserAuthDto;
-import team.capybara.backend.spring.controllers.dto.user.UserDto;
+import team.capybara.backend.spring.controllers.dto.other.login.LoginResultDto;
+import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthDto;
+import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.user.UserDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.UserMapper;
 import team.capybara.backend.spring.controllers.repositories.UserRepository;
 import team.capybara.backend.spring.entities.User;
@@ -36,12 +37,12 @@ public final class UserService {
         return users.stream().map(userMapper::getEntity).toList();
     }
 
-    public Optional<UserAuthDto> getUserById(UUID id) {
+    public Optional<UserAuthWithIdDto> getUserById(UUID id) {
         Optional<User> userOptional = userRepository.findById(id);
 
         if (userOptional.isPresent()) {
-            UserAuthDto userAuthDto = userAuthMapper.getEntity(userOptional.get());
-            return Optional.of(userAuthDto);
+            UserAuthWithIdDto userAuthWithIdDto = userAuthMapper.getEntity(userOptional.get());
+            return Optional.of(userAuthWithIdDto);
         }
 
         return Optional.empty();
@@ -59,11 +60,11 @@ public final class UserService {
         return new LoginResultDto(user.getPassword().equals(password), user.getId().toString());
     }
 
-    public UserAuthDto createUser(UserAuthDto userToCreate) {
+    public UserAuthWithIdDto createUser(UserAuthDto userToCreate) {
         return userAuthMapper.postEntity(userToCreate);
     }
 
-    public UserAuthDto updateUser(UserAuthDto userToUpdate) {
+    public UserAuthWithIdDto updateUser(UserAuthWithIdDto userToUpdate) {
         try {
             return userAuthMapper.putEntity(userToUpdate);
         } catch (EntityNotFoundException e) {

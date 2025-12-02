@@ -2,6 +2,7 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
+import team.capybara.backend.spring.controllers.dto.entities.producttype.ProductTypeDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ImageConverter;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ProductTypeConverter;
@@ -10,13 +11,13 @@ import team.capybara.backend.spring.controllers.repositories.ProductTypeReposito
 import team.capybara.backend.spring.entities.Image;
 import team.capybara.backend.spring.entities.ProductType;
 import team.capybara.backend.spring.entities.Shop;
-import team.capybara.backend.spring.controllers.dto.producttype.ProductTypeDto;
+import team.capybara.backend.spring.controllers.dto.entities.producttype.ProductTypeWithIdDto;
 
 import java.util.List;
 import java.util.UUID;
 
 @Component
-public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeDto> {
+public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeWithIdDto, ProductTypeDto> {
     private final ProductTypeRepository productTypeRepository;
     private final ProductTypeConverter productTypeConverter;
     private final ImageConverter imageConverter;
@@ -35,10 +36,10 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
     }
 
     @Override
-    public ProductTypeDto getEntity(ProductType productType) {
+    public ProductTypeWithIdDto getEntity(ProductType productType) {
         List<UUID> imagesId = imageConverter.toIdList(productType.getImages());
 
-        return new ProductTypeDto(
+        return new ProductTypeWithIdDto(
                 productType.getId(),
                 productType.getName(),
                 productType.getDescription(),
@@ -48,17 +49,18 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
                 productType.getFats(),
                 productType.getCarbohydrates(),
                 productType.getQuantityInOnePackage(),
-                productType.getMainImagePath(),
+                productType.getMainImage().getId(),
                 imagesId,
                 productType.getShop().getId()
         );
     }
 
     @Override
-    public ProductTypeDto postEntity(ProductTypeDto productTypeToCreate) {
+    public ProductTypeWithIdDto postEntity(ProductTypeDto productTypeToCreate) {
         try {
             Shop shop = shopConverter.toEntity(productTypeToCreate.shopId());
             List<Image> images = imageConverter.toEntityList(productTypeToCreate.imagesId());
+            Image mainImage = imageConverter.toEntity(productTypeToCreate.mainImage());
 
             ProductType productTypeCreated = new ProductType(
                     UUID.randomUUID(),
@@ -70,7 +72,7 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
                     productTypeToCreate.fats(),
                     productTypeToCreate.carbohydrates(),
                     productTypeToCreate.quantityInOnePackage(),
-                    productTypeToCreate.mainImagePath(),
+                    mainImage,
                     images,
                     shop
             );
@@ -84,11 +86,12 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
     }
 
     @Override
-    public ProductTypeDto putEntity(ProductTypeDto productTypeToUpdate) {
+    public ProductTypeWithIdDto putEntity(ProductTypeWithIdDto productTypeToUpdate) {
         try {
             ProductType productTypeUpdated = productTypeConverter.toEntity(productTypeToUpdate.id());
             Shop shop = shopConverter.toEntity(productTypeToUpdate.shopId());
             List<Image> images = imageConverter.toEntityList(productTypeToUpdate.imagesId());
+            Image mainImage = imageConverter.toEntity(productTypeToUpdate.mainImage());
 
             productTypeUpdated.setName(productTypeToUpdate.name());
             productTypeUpdated.setDescription(productTypeToUpdate.description());
@@ -98,7 +101,7 @@ public final class ProductTypeMapper implements Mapper<ProductType, ProductTypeD
             productTypeUpdated.setFats(productTypeToUpdate.fats());
             productTypeUpdated.setCarbohydrates(productTypeToUpdate.carbohydrates());
             productTypeUpdated.setQuantityInOnePackage(productTypeToUpdate.quantityInOnePackage());
-            productTypeUpdated.setMainImagePath(productTypeToUpdate.mainImagePath());
+            productTypeUpdated.setMainImage(mainImage);
             productTypeUpdated.setImages(images);
             productTypeUpdated.setShop(shop);
             productTypeRepository.save(productTypeUpdated);

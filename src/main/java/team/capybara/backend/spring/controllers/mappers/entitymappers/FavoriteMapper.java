@@ -2,7 +2,8 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
-import team.capybara.backend.spring.controllers.dto.favorite.FavoriteDto;
+import team.capybara.backend.spring.controllers.dto.entities.favorite.FavoriteDto;
+import team.capybara.backend.spring.controllers.dto.entities.favorite.FavoriteWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.FavoriteConverter;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ProductTypeConverter;
@@ -15,7 +16,7 @@ import team.capybara.backend.spring.entities.User;
 import java.util.UUID;
 
 @Component
-public final class FavoriteMapper implements Mapper<Favorite, FavoriteDto> {
+public final class FavoriteMapper implements Mapper<Favorite, FavoriteWithIdDto, FavoriteDto> {
     private final FavoriteRepository favoriteRepository;
     private final FavoriteConverter favoriteConverter;
     private final UserConverter userConverter;
@@ -35,8 +36,8 @@ public final class FavoriteMapper implements Mapper<Favorite, FavoriteDto> {
     }
 
     @Override
-    public FavoriteDto getEntity(Favorite favorite) {
-        return new FavoriteDto(
+    public FavoriteWithIdDto getEntity(Favorite favorite) {
+        return new FavoriteWithIdDto(
                 favorite.getId(),
                 favorite.getUser().getId(),
                 favorite.getProductType().getId()
@@ -44,7 +45,7 @@ public final class FavoriteMapper implements Mapper<Favorite, FavoriteDto> {
     }
 
     @Override
-    public FavoriteDto postEntity(FavoriteDto favoriteToCreate) {
+    public FavoriteWithIdDto postEntity(FavoriteDto favoriteToCreate) {
         try {
             User user = userConverter.toEntity(favoriteToCreate.userId());
             ProductType productType = productTypeConverter.toEntity(favoriteToCreate.productTypeId());
@@ -62,7 +63,7 @@ public final class FavoriteMapper implements Mapper<Favorite, FavoriteDto> {
     }
 
     @Override
-    public FavoriteDto putEntity(FavoriteDto favoriteToUpdate) {
+    public FavoriteWithIdDto putEntity(FavoriteWithIdDto favoriteToUpdate) {
         try {
             Favorite favoriteUpdated = favoriteConverter.toEntity(favoriteToUpdate.id());
             User user = userConverter.toEntity(favoriteToUpdate.id());

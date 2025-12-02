@@ -2,16 +2,17 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
+import team.capybara.backend.spring.controllers.dto.entities.image.ImageDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ImageConverter;
 import team.capybara.backend.spring.controllers.repositories.ImageRepository;
 import team.capybara.backend.spring.entities.Image;
-import team.capybara.backend.spring.controllers.dto.image.ImageDto;
+import team.capybara.backend.spring.controllers.dto.entities.image.ImageWithIdDto;
 
 import java.util.*;
 
 @Component
-public final class ImageMapper implements Mapper<Image, ImageDto> {
+public final class ImageMapper implements Mapper<Image, ImageWithIdDto, ImageDto> {
     private final ImageRepository imageRepository;
     private final ImageConverter imageConverter;
 
@@ -21,26 +22,26 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
     }
 
     @Override
-    public ImageDto getEntity(Image image) {
-        return new ImageDto(
+    public ImageWithIdDto getEntity(Image image) {
+        return new ImageWithIdDto(
                 image.getId(),
                 image.getPath()
         );
     }
 
     @Override
-    public ImageDto postEntity(ImageDto imageToCreate) {
+    public ImageWithIdDto postEntity(ImageDto imageToCreate) {
         UUID id = UUID.randomUUID();
         Image imageCreated = imageRepository.save(new Image(
                 id,
-                imageToCreate.path()+id.toString()+".jpg"
+                imageToCreate.path() + id + ".webp"
         ));
 
         return getEntity(imageCreated);
     }
 
     @Override
-    public ImageDto putEntity(ImageDto imageToUpdate) {
+    public ImageWithIdDto putEntity(ImageWithIdDto imageToUpdate) {
         try {
             Image imageUpdated = imageConverter.toEntity(imageToUpdate.id());
             imageUpdated.setPath(imageToUpdate.path());
@@ -62,8 +63,8 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
         }
     }
 
-    public List<ImageDto> toDtoList(List<Image> images) {
-        List<ImageDto> dtoImages = new LinkedList<>();
+    public List<ImageWithIdDto> toDtoList(List<Image> images) {
+        List<ImageWithIdDto> dtoImages = new LinkedList<>();
 
         for (Image image : images) {
             dtoImages.add(this.getEntity(image));
@@ -72,15 +73,15 @@ public final class ImageMapper implements Mapper<Image, ImageDto> {
         return dtoImages;
     }
 
-    public List<Image> toEntityList(List<ImageDto> dtoImages) {
+    public List<Image> toEntityList(List<ImageWithIdDto> dtoImages) {
         List<Image> images = new LinkedList<>();
 
-        for (ImageDto imageDto : dtoImages) {
-            Optional<Image> optionalImage = imageRepository.findById(imageDto.id());
+        for (ImageWithIdDto imageWithIdDto : dtoImages) {
+            Optional<Image> optionalImage = imageRepository.findById(imageWithIdDto.id());
             if (optionalImage.isPresent()) {
                 images.add(optionalImage.get());
             } else {
-                throw new EntityNotFoundException("Image not found; id=" + imageDto.id());
+                throw new EntityNotFoundException("Image not found; id=" + imageWithIdDto.id());
             }
         }
         return images;

@@ -2,7 +2,8 @@ package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.controllers.dto.category.CategoryDto;
+import team.capybara.backend.spring.controllers.dto.entities.category.CategoryDto;
+import team.capybara.backend.spring.controllers.dto.entities.category.CategoryWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.CategoryMapper;
 import team.capybara.backend.spring.controllers.repositories.*;
 import team.capybara.backend.spring.entities.Category;
@@ -26,26 +27,26 @@ public final class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<CategoryDto> getAllCategories() {
+    public List<CategoryWithIdDto> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
 
         return categories.stream().map(categoryMapper::getEntity).toList();
     }
 
-    public Optional<CategoryDto> getCategoryById(UUID id) {
+    public Optional<CategoryWithIdDto> getCategoryById(UUID id) {
         Optional<Category> categoryOptional = categoryRepository.findById(id);
 
         if (categoryOptional.isPresent()) {
-            CategoryDto categoryDto = categoryMapper.getEntity(categoryOptional.get());
-            return Optional.of(categoryDto);
+            CategoryWithIdDto categoryWithIdDto = categoryMapper.getEntity(categoryOptional.get());
+            return Optional.of(categoryWithIdDto);
         }
 
         return Optional.empty();
     }
 
-    public List<CategoryDto> getAllCategoriesByProductTypeId(UUID productTypeId) {
+    public List<CategoryWithIdDto> getAllCategoriesByProductTypeId(UUID productTypeId) {
         List<Category> allCategories = categoryRepository.findAll();
-        List<CategoryDto> categories = new ArrayList<>();
+        List<CategoryWithIdDto> categories = new ArrayList<>();
 
         for (Category category : allCategories) {
             List <ProductType> productTypes = category.getProductTypes();
@@ -59,7 +60,7 @@ public final class CategoryService {
         return categories;
     }
 
-    public CategoryDto createCategory(CategoryDto categoryToCreate) {
+    public CategoryWithIdDto createCategory(CategoryDto categoryToCreate) {
         try {
             return categoryMapper.postEntity(categoryToCreate);
         } catch (EntityNotFoundException e) {
@@ -67,7 +68,7 @@ public final class CategoryService {
         }
     }
 
-    public CategoryDto updateCategory(CategoryDto categoryToUpdate) {
+    public CategoryWithIdDto updateCategory(CategoryWithIdDto categoryToUpdate) {
         try {
             return categoryMapper.putEntity(categoryToUpdate);
         } catch (EntityNotFoundException e) {

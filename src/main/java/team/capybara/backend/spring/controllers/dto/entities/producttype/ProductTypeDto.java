@@ -1,10 +1,9 @@
-package team.capybara.backend.spring.controllers.dto.producttype;
+package team.capybara.backend.spring.controllers.dto.entities.producttype;
 
 import java.util.List;
 import java.util.UUID;
 
 public record ProductTypeDto(
-        UUID id,
         String name,
         String description,
         Double weight,
@@ -13,7 +12,7 @@ public record ProductTypeDto(
         Double fats,
         Double carbohydrates,
         int quantityInOnePackage,
-        String mainImagePath,
+        UUID mainImage,
         List<UUID> imagesId,
         UUID shopId
 ) {

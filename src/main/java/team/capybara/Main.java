@@ -7,6 +7,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.sql.Time;
+
 /**
  * {@code Main} class is the entrypoint of the backend, which based on {@link SpringApplication}.
  */
@@ -17,6 +19,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class Main {
     public static void main(String[] args) {
+
         SpringApplication.run(Main.class, args);
     }
 }

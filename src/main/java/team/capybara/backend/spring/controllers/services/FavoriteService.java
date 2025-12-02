@@ -2,7 +2,9 @@ package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.controllers.dto.favorite.FavoriteDto;
+import team.capybara.backend.spring.controllers.dto.entities.favorite.FavoriteDto;
+import team.capybara.backend.spring.controllers.dto.entities.favorite.FavoriteWithIdDto;
+import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.UserConverter;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.FavoriteMapper;
 import team.capybara.backend.spring.controllers.repositories.*;
 import team.capybara.backend.spring.entities.Favorite;
@@ -16,28 +18,31 @@ import java.util.UUID;
 @Service
 public final class FavoriteService {
     private final FavoriteMapper favoriteMapper;
+    private final UserConverter userConverter;
     private final FavoriteRepository favoriteRepository;
 
     public FavoriteService(
             FavoriteMapper favoriteMapper,
+            UserConverter userConverter,
             FavoriteRepository favoriteRepository
     ) {
         this.favoriteMapper = favoriteMapper;
+        this.userConverter = userConverter;
         this.favoriteRepository = favoriteRepository;
     }
 
-    public List<FavoriteDto> getAllFavorites() {
+    public List<FavoriteWithIdDto> getAllFavorites() {
         List<Favorite> favorites = favoriteRepository.findAll();
 
         return favorites.stream().map(favoriteMapper::getEntity).toList();
     }
 
-    public Optional<FavoriteDto> getFavoriteById(UUID id) {
+    public Optional<FavoriteWithIdDto> getFavoriteById(UUID id) {
         Optional<Favorite> favorite = favoriteRepository.findById(id);
 
         if (favorite.isPresent()) {
-            FavoriteDto favoriteDto = favoriteMapper.getEntity(favorite.get());
-            return Optional.of(favoriteDto);
+            FavoriteWithIdDto favoriteWithIdDto = favoriteMapper.getEntity(favorite.get());
+            return Optional.of(favoriteWithIdDto);
         }
 
         return Optional.empty();
@@ -51,7 +56,17 @@ public final class FavoriteService {
         return favoriteRepository.findFavoritesByUser(user);
     }
 
-    public FavoriteDto createFavorite(FavoriteDto favoriteToCreate) {
+    public List<FavoriteWithIdDto> getFavoritesByUserId(UUID id) {
+        User user = userConverter.toEntity(id);
+        try {
+            return favoriteRepository.findFavoritesByUser(user).
+                    stream().map(favoriteMapper::getEntity).toList();
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException(e.getMessage());
+        }
+    }
+
+    public FavoriteWithIdDto createFavorite(FavoriteDto favoriteToCreate) {
         try {
             return favoriteMapper.postEntity(favoriteToCreate);
         } catch (EntityNotFoundException e) {
@@ -59,9 +74,9 @@ public final class FavoriteService {
         }
     }
 
-    public FavoriteDto updateFavorite(FavoriteDto favoriteToUpdate) {
+    public FavoriteWithIdDto updateFavorite(FavoriteWithIdDto favoriteToUpdate) {
         try {
-            return favoriteMapper.postEntity(favoriteToUpdate);
+            return favoriteMapper.putEntity(favoriteToUpdate);
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());
         }

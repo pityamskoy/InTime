@@ -2,19 +2,20 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
+import team.capybara.backend.spring.controllers.dto.entities.product.ProductDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ProductConverter;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ProductTypeConverter;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 import team.capybara.backend.spring.entities.Product;
 import team.capybara.backend.spring.entities.ProductType;
-import team.capybara.backend.spring.controllers.dto.product.ProductDto;
+import team.capybara.backend.spring.controllers.dto.entities.product.ProductWithIdDto;
 
 import java.util.UUID;
 
 
 @Component
-public final class ProductMapper implements Mapper<Product, ProductDto> {
+public final class ProductMapper implements Mapper<Product, ProductWithIdDto, ProductDto> {
     private final ProductRepository productRepository;
     private final ProductConverter productConverter;
     private final ProductTypeConverter productTypeConverter;
@@ -30,10 +31,10 @@ public final class ProductMapper implements Mapper<Product, ProductDto> {
     }
 
     @Override
-    public ProductDto getEntity(Product product) {
+    public ProductWithIdDto getEntity(Product product) {
         UUID productTypeId = product.getProductType().getId();
 
-        return new ProductDto(
+        return new ProductWithIdDto(
                 product.getId(),
                 productTypeId,
                 product.getShelfLife(),
@@ -44,9 +45,9 @@ public final class ProductMapper implements Mapper<Product, ProductDto> {
     }
 
     @Override
-    public ProductDto postEntity(ProductDto productToCreate) {
+    public ProductWithIdDto postEntity(ProductDto productToCreate) {
         try {
-            ProductType productType = productTypeConverter.toEntity(productToCreate.id());
+            ProductType productType = productTypeConverter.toEntity(productToCreate.productTypeId());
 
             Product productCreated = productRepository.save(new Product(
                     UUID.randomUUID(),
@@ -65,7 +66,7 @@ public final class ProductMapper implements Mapper<Product, ProductDto> {
     }
 
     @Override
-    public ProductDto putEntity(ProductDto productToUpdate) {
+    public ProductWithIdDto putEntity(ProductWithIdDto productToUpdate) {
         try {
             Product productUpdated = productConverter.toEntity(productToUpdate.id());
             ProductType productType = productTypeConverter.toEntity(productToUpdate.id());

@@ -8,5 +8,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ProductTypeRepository extends JpaRepository<ProductType, UUID> {
-    List<ProductType> findByNameContaining(String name);
+    List<ProductType> findByNameContainingIgnoreCase(String name);
 }

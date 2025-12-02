@@ -12,7 +12,7 @@ services:
   #    POSTGRES_DB: postgres
 
   db_dev:
-    image: leoagf/devbd:1.9
+    image: leoagf/devbd:2.0
     #image: postgres
     restart: unless-stopped
     ports:
@@ -29,5 +29,5 @@ services:
     ports:
       - "1235:80"
     volumes:
-      - ./src/main/resources/static:/usr/share/nginx/html:ro
+      - ./static:/usr/share/nginx/html:ro
     restart: unless-stopped

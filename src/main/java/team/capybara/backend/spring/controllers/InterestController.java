@@ -6,7 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.spring.controllers.dto.interest.InterestDto;
+import team.capybara.backend.spring.controllers.dto.entities.interest.InterestDto;
+import team.capybara.backend.spring.controllers.dto.entities.interest.InterestWithIdDto;
 import team.capybara.backend.spring.controllers.services.InterestService;
 
 import java.util.List;
@@ -27,30 +28,30 @@ public final class InterestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<InterestDto>> getAllInterests() {
+    public ResponseEntity<List<InterestWithIdDto>> getAllInterests() {
         log.info("Called getAllInterests");
 
         return ResponseEntity.ok(interestService.getAllInterests());
     }
 
     @GetMapping("/get_by_product/{id}")
-    public ResponseEntity<List<InterestDto>> getAllInterestsByProduct(@PathVariable String id) {
+    public ResponseEntity<List<InterestWithIdDto>> getAllInterestsByProduct(@PathVariable String id) {
         log.info("Called getAllInterestsByProduct");
 
         return ResponseEntity.ok(interestService.getAllInterestsByProduct(UUID.fromString(id)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<InterestDto> getInterestById(@PathVariable String id) {
+    public ResponseEntity<InterestWithIdDto> getInterestById(@PathVariable String id) {
         log.info("Called getInterestById; id={}", id);
-        Optional<InterestDto> interestDtoOptional = interestService.getInterestById(UUID.fromString(id));
+        Optional<InterestWithIdDto> interestDtoOptional = interestService.getInterestById(UUID.fromString(id));
 
         return interestDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/create")
-    public ResponseEntity<InterestDto> createInterest(@RequestBody InterestDto interestToCreate) {
+    public ResponseEntity<InterestWithIdDto> createInterest(@RequestBody InterestDto interestToCreate) {
         log.info("Called createInterest; interestToCreate={}", interestToCreate);
 
         try {
@@ -62,7 +63,7 @@ public final class InterestController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<InterestDto> updateInterest(@RequestBody InterestDto interestToUpdate) {
+    public ResponseEntity<InterestWithIdDto> updateInterest(@RequestBody InterestWithIdDto interestToUpdate) {
         log.info("Called updateInterest; interestToUpdate={}", interestToUpdate);
 
         try {

@@ -2,7 +2,8 @@ package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.controllers.dto.producttype.ProductTypeDto;
+import team.capybara.backend.spring.controllers.dto.entities.producttype.ProductTypeDto;
+import team.capybara.backend.spring.controllers.dto.entities.producttype.ProductTypeWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ProductTypeMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
@@ -29,7 +30,7 @@ public final class ProductTypeService {
         this.shopRepository = shopRepository;
     }
 
-    public List<ProductTypeDto> getAllProductTypes() {
+    public List<ProductTypeWithIdDto> getAllProductTypes() {
         List<ProductType> productTypes = productTypeRepository.findAll();
 
         return productTypes.stream().map(productTypeMapper::getEntity).toList();
@@ -47,18 +48,18 @@ public final class ProductTypeService {
         }
     }
 
-    public Optional<ProductTypeDto> getProductTypeById(UUID id) {
+    public Optional<ProductTypeWithIdDto> getProductTypeById(UUID id) {
         Optional<ProductType> productTypeOptional = productTypeRepository.findById(id);
 
         if (productTypeOptional.isPresent()) {
-            ProductTypeDto productTypeDto = productTypeMapper.getEntity(productTypeOptional.get());
-            return Optional.of(productTypeDto);
+            ProductTypeWithIdDto productTypeWithIdDto = productTypeMapper.getEntity(productTypeOptional.get());
+            return Optional.of(productTypeWithIdDto);
         }
 
         return Optional.empty();
     }
 
-    public ProductTypeDto createProductType(ProductTypeDto productTypeToCreate) {
+    public ProductTypeWithIdDto createProductType(ProductTypeDto productTypeToCreate) {
         try {
             return productTypeMapper.postEntity(productTypeToCreate);
         } catch (EntityNotFoundException e) {
@@ -66,7 +67,7 @@ public final class ProductTypeService {
         }
     }
 
-    public ProductTypeDto updateProductType(ProductTypeDto productTypeToUpdate) {
+    public ProductTypeWithIdDto updateProductType(ProductTypeWithIdDto productTypeToUpdate) {
         try {
             return productTypeMapper.putEntity(productTypeToUpdate);
         } catch (EntityNotFoundException e) {

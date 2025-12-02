@@ -7,10 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.spring.controllers.filters.FeedFilterEntity;
+import team.capybara.backend.spring.controllers.dto.entities.product.ProductDto;
+import team.capybara.backend.spring.controllers.dto.other.filters.FeedFilterEntity;
+import team.capybara.backend.spring.controllers.dto.other.pagination.PaginationLimit;
 import team.capybara.backend.spring.controllers.services.FilteredProductService;
 import team.capybara.backend.spring.entities.*;
-import team.capybara.backend.spring.controllers.dto.product.ProductDto;
+import team.capybara.backend.spring.controllers.dto.entities.product.ProductWithIdDto;
 import team.capybara.backend.spring.controllers.services.ProductService;
 
 import java.util.*;
@@ -21,7 +23,6 @@ import java.util.*;
 @SuppressWarnings(value = {"unused"})
 public final class FeedController{
     private static final Logger log = LoggerFactory.getLogger(FeedController.class);
-    private static final int NUMBER_OF_PRODUCTS_PER_PAGE = 30;
 
     private final ProductService productService;
     private final FilteredProductService filteredProductService;
@@ -34,47 +35,61 @@ public final class FeedController{
         this.filteredProductService = filteredProductService;
     }
 
-    @GetMapping("/{offset}")
-    public ResponseEntity<Page<ProductDto>> getAllProducts(@PathVariable int offset) {
-        log.info("Called getAllProducts");
+    @Deprecated(forRemoval = true)
+    @PostMapping("/{offset}")
+    public ResponseEntity<Page<ProductWithIdDto>> getAllProducts(
+            @PathVariable int offset,
+            @RequestBody PaginationLimit limit
+    ) {
+        log.info("Called getAllProducts; offset={}, limit={}", offset, limit.getLimit());
 
-        return ResponseEntity.ok(productService.getAllProducts(offset, NUMBER_OF_PRODUCTS_PER_PAGE));
+        if (offset < 1) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok(productService.getAllProducts(offset, limit.getLimit()));
     }
 
-    //will be replaced
-    @GetMapping("/products_by_shop/{shop}/{offset}")
-    public ResponseEntity<Page<ProductDto>> getProductsByShopId(@PathVariable String id,@PathVariable int offset) {
-        log.info("Called getProductsByShopId");
+    @PostMapping("/products_by_shop/{id}/{offset}")
+    public ResponseEntity<Page<ProductWithIdDto>> getProductsByShopId(
+            @PathVariable String id,
+            @PathVariable int offset,
+            @RequestBody PaginationLimit limit
+    ) {
+        log.info("Called getProductsByShopId; id={}, offset={}, limit={}", id, offset, limit.getLimit());
 
-        return ResponseEntity.ok(productService.getProductByShop(offset, NUMBER_OF_PRODUCTS_PER_PAGE, id));
+        if (offset < 1) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok(productService.getProductByShop(offset, limit.getLimit(), id));
     }
 
     @PostMapping("/filtered/{offset}")
-    public ResponseEntity<Page<ProductDto>> getAllSortedProducts(
+    public ResponseEntity<Page<ProductWithIdDto>> getAllSortedProducts(
             @PathVariable int offset,
             @RequestBody FeedFilterEntity filter
     ) {
-        if (filter.getShopsId() == null && filter.getCategoriesId() == null && filter.getIsOnlyFreeProducts() == null
-                && filter.getDistance() == null && filter.getUserId() == null) {
-            return getAllProducts(offset);
+        log.info("Called getAllSortedProducts; offset={}; filter={}", offset, filter);
+
+        if (offset < 1) {
+            return ResponseEntity.badRequest().build();
         }
 
-        log.info("Called getAllSortedProducts; filter={}", filter);
-
-        return ResponseEntity.ok(filteredProductService.getAllSortedProducts(offset, NUMBER_OF_PRODUCTS_PER_PAGE, filter));
+        return ResponseEntity.ok(filteredProductService.getAllSortedProducts(offset, filter));
     }
 
     @GetMapping("/product/{id}")
-    public ResponseEntity<ProductDto> getProductById(@PathVariable String id) {
+    public ResponseEntity<ProductWithIdDto> getProductById(@PathVariable String id) {
         log.info("Called getProduct; id={}", id);
-        Optional<ProductDto> productDtoOptional = productService.getProductById(UUID.fromString(id));
+        Optional<ProductWithIdDto> productDtoOptional = productService.getProductById(UUID.fromString(id));
 
         return productDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productToCreate) {
+    public ResponseEntity<ProductWithIdDto> createProduct(@RequestBody ProductDto productToCreate) {
         log.info("Called createProduct; productToCreate={}", productToCreate);
 
         try {
@@ -87,7 +102,7 @@ public final class FeedController{
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ProductDto> updateProduct(@RequestBody ProductDto productToUpdate) {
+    public ResponseEntity<ProductWithIdDto> updateProduct(@RequestBody ProductWithIdDto productToUpdate) {
         log.info("Called updateProduct; productToUpdate={}", productToUpdate);
 
         try {

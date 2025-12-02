@@ -2,7 +2,8 @@ package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
+import team.capybara.backend.spring.controllers.dto.entities.shop.ShopDto;
+import team.capybara.backend.spring.controllers.dto.entities.shop.ShopWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ShopMapper;
 import team.capybara.backend.spring.controllers.repositories.ReviewRepository;
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
@@ -12,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import team.capybara.backend.spring.entities.Review;
 import team.capybara.backend.spring.entities.Shop;
 
 @Service
@@ -27,52 +27,52 @@ public final class ShopService {
         this.reviewRepository = reviewRepository;
     }
 
-    public List<ShopDto> getAllShops() {
+    public List<ShopWithIdDto> getAllShops() {
         List<Shop> shops = shopRepository.findAll();
-        List<ShopDto> shopDtos = shops.stream().map(shopMapper::getEntity).toList();
-        return shopDtos;
+        List<ShopWithIdDto> shopWithIdDtos = shops.stream().map(shopMapper::getEntity).toList();
+        return shopWithIdDtos;
     }
 
-    public List<ShopDto> getAllShops(double lat,double lon) {
+    public List<ShopWithIdDto> getAllShops(double lat, double lon) {
         List<Shop> shops = shopRepository.findAll();
         shops.stream().forEach(shop -> shop.getDistanceTo(lat,lon));
-        List<ShopDto> shopDtos = shops.stream().map(shopMapper::getEntity).toList();
-        return shopDtos;
+        List<ShopWithIdDto> shopWithIdDtos = shops.stream().map(shopMapper::getEntity).toList();
+        return shopWithIdDtos;
     }
 
-    public Optional<ShopDto> getShopById(UUID id) {
+    public Optional<ShopWithIdDto> getShopById(UUID id) {
         Optional<Shop> shopOptional = shopRepository.findById(id);
 
         if  (shopOptional.isPresent()) {
-            ShopDto shopDto = shopMapper.getEntity(shopOptional.get());
-            return Optional.of(shopDto);
+            ShopWithIdDto shopWithIdDto = shopMapper.getEntity(shopOptional.get());
+            return Optional.of(shopWithIdDto);
         }
 
         return Optional.empty();
     }
 
-    public Optional<ShopDto> getShopById(UUID id, double lat, double lon) {
+    public Optional<ShopWithIdDto> getShopById(UUID id, double lat, double lon) {
         Optional<Shop> shopOptional = shopRepository.findById(id);
 
         if  (shopOptional.isPresent()) {
             Shop shop = shopOptional.get();
             shop.getDistanceTo(lat,lon);
-            ShopDto shopDto = shopMapper.getEntity(shop);
-            return Optional.of(shopDto);
+            ShopWithIdDto shopWithIdDto = shopMapper.getEntity(shop);
+            return Optional.of(shopWithIdDto);
         }
 
         return Optional.empty();
     }
 
-    public List<ShopDto> sortShopsByDistance(List<UUID> shopsId, Double distance) {
-        List<ShopDto> shopsWithAppropriateDistance = new ArrayList<>();
+    public List<ShopWithIdDto> sortShopsByDistance(List<UUID> shopsId, Double distance) {
+        List<ShopWithIdDto> shopsWithAppropriateDistance = new ArrayList<>();
 
         for (UUID shopId : shopsId) {
-            Optional<ShopDto> shopDtoOptional = getShopById(shopId);
+            Optional<ShopWithIdDto> shopDtoOptional = getShopById(shopId);
             if (shopDtoOptional.isPresent()) {
-                ShopDto shopDto = shopDtoOptional.get();
-                if (shopDto.distance() <= distance) {
-                    shopsWithAppropriateDistance.add(shopDto);
+                ShopWithIdDto shopWithIdDto = shopDtoOptional.get();
+                if (shopWithIdDto.distance() <= distance) {
+                    shopsWithAppropriateDistance.add(shopWithIdDto);
                 }
             }
         }
@@ -80,12 +80,12 @@ public final class ShopService {
         return shopsWithAppropriateDistance;
     }
 
-    public ShopDto createShop(ShopDto shopToCreate) {
-        if (shopToCreate.name().isEmpty()) {
-            throw new IllegalArgumentException("Shop name cannot be empty");
+    public ShopWithIdDto createShop(ShopDto shopToCreate) {
+        try {
+            return shopMapper.postEntity(shopToCreate);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
-
-        return shopMapper.postEntity(shopToCreate);
     }
 
     public Optional<Double> getShopStarsById(UUID id) {
@@ -95,19 +95,10 @@ public final class ShopService {
             throw new EntityNotFoundException("Shop not found; id=" + id);
         }
 
-        List<Review> reviews = reviewRepository.findByShop(shop.get());
-        double sumOfStarsValue = 0.0;
-        double colOfReview = 0.0;
-
-        for (Review review:reviews) {
-            sumOfStarsValue+=review.getStars();
-            colOfReview++;
-        }
-
-        return Optional.of(sumOfStarsValue / colOfReview);
+        return Optional.of(reviewRepository.calculateStoreRating(shop.get().getId()));
     }
 
-    public ShopDto updateShop(ShopDto shopToUpdate){
+    public ShopWithIdDto updateShop(ShopWithIdDto shopToUpdate){
         try {
             return shopMapper.putEntity(shopToUpdate);
         } catch (EntityNotFoundException e) {

@@ -2,6 +2,7 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
+import team.capybara.backend.spring.controllers.dto.entities.shop.ShopDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ImageConverter;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ShopConverter;
@@ -9,14 +10,14 @@ import team.capybara.backend.spring.controllers.mappers.converters.entityconvert
 import team.capybara.backend.spring.controllers.repositories.ShopRepository;
 import team.capybara.backend.spring.entities.Image;
 import team.capybara.backend.spring.entities.Shop;
-import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
+import team.capybara.backend.spring.controllers.dto.entities.shop.ShopWithIdDto;
 import team.capybara.backend.spring.entities.User;
 
 import java.util.List;
 import java.util.UUID;
 
 @Component
-public final class ShopMapper implements Mapper<Shop, ShopDto> {
+public final class ShopMapper implements Mapper<Shop, ShopWithIdDto, ShopDto> {
     private final ShopRepository shopRepository;
     private final ShopConverter shopConverter;
     private final ImageConverter imageConverter;
@@ -35,10 +36,10 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
     }
 
     @Override
-    public ShopDto getEntity(Shop shop) {
+    public ShopWithIdDto getEntity(Shop shop) {
         List<UUID> imagesId = imageConverter.toIdList(shop.getImages());
 
-        return new ShopDto(
+        return new ShopWithIdDto(
                 shop.getId(),
                 shop.getName(),
                 shop.getTimeOpen(),
@@ -47,22 +48,28 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
                 shop.getDescription(),
                 shop.isVerified(),
                 shop.getInn(),
-                shop.getMainImagePath(),
+                shop.getMainImage().getId(),
                 imagesId,
                 shop.getAddress(),
                 shop.getLat(),
                 shop.getLon(),
                 shop.getLinkToSocialMedia(),
                 shop.getOwner().getId(),
+                shop.getOrganizationPhoneNumber(),
                 shop.getCompanyType(),
                 shop.getDistance()
         );
     }
 
     @Override
-    public ShopDto postEntity(ShopDto shopToCreate) {
+    public ShopWithIdDto postEntity(ShopDto shopToCreate) {
+        if (shopToCreate.name().isEmpty()) {
+            throw new IllegalArgumentException("Shop name cannot be empty");
+        }
+
         try {
             List<Image> images = imageConverter.toEntityList(shopToCreate.imagesId());
+            Image mainImage = imageConverter.toEntity(shopToCreate.mainImage());
             User owner = userConverter.toEntity(shopToCreate.owner());
 
             Shop shopCreated = shopRepository.save(new Shop(
@@ -74,13 +81,14 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
                     shopToCreate.description(),
                     shopToCreate.isVerified(),
                     shopToCreate.inn(),
-                    shopToCreate.mainImagePath(),
+                    mainImage,
                     images,
                     shopToCreate.address(),
                     shopToCreate.lat(),
                     shopToCreate.lon(),
                     shopToCreate.linkToSocialMedia(),
                     owner,
+                    shopToCreate.organizationPhoneNumber(),
                     shopToCreate.companyType(),
                     0.0
             ));
@@ -92,10 +100,11 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
     }
 
     @Override
-    public ShopDto putEntity(ShopDto shopToUpdate) {
+    public ShopWithIdDto putEntity(ShopWithIdDto shopToUpdate) {
         try {
             Shop shopUpdated = shopConverter.toEntity(shopToUpdate.id());
             List<Image> images = imageConverter.toEntityList(shopToUpdate.imagesId());
+            Image mainImage = imageConverter.toEntity(shopToUpdate.mainImage());
 
             shopUpdated.setName(shopToUpdate.name());
             shopUpdated.setTimeOpen(shopToUpdate.timeOpen());
@@ -104,7 +113,7 @@ public final class ShopMapper implements Mapper<Shop, ShopDto> {
             shopUpdated.setDescription(shopToUpdate.description());
             shopUpdated.setVerified(shopToUpdate.isVerified());
             shopUpdated.setInn(shopToUpdate.inn());
-            shopUpdated.setMainImagePath(shopToUpdate.mainImagePath());
+            shopUpdated.setMainImage(mainImage);
             shopUpdated.setImages(images);
             shopUpdated.setAddress(shopToUpdate.address());
             shopUpdated.setLat(shopToUpdate.lat());

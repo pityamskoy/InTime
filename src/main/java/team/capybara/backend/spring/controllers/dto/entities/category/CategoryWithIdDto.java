@@ -1,9 +1,9 @@
-package team.capybara.backend.spring.controllers.dto.category;
+package team.capybara.backend.spring.controllers.dto.entities.category;
 
 import java.util.List;
 import java.util.UUID;
 
-public record CategoryDto(
+public record CategoryWithIdDto(
         UUID id,
         String name,
         String description,

@@ -6,7 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.spring.controllers.dto.shop.ShopDto;
+import team.capybara.backend.spring.controllers.dto.entities.shop.ShopDto;
+import team.capybara.backend.spring.controllers.dto.entities.shop.ShopWithIdDto;
 import team.capybara.backend.spring.controllers.services.ShopService;
 
 import java.util.List;
@@ -28,9 +29,9 @@ public final class ShopController {
     }
 
     @GetMapping(value = {"", "/{userLat}/{userLon}"})
-    public ResponseEntity<List<ShopDto>> getAllShops(@PathVariable Map<String, String> params) {
+    public ResponseEntity<List<ShopWithIdDto>> getAllShops(@PathVariable Map<String, String> params) {
         log.info("Called getAllShops");
-        ResponseEntity<List<ShopDto>> response;
+        ResponseEntity<List<ShopWithIdDto>> response;
 
         if (params.isEmpty())
             response = ResponseEntity.ok(shopService.getAllShops());
@@ -46,10 +47,10 @@ public final class ShopController {
     }
 
     @GetMapping(value = {"/{id}", "/{id}/{userLat}/{userLon}"})
-    public ResponseEntity<ShopDto> getShopById(@PathVariable Map<String, String> params) {
+    public ResponseEntity<ShopWithIdDto> getShopById(@PathVariable Map<String, String> params) {
         log.info("Called getShopById; id={}", params.get("id"));
 
-        Optional<ShopDto> shopDtoOptional = Optional.empty();
+        Optional<ShopWithIdDto> shopDtoOptional = Optional.empty();
 
         if(params.size()==1)
             shopDtoOptional = shopService.getShopById(UUID.fromString(params.get("id")));
@@ -74,7 +75,7 @@ public final class ShopController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ShopDto> createShop(@RequestBody ShopDto shopToCreate) {
+    public ResponseEntity<ShopWithIdDto> createShop(@RequestBody ShopDto shopToCreate) {
         log.info("Called createShop; shopToCreate={}", shopToCreate);
 
         try {
@@ -89,7 +90,7 @@ public final class ShopController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ShopDto> updateShop(@RequestBody ShopDto shopToUpdate) {
+    public ResponseEntity<ShopWithIdDto> updateShop(@RequestBody ShopWithIdDto shopToUpdate) {
         log.info("Called updateShop; shopToUpdate={}", shopToUpdate);
 
         try {

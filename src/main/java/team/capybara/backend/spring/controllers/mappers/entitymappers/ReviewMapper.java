@@ -2,7 +2,8 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
-import team.capybara.backend.spring.controllers.dto.review.ReviewDto;
+import team.capybara.backend.spring.controllers.dto.entities.review.ReviewDto;
+import team.capybara.backend.spring.controllers.dto.entities.review.ReviewWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ReviewConverter;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.ShopConverter;
@@ -15,7 +16,7 @@ import team.capybara.backend.spring.entities.User;
 import java.util.UUID;
 
 @Component
-public final class ReviewMapper implements Mapper<Review, ReviewDto> {
+public final class ReviewMapper implements Mapper<Review, ReviewWithIdDto, ReviewDto> {
     private final ReviewRepository reviewRepository;
     private final ReviewConverter reviewConverter;
     private final UserConverter userConverter;
@@ -34,8 +35,8 @@ public final class ReviewMapper implements Mapper<Review, ReviewDto> {
     }
 
     @Override
-    public ReviewDto getEntity(Review review) {
-        return new ReviewDto(
+    public ReviewWithIdDto getEntity(Review review) {
+        return new ReviewWithIdDto(
                 review.getId(),
                 review.getUser().getId(),
                 review.getShop().getId(),
@@ -45,7 +46,7 @@ public final class ReviewMapper implements Mapper<Review, ReviewDto> {
     }
 
     @Override
-    public ReviewDto postEntity(ReviewDto reviewToCreate) {
+    public ReviewWithIdDto postEntity(ReviewDto reviewToCreate) {
         try {
             User user = userConverter.toEntity(reviewToCreate.userId());
             Shop shop = shopConverter.toEntity(reviewToCreate.shopId());
@@ -65,7 +66,7 @@ public final class ReviewMapper implements Mapper<Review, ReviewDto> {
     }
 
     @Override
-    public ReviewDto putEntity(ReviewDto reviewToUpdate) {
+    public ReviewWithIdDto putEntity(ReviewWithIdDto reviewToUpdate) {
         try {
             Review reviewUpdated = reviewConverter.toEntity(reviewToUpdate.id());
             User user = userConverter.toEntity(reviewToUpdate.userId());

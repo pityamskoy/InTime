@@ -2,8 +2,9 @@ package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
-import team.capybara.backend.spring.controllers.dto.user.UserAuthDto;
-import team.capybara.backend.spring.controllers.dto.user.UserDto;
+import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthDto;
+import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.user.UserDto;
 import team.capybara.backend.spring.controllers.mappers.Mapper;
 import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.UserConverter;
 import team.capybara.backend.spring.controllers.repositories.UserRepository;
@@ -23,7 +24,7 @@ public final class UserMapper {
     }
 
     @Component
-    public static final class UserAuthMapper implements Mapper<User, UserAuthDto> {
+    public static final class UserAuthMapper implements Mapper<User, UserAuthWithIdDto, UserAuthDto> {
         private final UserRepository userRepository;
         private final UserConverter userConverter;
 
@@ -33,8 +34,8 @@ public final class UserMapper {
         }
 
         @Override
-        public UserAuthDto getEntity(User user) {
-            return new UserAuthDto(
+        public UserAuthWithIdDto getEntity(User user) {
+            return new UserAuthWithIdDto(
                     user.getId(),
                     user.getName(),
                     user.getEmail(),
@@ -45,7 +46,7 @@ public final class UserMapper {
         }
 
         @Override
-        public UserAuthDto postEntity(UserAuthDto userAuthToCreate) {
+        public UserAuthWithIdDto postEntity(UserAuthDto userAuthToCreate) {
             User userCreated = new User(
                     UUID.randomUUID(),
                     userAuthToCreate.name(),
@@ -61,7 +62,7 @@ public final class UserMapper {
         }
 
         @Override
-        public UserAuthDto putEntity(UserAuthDto userAuthToUpdate) {
+        public UserAuthWithIdDto putEntity(UserAuthWithIdDto userAuthToUpdate) {
             try {
                 User userUpdated = userConverter.toEntity(userAuthToUpdate.id());
 

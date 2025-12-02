@@ -37,11 +37,12 @@ public class ProductType implements EntityWithId {
     @Column(name = "carbohydrates")
     private Double carbohydrates;
 
-    @Column(name = "quantityInOnePackage")
+    @Column(name = "quantity_in_one_package")
     private int quantityInOnePackage;
 
-    @Column(name = "mainImagePath", nullable = false)
-    private String mainImagePath;
+    @OneToOne
+    @JoinColumn(name = "main_image_id")
+    private Image mainImage;
 
     @OneToMany(fetch = FetchType.EAGER)
     private List<Image> images;
