@@ -29,5 +29,5 @@ services:
     ports:
       - "1235:80"
     volumes:
-      - ./src/main/resources/static:/usr/share/nginx/html:ro
+      - ./static:/usr/share/nginx/html:ro
     restart: unless-stopped
