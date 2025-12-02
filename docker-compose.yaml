@@ -1,5 +1,12 @@
 name: vSrok
 services:
+  frontend:
+    image: semayagi/vsrok-frontend:latest
+    depends_on:
+      - backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
 
   backend:
     image: leoagf/devback:1.0
@@ -8,7 +15,7 @@ services:
       - nginx
     restart: unless-stopped
     ports:
-      - "1236:8080"
+      - "8080:8080"
     volumes:
       - app-volume:/static
 
