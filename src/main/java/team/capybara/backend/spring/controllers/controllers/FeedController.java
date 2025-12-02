@@ -62,7 +62,7 @@ public final class FeedController{
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(productService.getProductByShop(offset, limit.getLimit(), id));
+        return ResponseEntity.ok(productService.getProductsByShop(offset, limit.getLimit(), id));
     }
 
     @PostMapping("/filtered/{offset}")

@@ -2,6 +2,7 @@ package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.entities.product.ProductDto;
@@ -51,18 +52,39 @@ public final class ProductService {
         return Optional.empty();
     }
 
-    public Page<ProductWithIdDto> getProductByShop(int offset, int limit, String id) {
+    public Page<ProductWithIdDto> getProductsByShop(int offset, int limit, String id) {
         List<ProductType> productTypes = productTypeRepository.findAll();
         List<ProductType> productTypesWithNeededShop = new ArrayList<>();
+        List<Product> products = new ArrayList<>();
 
         for (ProductType productType : productTypes) {
             if (productType.getShop().getId().equals(UUID.fromString(id)))
                 productTypesWithNeededShop.add(productType);
         }
 
-        Page<Product> products = productRepository.findByProductTypeIn(productTypesWithNeededShop,PageRequest.of(offset, limit));
+        for (ProductType productType : productTypesWithNeededShop) {
+            products.addAll(productRepository.findByProductType(productType));
+        }
+
+        List<Product> slice = new ArrayList<>();
+        //make separate method
+        if (!products.isEmpty()) {
+            try {
+                slice = products.subList(limit * (offset - 1), limit * (offset));
+            } catch (IndexOutOfBoundsException _) {
+                if (limit * (offset - 1) == products.size()) {
+                    slice.add(products.get(limit * (offset - 1)));
+                } else if (limit * (offset - 1) < products.size()) {
+                    slice = products.subList(limit * (offset - 1), products.size());
+                }
+            }
+        }
+
+        if (slice.isEmpty()) {
+            return new PageImpl<>(new ArrayList<>());
+        }
         //products.stream().forEach(product -> product.calculateScore(1,5));
-        return products.map(productMapper::getEntity);
+        return new PageImpl<>(slice.stream().map(productMapper::getEntity).toList());
     }
 
     public ProductWithIdDto createProduct(ProductDto productToCreate) {
