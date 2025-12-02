@@ -5,45 +5,36 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.entities.category.CategoryWithIdDto;
 import team.capybara.backend.spring.controllers.dto.entities.product.ProductWithIdDto;
-import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthWithIdDto;
 import team.capybara.backend.spring.controllers.dto.other.filters.FeedFilterEntity;
-import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.UserConverter;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ProductMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
 import team.capybara.backend.spring.entities.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public final class FilteredProductService {
     private final ShopService shopService;
     private final CategoryService categoryService;
-    private final FavoriteService favoriteService;
-    private final UserService userService;
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
     private final ProductTypeRepository productTypeRepository;
-    private final UserConverter userConverter;
 
     public FilteredProductService(
             ShopService shopService,
             CategoryService categoryService,
-            FavoriteService favoriteService,
-            UserService userService,
             ProductMapper productMapper,
             ProductRepository productRepository,
-            ProductTypeRepository productTypeRepository,
-            UserConverter userConverter
+            ProductTypeRepository productTypeRepository
     ) {
         this.shopService = shopService;
         this.categoryService = categoryService;
-        this.favoriteService = favoriteService;
-        this.userService = userService;
         this.productMapper = productMapper;
         this.productRepository = productRepository;
         this.productTypeRepository = productTypeRepository;
-        this.userConverter = userConverter;
     }
 
     public Page<ProductWithIdDto> getAllSortedProducts(
@@ -81,11 +72,13 @@ public final class FilteredProductService {
             productsToSort = sortProductsByShops(productsToSort, filter.getShopsId().stream().map(UUID::fromString).toList());
         }
 
+        productsToSort = quickSortProductsByShopDistance(productsToSort);
+
         if (filter.getUserLat() != null && filter.getUserLon() != null) {
             shopService.getAllShops(filter.getUserLat(), filter.getUserLon());
 
             if (filter.getDistance() != null) {
-                productsToSort = sortProductsByDistance(productsToSort, filter.getDistance());
+                productsToSort = filterProductsByDistance(productsToSort, filter.getDistance());
             }
         }
 
@@ -164,61 +157,37 @@ public final class FilteredProductService {
         return productsSorted;
     }
 
-    //add quicksort exactly in this method
-    private List<Product> sortProductsByDistance(List<Product> productsToSort, Double distance) {
+    private List<Product> filterProductsByDistance(List<Product> productsToSort, Double distance) {
         List<Product> productsSorted = new ArrayList<>();
-        List<Shop> shopsToSort = new ArrayList<>();
 
         for (Product product : productsToSort) {
-            shopsToSort.add(product.getProductType().getShop());
+            if (product.getProductType().getShop().getDistance() > distance) {
+                break;
+            }
+            productsSorted.add(product);
         }
-
-
 
         return productsSorted;
     }
 
-    // It's necessary to add score to recommend by multiple parameters.
-    // Also add quicksort algorithm for all criteria
-    private List<Product> recommendProducts(
-            List<Product> productsToSort,
-            String userId
-    ) {
-        if (userId == null) {
+    private List<Product> quickSortProductsByShopDistance(List<Product> productsToSort) {
+        if (productsToSort.size() <= 1) {
             return productsToSort;
         }
 
-        Optional<UserAuthWithIdDto> userDtoOptional = userService.getUserById(UUID.fromString(userId));
+        Shop pivot = productsToSort.getFirst().getProductType().getShop();
+        List<Product> left = new ArrayList<>();
+        List<Product> right = new ArrayList<>();
 
-        if (userDtoOptional.isEmpty()) {
-            return productsToSort;
-        }
-
-        User user = userConverter.toEntity(UUID.fromString(userId));
-        List<Favorite> favoritesOfUser = favoriteService.getFavoritesByUser(user);
-
-        List<Double> distances = new ArrayList<>();
-        List<ProductType> productTypes = new ArrayList<>();
-        for (Favorite favorite : favoritesOfUser) {
-            productTypes.add(favorite.getProductType());
-            distances.add(favorite.getProductType().getShop().getDistance());
-        }
-
-        Double sumOfDistances = 0.0;
-        for (Double distance : distances) {
-            sumOfDistances += distance;
-        }
-
-        Double mediumDistance = sumOfDistances / distances.size();
-
-        // add quicksort here
-        List<Product> productsSorted = sortProductsByDistance(productsToSort, mediumDistance);
-        for (Product product : productsToSort) {
-            if (!productsSorted.contains(product)) {
-                productsSorted.add(product);
+        for (int i = 0; i <= productsToSort.size(); i++) {
+            if (productsToSort.get(i).getProductType().getShop().getDistance() <= pivot.getDistance() && i != 0) {
+                left.add(productsToSort.get(i));
+            } else if (productsToSort.get(i).getProductType().getShop().getDistance() > pivot.getDistance()) {
+                right.add(productsToSort.get(i));
             }
         }
 
-        return productsSorted;
+        return Stream.of(quickSortProductsByShopDistance(left), List.of(productsToSort.getFirst()), quickSortProductsByShopDistance(right))
+                .flatMap(List::stream).collect(Collectors.toList());
     }
 }

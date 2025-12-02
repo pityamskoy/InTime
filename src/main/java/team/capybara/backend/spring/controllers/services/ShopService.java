@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import team.capybara.backend.spring.entities.Shop;
 
@@ -114,11 +116,7 @@ public final class ShopService {
         }
     }
 
-    /**
-     * {@code quickSortShopsByDistance} should be package-private because it returns {@code Shop}, not {@code ShopWithIdDto}.
-     * This method is supposed to be used only in services to get auxiliary information.
-     */
-    List<Shop> quickSortShopsByDistance(List<Shop> shopsToSort) {
+    private List<Shop> quickSortShopsByDistance(List<Shop> shopsToSort) {
         if (shopsToSort.size() <= 1) {
             return shopsToSort;
         }
@@ -134,8 +132,8 @@ public final class ShopService {
                 right.add(shopsToSort.get(i));
             }
         }
-        return List.of(pivot);
 
-        //return quickSortShopsByDistance(left) + List.of(pivot) + quickSortShopsByDistance(right);
+        return Stream.of(quickSortShopsByDistance(left), List.of(pivot), quickSortShopsByDistance(right))
+                .flatMap(List::stream).collect(Collectors.toList());
     }
 }
