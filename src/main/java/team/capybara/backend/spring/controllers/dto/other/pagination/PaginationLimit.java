@@ -12,7 +12,6 @@ import java.util.Objects;
 @Getter
 @Setter
 public final class PaginationLimit {
-    @NonNull
     private Integer limit;
 
     public PaginationLimit(@Nullable Integer limit) {

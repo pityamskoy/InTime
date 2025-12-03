@@ -1,4 +1,4 @@
-package team.capybara.backend.spring.controllers;
+package team.capybara.backend.spring.controllers.controllers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -16,7 +16,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/favorites")
-@CrossOrigin(value = {"http://localhost:3000"})
 @SuppressWarnings(value = {"unused"})
 public final class FavoriteController {
     private static final Logger log = LoggerFactory.getLogger(FavoriteController.class);

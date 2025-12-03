@@ -18,7 +18,8 @@ public final class FeedFilterEntity {
     private List<String> shopsId;
     private List<String> categoriesId;
     private Double distance;
-    private String userId;
+    private Double userLat;
+    private Double userLon;
 
     @SuppressWarnings(value = {"unused"})
     public FeedFilterEntity(
@@ -28,9 +29,10 @@ public final class FeedFilterEntity {
             @Nullable List<String> shopsId,
             @Nullable List<String> categoriesId,
             @Nullable Double Distance,
-            @Nullable String userId
+            @Nullable Double userLat,
+            @Nullable Double userLon
     ) {
-        makeAllEmptyFieldsEquivalentToNull(limit, name, isOnlyFreeProducts, shopsId, categoriesId, Distance, userId);
+        makeAllEmptyFieldsEquivalentToNull(limit, name, isOnlyFreeProducts, shopsId, categoriesId, Distance, userLat, userLon);
     }
 
     @SuppressWarnings(value = {"unused", "DataFlowIssue"})
@@ -41,7 +43,8 @@ public final class FeedFilterEntity {
             @Nullable List<String> shopsId,
             @Nullable List<String> categoriesId,
             @Nullable Double Distance,
-            @Nullable String userId
+            @Nullable Double userLat,
+            @Nullable Double userLon
     ) {
         try {
             if (name.isEmpty()) {
@@ -58,11 +61,6 @@ public final class FeedFilterEntity {
                 categoriesId = null;
             }
         } catch (NullPointerException _) {}
-        try {
-            if (userId.isEmpty()) {
-                userId = null;
-            }
-        } catch (NullPointerException _) {}
 
         this.limit = Objects.requireNonNullElse(limit, 30);
         this.name = name;
@@ -70,6 +68,7 @@ public final class FeedFilterEntity {
         this.shopsId = shopsId;
         this.categoriesId = categoriesId;
         this.distance = Distance;
-        this.userId = userId;
+        this.userLat = userLat;
+        this.userLon = userLon;
     }
 }

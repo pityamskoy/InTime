@@ -2,8 +2,10 @@ package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import team.capybara.backend.spring.controllers.controllers.pagination.PaginationHandler;
 import team.capybara.backend.spring.controllers.dto.entities.product.ProductDto;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
 import team.capybara.backend.spring.entities.Product;
@@ -23,20 +25,22 @@ public final class ProductService {
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
     private final ProductTypeRepository productTypeRepository;
+    private final PaginationHandler<Product> paginationHandler;
 
     public ProductService(
             ProductMapper productMapper,
             ProductRepository productRepository,
-            ProductTypeRepository productTypeRepository
+            ProductTypeRepository productTypeRepository,
+            PaginationHandler<Product> paginationHandler
     ) {
         this.productMapper = productMapper;
         this.productRepository = productRepository;
         this.productTypeRepository = productTypeRepository;
+        this.paginationHandler = paginationHandler;
     }
 
     public Page<ProductWithIdDto> getAllProducts(int offset, int limit) {
         Page<Product> products = productRepository.findAll(PageRequest.of(offset, limit));
-        products.stream().forEach(product -> product.calculateScore(1, 5));
         return products.map(productMapper::getEntity);
     }
 
@@ -51,22 +55,35 @@ public final class ProductService {
         return Optional.empty();
     }
 
-    public Page<ProductWithIdDto> getProductByShop(int offset, int limit, String id) {
+    public Page<ProductWithIdDto> getProductsByShop(int offset, int limit, String id) {
         List<ProductType> productTypes = productTypeRepository.findAll();
         List<ProductType> productTypesWithNeededShop = new ArrayList<>();
+        List<Product> products = new ArrayList<>();
 
         for (ProductType productType : productTypes) {
             if (productType.getShop().getId().equals(UUID.fromString(id)))
                 productTypesWithNeededShop.add(productType);
         }
 
-        Page<Product> products = productRepository.findByProductTypeIn(productTypesWithNeededShop,PageRequest.of(offset, limit));
+        for (ProductType productType : productTypesWithNeededShop) {
+            products.addAll(productRepository.findByProductType(productType));
+        }
+
+        List<Product> slice = paginationHandler.makeSliceFromList(products, offset, limit);
+
+        if (slice.isEmpty()) {
+            return new PageImpl<>(new ArrayList<>());
+        }
         //products.stream().forEach(product -> product.calculateScore(1,5));
-        return products.map(productMapper::getEntity);
+        return new PageImpl<>(slice.stream().map(productMapper::getEntity).toList());
     }
 
     public ProductWithIdDto createProduct(ProductDto productToCreate) {
-        return productMapper.postEntity(productToCreate);
+        try {
+            return productMapper.postEntity(productToCreate);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
     public ProductWithIdDto updateProduct(ProductWithIdDto productToUpdate) {
@@ -74,6 +91,8 @@ public final class ProductService {
             return productMapper.putEntity(productToUpdate);
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 

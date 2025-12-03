@@ -3,47 +3,42 @@ package team.capybara.backend.spring.controllers.services;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
+import team.capybara.backend.spring.controllers.controllers.pagination.PaginationHandler;
 import team.capybara.backend.spring.controllers.dto.entities.category.CategoryWithIdDto;
 import team.capybara.backend.spring.controllers.dto.entities.product.ProductWithIdDto;
-import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthWithIdDto;
 import team.capybara.backend.spring.controllers.dto.other.filters.FeedFilterEntity;
-import team.capybara.backend.spring.controllers.mappers.converters.entityconverters.UserConverter;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ProductMapper;
 import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
-import team.capybara.backend.spring.entities.Favorite;
-import team.capybara.backend.spring.entities.Product;
-import team.capybara.backend.spring.entities.ProductType;
-import team.capybara.backend.spring.entities.User;
+import team.capybara.backend.spring.entities.*;
+
+import static team.capybara.backend.spring.Constants.EPSILON;
 
 import java.util.*;
 
 @Service
 public final class FilteredProductService {
     private final CategoryService categoryService;
-    private final FavoriteService favoriteService;
-    private final UserService userService;
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
     private final ProductTypeRepository productTypeRepository;
-    private final UserConverter userConverter;
+    private final PaginationHandler<Product> paginationHandler;
+    private final EntityHandler entityHandler;
 
     public FilteredProductService(
             CategoryService categoryService,
-            FavoriteService favoriteService,
-            UserService userService,
             ProductMapper productMapper,
             ProductRepository productRepository,
             ProductTypeRepository productTypeRepository,
-            UserConverter userConverter
+            PaginationHandler<Product> paginationHandler,
+            EntityHandler entityHandler
     ) {
         this.categoryService = categoryService;
-        this.favoriteService = favoriteService;
-        this.userService = userService;
         this.productMapper = productMapper;
         this.productRepository = productRepository;
         this.productTypeRepository = productTypeRepository;
-        this.userConverter = userConverter;
+        this.paginationHandler = paginationHandler;
+        this.entityHandler = entityHandler;
     }
 
     public Page<ProductWithIdDto> getAllSortedProducts(
@@ -57,11 +52,11 @@ public final class FilteredProductService {
                 filter.getShopsId(),
                 filter.getCategoriesId(),
                 filter.getDistance(),
-                filter.getUserId());
+                filter.getUserLat(),
+                filter.getUserLon());
 
         int limit = filter.getLimit();
         List<Product> productsToSort;
-
 
         if (filter.getName() != null) {
             productsToSort = sortProductsByName(filter.getName());
@@ -81,27 +76,17 @@ public final class FilteredProductService {
             productsToSort = sortProductsByShops(productsToSort, filter.getShopsId().stream().map(UUID::fromString).toList());
         }
 
-        if (filter.getDistance() != null) {
-            productsToSort = sortProductsByDistance(productsToSort, filter.getDistance());
-        }
+        if (filter.getUserLat() != null && filter.getUserLon() != null) {
+            productsToSort.forEach(product -> product.getProductType().getShop().calculateDistance(filter.getUserLat(), filter.getUserLon()));
 
-        if (filter.getUserId() != null) {
-            productsToSort = recommendProducts(productsToSort, filter.getUserId());
-        }
-
-        List<Product> slice = new ArrayList<>();
-        if (!productsToSort.isEmpty()) {
-            try {
-                slice = productsToSort.subList(limit * (offset - 1), limit * (offset));
-            } catch (IndexOutOfBoundsException _) {
-                if (limit * (offset - 1) == productsToSort.size()) {
-                    slice.add(productsToSort.get(limit * (offset - 1)));
-                } else if (limit * (offset - 1) < productsToSort.size()) {
-                    slice = productsToSort.subList(limit * (offset - 1), productsToSort.size());
-                }
+            if (filter.getDistance() != null) {
+                productsToSort = filterProductsByDistance(productsToSort, filter.getDistance());
             }
+
+            productsToSort = recommendProductsByScore(productsToSort, filter.getUserLat(), filter.getUserLon());
         }
-        slice.forEach(product -> product.calculateScore(1, 5));
+
+        List<Product> slice = paginationHandler.makeSliceFromList(productsToSort, offset, limit);
 
         return new PageImpl<>(slice.stream().map(productMapper::getEntity).toList());
     }
@@ -113,8 +98,6 @@ public final class FilteredProductService {
         for (ProductType productType : productTypes) {
             products.addAll(productRepository.findByProductType(productType));
         }
-
-        products.forEach(product -> product.calculateScore(1, 5));
 
         return products;
     }
@@ -163,12 +146,11 @@ public final class FilteredProductService {
         return productsSorted;
     }
 
-    //add quicksort exactly in this method
-    private List<Product> sortProductsByDistance(List<Product> productsToSort, Double distance) {
+    private List<Product> filterProductsByDistance(List<Product> productsToSort, Double distance) {
         List<Product> productsSorted = new ArrayList<>();
 
         for (Product product : productsToSort) {
-            if (product.getProductType().getShop().getDistance() <= distance) {
+            if ((product.getProductType().getShop().getDistance() - distance) < EPSILON) {
                 productsSorted.add(product);
             }
         }
@@ -176,55 +158,14 @@ public final class FilteredProductService {
         return productsSorted;
     }
 
-    // It's necessary to add score to recommend by multiple parameters.
-    // Also add quicksort algorithm for all criteria
-    private List<Product> recommendProducts(
-            List<Product> productsToSort,
-            String userId
-    ) {
-        if (userId == null) {
+    private List<Product> recommendProductsByScore(List<Product> productsToSort, Double userLat, Double userLon) {
+        if (productsToSort.size() <= 1) {
             return productsToSort;
         }
 
-        Optional<UserAuthWithIdDto> userDtoOptional = userService.getUserById(UUID.fromString(userId));
+        Comparator<Product> comparator = Comparator.comparing(obj -> entityHandler.calculateProductScore(obj, userLat, userLon));
+        productsToSort.sort(comparator);
 
-        if (userDtoOptional.isEmpty()) {
-            return productsToSort;
-        }
-
-        User user = userConverter.toEntity(UUID.fromString(userId));
-        List<Favorite> favoritesOfUser = favoriteService.getFavoritesByUser(user);
-
-        List<Double> distances = new ArrayList<>();
-        List<ProductType> productTypes = new ArrayList<>();
-        for (Favorite favorite : favoritesOfUser) {
-            productTypes.add(favorite.getProductType());
-            distances.add(favorite.getProductType().getShop().getDistance());
-        }
-
-        //how to compare dates?
-        List<Date> dates = new ArrayList<>();
-        for (Product product : productsToSort) {
-            if (productTypes.contains(product.getProductType())) {
-                dates.add(product.getShelfLife());
-            }
-        }
-
-        Double sumOfDistances = 0.0;
-        for (Double distance : distances) {
-            sumOfDistances += distance;
-        }
-
-        Double mediumDistance = sumOfDistances / distances.size();
-
-        // add quicksort here
-        List<Product> productsSorted = sortProductsByDistance(productsToSort, mediumDistance);
-        for (Product product : productsToSort) {
-            if (!productsSorted.contains(product)) {
-                productsSorted.add(product);
-            }
-        }
-
-        return productsSorted;
+        return productsToSort;
     }
 }

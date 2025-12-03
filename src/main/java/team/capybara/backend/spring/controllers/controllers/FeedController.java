@@ -1,4 +1,4 @@
-package team.capybara.backend.spring.controllers;
+package team.capybara.backend.spring.controllers.controllers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -19,7 +19,6 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/feed")
-@CrossOrigin(value = {"http://localhost:3000"})
 @SuppressWarnings(value = {"unused"})
 public final class FeedController{
     private static final Logger log = LoggerFactory.getLogger(FeedController.class);
@@ -62,7 +61,7 @@ public final class FeedController{
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(productService.getProductByShop(offset, limit.getLimit(), id));
+        return ResponseEntity.ok(productService.getProductsByShop(offset, limit.getLimit(), id));
     }
 
     @PostMapping("/filtered/{offset}")
@@ -98,6 +97,9 @@ public final class FeedController{
         } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().build();
         }
     }
 
@@ -110,6 +112,9 @@ public final class FeedController{
         } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().build();
         }
     }
 

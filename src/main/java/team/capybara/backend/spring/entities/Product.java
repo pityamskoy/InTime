@@ -6,6 +6,8 @@ import lombok.*;
 import java.util.Date;
 import java.util.UUID;
 
+import static team.capybara.backend.spring.Constants.EPSILON;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -35,8 +37,26 @@ public class Product implements EntityWithId {
     @Transient
     private double score;
 
-    public void calculateScore(double distance,int raiting){
-        this.score = 100*((price-discount*1.0)/(price*1.0)) + shelfLife.getTime() + (50/distance) + raiting*10;
+    /**
+     * {@code calculateScore} is used to calculate score for products.
+     * This method should be used only in {@link EntityHandler}.
+     * @param userLat is user's latitude.
+     * @param userLon is user's longitude.
+     */
+    void calculateScore(Double userLat, Double userLon, Double rating) {
+        Shop shop = getProductType().getShop();
+        shop.calculateDistance(userLat, userLon);
+
+        if (shop.getDistance() < EPSILON) {
+            this.score = 1000;
+            return;
+        }
+
+        if (price < 30) {
+            this.score = 20 + ((shelfLife.getTime()) + (100 / shop.getDistance()) + (rating * 10));
+        } else {
+            this.score = (20 * (discount * 1.0 / price)) + (shelfLife.getTime()) + (100 / shop.getDistance()) + (rating * 10);
+        }
     }
 
     @Override
