@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.controllers.PaginationHandler;
+import team.capybara.backend.spring.controllers.controllers.pagination.PaginationHandler;
 import team.capybara.backend.spring.controllers.dto.entities.product.ProductDto;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
 import team.capybara.backend.spring.entities.Product;
@@ -79,7 +79,11 @@ public final class ProductService {
     }
 
     public ProductWithIdDto createProduct(ProductDto productToCreate) {
-        return productMapper.postEntity(productToCreate);
+        try {
+            return productMapper.postEntity(productToCreate);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
     public ProductWithIdDto updateProduct(ProductWithIdDto productToUpdate) {
@@ -87,6 +91,8 @@ public final class ProductService {
             return productMapper.putEntity(productToUpdate);
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 

@@ -11,6 +11,7 @@ import team.capybara.backend.spring.entities.Product;
 import team.capybara.backend.spring.entities.ProductType;
 import team.capybara.backend.spring.controllers.dto.entities.product.ProductWithIdDto;
 
+import java.util.Date;
 import java.util.UUID;
 
 
@@ -49,6 +50,12 @@ public final class ProductMapper implements Mapper<Product, ProductWithIdDto, Pr
         try {
             ProductType productType = productTypeConverter.toEntity(productToCreate.productTypeId());
 
+            try {
+                throwExceptionIfFieldsAreIncorrect(productToCreate.shelfLife(), productToCreate.price(), productToCreate.discount());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException(e.getMessage());
+            }
+
             Product productCreated = productRepository.save(new Product(
                     UUID.randomUUID(),
                     productType,
@@ -71,6 +78,12 @@ public final class ProductMapper implements Mapper<Product, ProductWithIdDto, Pr
             Product productUpdated = productConverter.toEntity(productToUpdate.id());
             ProductType productType = productTypeConverter.toEntity(productToUpdate.id());
 
+            try {
+                throwExceptionIfFieldsAreIncorrect(productToUpdate.shelfLife(), productToUpdate.price(), productToUpdate.discount());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException(e.getMessage());
+            }
+
             productUpdated.setProductType(productType);
             productUpdated.setShelfLife(productToUpdate.shelfLife());
             productUpdated.setPrice(productToUpdate.price());
@@ -91,6 +104,23 @@ public final class ProductMapper implements Mapper<Product, ProductWithIdDto, Pr
             productRepository.delete(productDeleted);
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());
+        }
+    }
+
+    //add check for shelfLife
+    private void throwExceptionIfFieldsAreIncorrect(Date shelfLife, int price, int discount) {
+        boolean isFieldsCorrect = price >= 0;
+
+        if (discount < 0) {
+            isFieldsCorrect = false;
+        }
+
+        if (price - discount < 0) {
+            isFieldsCorrect = false;
+        }
+
+        if (!isFieldsCorrect) {
+            throw new IllegalArgumentException("Fields are incorrect.");
         }
     }
 }

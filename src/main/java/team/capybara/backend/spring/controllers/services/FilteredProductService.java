@@ -3,7 +3,7 @@ package team.capybara.backend.spring.controllers.services;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.controllers.PaginationHandler;
+import team.capybara.backend.spring.controllers.controllers.pagination.PaginationHandler;
 import team.capybara.backend.spring.controllers.dto.entities.category.CategoryWithIdDto;
 import team.capybara.backend.spring.controllers.dto.entities.product.ProductWithIdDto;
 import team.capybara.backend.spring.controllers.dto.other.filters.FeedFilterEntity;
@@ -12,9 +12,9 @@ import team.capybara.backend.spring.controllers.repositories.ProductRepository;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
 import team.capybara.backend.spring.entities.*;
 
+import static team.capybara.backend.spring.Constants.EPSILON;
+
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public final class FilteredProductService {
@@ -23,19 +23,22 @@ public final class FilteredProductService {
     private final ProductRepository productRepository;
     private final ProductTypeRepository productTypeRepository;
     private final PaginationHandler<Product> paginationHandler;
+    private final EntityHandler entityHandler;
 
     public FilteredProductService(
             CategoryService categoryService,
             ProductMapper productMapper,
             ProductRepository productRepository,
             ProductTypeRepository productTypeRepository,
-            PaginationHandler<Product> paginationHandler
+            PaginationHandler<Product> paginationHandler,
+            EntityHandler entityHandler
     ) {
         this.categoryService = categoryService;
         this.productMapper = productMapper;
         this.productRepository = productRepository;
         this.productTypeRepository = productTypeRepository;
         this.paginationHandler = paginationHandler;
+        this.entityHandler = entityHandler;
     }
 
     public Page<ProductWithIdDto> getAllSortedProducts(
@@ -74,13 +77,13 @@ public final class FilteredProductService {
         }
 
         if (filter.getUserLat() != null && filter.getUserLon() != null) {
-            productsToSort.forEach(product -> product.getProductType().getShop().setDistance(filter.getUserLat(), filter.getUserLon()));
-
-            productsToSort = quickSortProductsByShopDistance(productsToSort, filter.getUserLat(), filter.getUserLon());
+            productsToSort.forEach(product -> product.getProductType().getShop().calculateDistance(filter.getUserLat(), filter.getUserLon()));
 
             if (filter.getDistance() != null) {
                 productsToSort = filterProductsByDistance(productsToSort, filter.getDistance());
             }
+
+            productsToSort = recommendProductsByScore(productsToSort, filter.getUserLat(), filter.getUserLon());
         }
 
         List<Product> slice = paginationHandler.makeSliceFromList(productsToSort, offset, limit);
@@ -147,33 +150,37 @@ public final class FilteredProductService {
         List<Product> productsSorted = new ArrayList<>();
 
         for (Product product : productsToSort) {
-            if (product.getProductType().getShop().getDistance() > distance) {
-                break;
+            if ((product.getProductType().getShop().getDistance() - distance) < EPSILON) {
+                productsSorted.add(product);
             }
-            productsSorted.add(product);
         }
 
         return productsSorted;
     }
 
-    private List<Product> quickSortProductsByShopDistance(List<Product> productsToSort, Double userLat, Double userLon) {
+    private List<Product> recommendProductsByScore(List<Product> productsToSort, Double userLat, Double userLon) {
         if (productsToSort.size() <= 1) {
             return productsToSort;
         }
 
-        Shop pivot = productsToSort.getFirst().getProductType().getShop();
+        Double pivot = entityHandler.calculateProductScore(productsToSort.getFirst(), userLat, userLon);
         List<Product> left = new ArrayList<>();
         List<Product> right = new ArrayList<>();
 
         for (int i = 0; i < productsToSort.size(); i++) {
-            if (productsToSort.get(i).getProductType().getShop().getDistance() <= pivot.getDistance() && i != 0) {
+            if (entityHandler.calculateProductScore(productsToSort.get(i), userLat, userLon) <= pivot && i != 0) {
                 left.add(productsToSort.get(i));
-            } else if (productsToSort.get(i).getProductType().getShop().getDistance() > pivot.getDistance()) {
+            } else if (entityHandler.calculateProductScore(productsToSort.get(i), userLat, userLon) > pivot) {
                 right.add(productsToSort.get(i));
             }
         }
 
-        return Stream.of(quickSortProductsByShopDistance(left, userLat, userLon), List.of(productsToSort.getFirst()), quickSortProductsByShopDistance(right, userLat, userLon))
-                .flatMap(List::stream).collect(Collectors.toList());
+        left = recommendProductsByScore(left, userLat, userLon);
+        right = recommendProductsByScore(right, userLat, userLon);
+        List<Product> mergedList = new ArrayList<>(left);
+        mergedList.add(productsToSort.getFirst());
+        mergedList.addAll(right);
+
+        return mergedList;
     }
 }

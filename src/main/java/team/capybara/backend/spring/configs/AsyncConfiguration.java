@@ -1,4 +1,4 @@
-package team.capybara.backend.spring;
+package team.capybara.backend.spring.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package team.capybara.backend.spring.controllers;
+package team.capybara.backend.spring.controllers.controllers.pagination;
 
 import org.springframework.stereotype.Component;
 
@@ -7,7 +7,7 @@ import java.util.List;
 
 @Component
 public final class PaginationHandler<Objects> {
-    public List<Objects> makeSliceFromList(List<Objects> objectsToMakeSlice, int limit, int offset) {
+    public List<Objects> makeSliceFromList(List<Objects> objectsToMakeSlice, int offset, int limit) {
         List<Objects> slice = new ArrayList<>();
 
         if (!objectsToMakeSlice.isEmpty()) {
