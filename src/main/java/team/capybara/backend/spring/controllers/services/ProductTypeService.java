@@ -36,16 +36,11 @@ public final class ProductTypeService {
         return productTypes.stream().map(productTypeMapper::getEntity).toList();
     }
 
-    //fix soon. Don't throw exceptions. Use Optional
-    public List<ProductType> getAllProductTypesByShopId(String shopId) {
-        Optional<Shop> shop = shopRepository.findById(UUID.fromString(shopId));
+    public Optional<List<ProductTypeWithIdDto>> getAllProductTypesByShopId(UUID shopId) {
+        Optional<Shop> shop = shopRepository.findById(shopId);
+        List<ProductType> productTypes = productTypeRepository.findByShop(shop.get());
 
-        if (shop.isPresent()) {
-            //List<ProductType> = shop.get().get
-            return null;
-        } else {
-            throw new EntityNotFoundException("Shop not found by id: " + shopId);
-        }
+        return Optional.of(productTypes.stream().map(productTypeMapper::getEntity).toList());
     }
 
     public Optional<ProductTypeWithIdDto> getProductTypeById(UUID id) {

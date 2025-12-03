@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+
 @RestController
 @RequestMapping("/favorites")
 @SuppressWarnings(value = {"unused"})
@@ -81,11 +82,11 @@ public final class FavoriteController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteFavorite(@RequestBody UUID id) {
+    public ResponseEntity<Void> deleteFavorite(@RequestBody String id) {
         log.info("Called deleteFavorite; id={}", id);
 
         try {
-            favoriteService.deleteFavorite(id);
+            favoriteService.deleteFavorite(UUID.fromString(id));
             return ResponseEntity.notFound().build();
         } catch (EntityNotFoundException e) {
             log.error(e.getMessage());

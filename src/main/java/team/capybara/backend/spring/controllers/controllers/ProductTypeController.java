@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+
 @RestController
 @RequestMapping("/product_types")
 @SuppressWarnings(value = {"unused"})
@@ -69,6 +70,15 @@ public final class ProductTypeController {
         Optional<ProductTypeWithIdDto> productTypeDtoOptional = productTypeService.getProductTypeById(UUID.fromString(id));
 
         return productTypeDtoOptional.map(ResponseEntity::ok).orElseGet
+                (() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/get_all_by_shop/{id}")
+    public ResponseEntity<List<ProductTypeWithIdDto>> getProductTypeByShop(@PathVariable("id") String id) {
+        log.info("Called getProductTypeById; id={}", id);
+        Optional<List<ProductTypeWithIdDto>> allProductTypesByShopId = productTypeService.getAllProductTypesByShopId(UUID.fromString(id));
+
+        return allProductTypesByShopId.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
     }
 
