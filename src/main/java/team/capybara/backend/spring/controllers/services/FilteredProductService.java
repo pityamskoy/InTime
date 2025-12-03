@@ -78,6 +78,7 @@ public final class FilteredProductService {
 
             productsToSort = quickSortProductsByShopDistance(productsToSort, filter.getUserLat(), filter.getUserLon());
 
+
             if (filter.getDistance() != null) {
                 productsToSort = filterProductsByDistance(productsToSort, filter.getDistance());
             }
@@ -173,7 +174,12 @@ public final class FilteredProductService {
             }
         }
 
-        return Stream.of(quickSortProductsByShopDistance(left, userLat, userLon), List.of(productsToSort.getFirst()), quickSortProductsByShopDistance(right, userLat, userLon))
-                .flatMap(List::stream).collect(Collectors.toList());
+        left = quickSortProductsByShopDistance(left, userLat, userLon);
+        right = quickSortProductsByShopDistance(right, userLat, userLon);
+        List<Product> mergedList = new ArrayList<>(left);
+        mergedList.add(productsToSort.getFirst());
+        mergedList.addAll(right);
+
+        return mergedList;
     }
 }
