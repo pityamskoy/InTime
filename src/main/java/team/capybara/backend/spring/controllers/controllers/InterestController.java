@@ -40,6 +40,13 @@ public final class InterestController {
         return ResponseEntity.ok(interestService.getAllInterestsByProduct(UUID.fromString(id)));
     }
 
+    @GetMapping("/get_by_user/{id}")
+    public ResponseEntity<List<InterestWithIdDto>> getAllInterestsByUser(@PathVariable String id) {
+        log.info("Called getAllInterestsByUser");
+
+        return ResponseEntity.ok(interestService.getAllInterestsByUser(UUID.fromString(id)));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<InterestWithIdDto> getInterestById(@PathVariable String id) {
         log.info("Called getInterestById; id={}", id);
