@@ -18,10 +18,10 @@ public class User implements EntityWithId {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "phoneNumber", nullable = false)
+    @Column(name = "phoneNumber", nullable = false, unique = true)
     private String phoneNumber;
 
     @Column(name = "password", nullable = false)
