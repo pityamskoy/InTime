@@ -163,24 +163,9 @@ public final class FilteredProductService {
             return productsToSort;
         }
 
-        Double pivot = entityHandler.calculateProductScore(productsToSort.getFirst(), userLat, userLon);
-        List<Product> left = new ArrayList<>();
-        List<Product> right = new ArrayList<>();
+        Comparator<Product> comparator = Comparator.comparing(obj -> entityHandler.calculateProductScore(obj, userLat, userLon));
+        productsToSort.sort(comparator);
 
-        for (int i = 0; i < productsToSort.size(); i++) {
-            if (entityHandler.calculateProductScore(productsToSort.get(i), userLat, userLon) <= pivot && i != 0) {
-                left.add(productsToSort.get(i));
-            } else if (entityHandler.calculateProductScore(productsToSort.get(i), userLat, userLon) > pivot) {
-                right.add(productsToSort.get(i));
-            }
-        }
-
-        left = recommendProductsByScore(left, userLat, userLon);
-        right = recommendProductsByScore(right, userLat, userLon);
-        List<Product> mergedList = new ArrayList<>(left);
-        mergedList.add(productsToSort.getFirst());
-        mergedList.addAll(right);
-
-        return mergedList;
+        return productsToSort;
     }
 }
