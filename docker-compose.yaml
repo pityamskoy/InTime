@@ -1,30 +1,31 @@
 name: vSrok
 services:
   backend:
-    image: leoagf/devback:1.14
+    image: leoagf/devback:1.13
     depends_on:
       - db
-      - caddy
+      - nginx
     restart: unless-stopped
+    ports:
+      - "8080:8080"
     volumes:
       - app-volume:/static
 
   db:
     image: leoagf/bd:1.0
     restart: unless-stopped
-
-  caddy:
-    image: caddy:2.10.2
-    restart: unless-stopped
-    cap_add:
-      - NET_ADMIN
-    ports:
-      - "8082:8082"
     volumes:
-      - caddy_data:/data
-      - app-volume:/var/www/html
-      - ./config/Caddyfile:/etc/caddy/Caddyfile
+      - ./src/main/resources/bd:/var/lib/postgresql/18
+    ports:
+      - "1234:5432"
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "1235:80"
+    volumes:
+      - app-volume:/usr/share/nginx/html:ro
+    restart: unless-stopped
 
 volumes:
-  caddy_data:
   app-volume:
