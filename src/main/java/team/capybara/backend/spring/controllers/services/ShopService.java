@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import team.capybara.backend.spring.entities.Shop;
 
@@ -35,7 +37,7 @@ public final class ShopService {
 
     public List<ShopWithIdDto> getAllShops(double lat, double lon) {
         List<Shop> shops = shopRepository.findAll();
-        shops.stream().forEach(shop -> shop.getDistanceTo(lat,lon));
+        shops.stream().forEach(shop -> shop.calculateDistance(lat,lon));
         List<ShopWithIdDto> shopWithIdDtos = shops.stream().map(shopMapper::getEntity).toList();
         return shopWithIdDtos;
     }
@@ -56,7 +58,7 @@ public final class ShopService {
 
         if  (shopOptional.isPresent()) {
             Shop shop = shopOptional.get();
-            shop.getDistanceTo(lat,lon);
+            shop.calculateDistance(lat,lon);
             ShopWithIdDto shopWithIdDto = shopMapper.getEntity(shop);
             return Optional.of(shopWithIdDto);
         }
@@ -112,5 +114,26 @@ public final class ShopService {
         }  catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());
         }
+    }
+
+    private List<Shop> quickSortShopsByDistance(List<Shop> shopsToSort) {
+        if (shopsToSort.size() <= 1) {
+            return shopsToSort;
+        }
+
+        Shop pivot = shopsToSort.getFirst();
+        List<Shop> left = new ArrayList<>();
+        List<Shop> right = new ArrayList<>();
+
+        for (int i = 0; i <= shopsToSort.size(); i++) {
+            if (shopsToSort.get(i).getDistance() <= pivot.getDistance() && i != 0) {
+                left.add(shopsToSort.get(i));
+            } else if (shopsToSort.get(i).getDistance() > pivot.getDistance()) {
+                right.add(shopsToSort.get(i));
+            }
+        }
+
+        return Stream.of(quickSortShopsByDistance(left), List.of(pivot), quickSortShopsByDistance(right))
+                .flatMap(List::stream).collect(Collectors.toList());
     }
 }

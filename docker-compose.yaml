@@ -1,33 +1,31 @@
 name: vSrok
 services:
-
-  #db:
-  #  image: postgres
-  #  restart: unless-stopped
-  #  ports:
-  #    - "1234:5432"
-  #  environment:
-  #    POSTGRES_USERNAME: postgres
-  #    POSTGRES_PASSWORD: root
-  #    POSTGRES_DB: postgres
-
-  db_dev:
-    image: leoagf/devbd:2.0
-    #image: postgres
+  backend:
+    image: leoagf/devback:1.13
+    depends_on:
+      - db
+      - nginx
     restart: unless-stopped
     ports:
+      - "8080:8080"
+    volumes:
+      - app-volume:/static
+
+  db:
+    image: leoagf/bd:1.0
+    restart: unless-stopped
+    volumes:
+      - ./src/main/resources/bd:/var/lib/postgresql/18
+    ports:
       - "1234:5432"
-    #environment:
-    #  POSTGRES_USERNAME: postgres
-    #  POSTGRES_PASSWORD: root
-    #  POSTGRES_DB: postgres
-    #volumes:
-    #  - ./src/main/resources/bd:/var/lib/postgresql/18
 
   nginx:
     image: nginx:latest
     ports:
       - "1235:80"
     volumes:
-      - ./static:/usr/share/nginx/html:ro
+      - app-volume:/usr/share/nginx/html:ro
     restart: unless-stopped
+
+volumes:
+  app-volume:

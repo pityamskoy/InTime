@@ -1,6 +1,8 @@
-package team.capybara.backend.spring.controllers;
+package team.capybara.backend.spring.controllers.controllers;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -17,9 +19,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(value = {"http://localhost:3000"})
 @SuppressWarnings(value = {"unused"})
 public final class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -46,7 +48,11 @@ public final class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResultDto> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<LoginResultDto> login(@CookieValue(value = "isLoggedIn", required = false) String isLoggedIn,  @RequestBody LoginDto loginDto, HttpServletResponse response) {
+        if (isLoggedIn != null) {
+            return ResponseEntity.ok().build(); // I don't, what I should do in this situation
+        }
+
         String login = loginDto.login();
         String password = loginDto.password();
         log.info("Called login; login={}, password={}", login, password);
@@ -54,6 +60,13 @@ public final class UserController {
         if (login.isEmpty() || password.isEmpty()) {
             return ResponseEntity.status(HttpStatus.LENGTH_REQUIRED).build();
         }
+
+        Cookie cookie = new Cookie("isLoggedIn", "True");
+        cookie.setMaxAge(7200);
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        response.addCookie(cookie);
 
         return ResponseEntity.ok(userService.login(login, password));
     }
@@ -88,5 +101,18 @@ public final class UserController {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/logout")
+    public String logout(@CookieValue(value = "isLoggedIn", required = false) String isLoggedIn, HttpServletResponse response) {
+        if (isLoggedIn == null) {
+            return "You are not logged in.";
+        }
+
+        Cookie cookie = new Cookie("token", "");
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        return "Logout successful!";
     }
 }

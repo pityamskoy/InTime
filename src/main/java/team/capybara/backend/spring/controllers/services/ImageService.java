@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
 @Service
 public final class ImageService {
+
     private final ImageMapper imageMapper;
     private final ImageRepository imageRepository;
     private static final String imageStorePath = "./static/";
-    private static final String imagePath = "http://127.0.0.1:1235/";
+    private static final String imagePath = "https://image.bloodstone.boo/";
     private final FileFromStorageStore fileFromStorageStore;
 
     public ImageService(

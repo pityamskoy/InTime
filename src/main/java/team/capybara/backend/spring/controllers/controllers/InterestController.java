@@ -1,4 +1,4 @@
-package team.capybara.backend.spring.controllers;
+package team.capybara.backend.spring.controllers.controllers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@CrossOrigin(value = {"https://image.bloodstone.boo:443"})
 @RestController
 @RequestMapping("/interests")
-@CrossOrigin(value = {"http://localhost:3000"})
 @SuppressWarnings(value = {"unused"})
 public final class InterestController {
     private static final Logger log = LoggerFactory.getLogger(InterestController.class);
@@ -39,6 +39,13 @@ public final class InterestController {
         log.info("Called getAllInterestsByProduct");
 
         return ResponseEntity.ok(interestService.getAllInterestsByProduct(UUID.fromString(id)));
+    }
+
+    @GetMapping("/get_by_user/{id}")
+    public ResponseEntity<List<InterestWithIdDto>> getAllInterestsByUser(@PathVariable String id) {
+        log.info("Called getAllInterestsByUser");
+
+        return ResponseEntity.ok(interestService.getAllInterestsByUser(UUID.fromString(id)));
     }
 
     @GetMapping("/{id}")

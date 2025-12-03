@@ -1,4 +1,4 @@
-package team.capybara.backend.spring.controllers;
+package team.capybara.backend.spring.controllers.controllers;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
@@ -15,9 +15,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+@CrossOrigin(value = {"https://image.bloodstone.boo:443"})
 @RestController
 @RequestMapping("/shops")
-@CrossOrigin(value = {"http://localhost:3000"})
 @SuppressWarnings(value = {"unused"})
 public final class ShopController {
     private static final Logger log = LoggerFactory.getLogger(ShopController.class);
