@@ -41,7 +41,6 @@ public final class ProductService {
 
     public Page<ProductWithIdDto> getAllProducts(int offset, int limit) {
         Page<Product> products = productRepository.findAll(PageRequest.of(offset, limit));
-        products.stream().forEach(product -> product.calculateScore(1, 5));
         return products.map(productMapper::getEntity);
     }
 

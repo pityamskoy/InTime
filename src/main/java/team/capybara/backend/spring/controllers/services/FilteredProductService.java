@@ -74,6 +74,8 @@ public final class FilteredProductService {
         }
 
         if (filter.getUserLat() != null && filter.getUserLon() != null) {
+            productsToSort.forEach(product -> product.getProductType().getShop().setDistance(filter.getUserLat(), filter.getUserLon()));
+
             productsToSort = quickSortProductsByShopDistance(productsToSort, filter.getUserLat(), filter.getUserLon());
 
             if (filter.getDistance() != null) {
@@ -82,7 +84,6 @@ public final class FilteredProductService {
         }
 
         List<Product> slice = paginationHandler.makeSliceFromList(productsToSort, offset, limit);
-        slice.forEach(product -> product.calculateScore(1, 5));
 
         return new PageImpl<>(slice.stream().map(productMapper::getEntity).toList());
     }
@@ -94,8 +95,6 @@ public final class FilteredProductService {
         for (ProductType productType : productTypes) {
             products.addAll(productRepository.findByProductType(productType));
         }
-
-        products.forEach(product -> product.calculateScore(1, 5));
 
         return products;
     }
@@ -167,9 +166,9 @@ public final class FilteredProductService {
         List<Product> right = new ArrayList<>();
 
         for (int i = 0; i < productsToSort.size(); i++) {
-            if (productsToSort.get(i).getProductType().getShop().getDistanceTo(userLat, userLon) <= pivot.getDistanceTo(userLat, userLon) && i != 0) {
+            if (productsToSort.get(i).getProductType().getShop().getDistance() <= pivot.getDistance() && i != 0) {
                 left.add(productsToSort.get(i));
-            } else if (productsToSort.get(i).getProductType().getShop().getDistanceTo(userLat, userLon) > pivot.getDistanceTo(userLat, userLon)) {
+            } else if (productsToSort.get(i).getProductType().getShop().getDistance() > pivot.getDistance()) {
                 right.add(productsToSort.get(i));
             }
         }
