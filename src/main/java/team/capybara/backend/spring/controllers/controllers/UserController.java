@@ -45,7 +45,7 @@ public final class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResultDto> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<LoginResultDto> login(@CookieValue(value = "isLoggedIn", defaultValue = "False")  @RequestBody LoginDto loginDto) {
         String login = loginDto.login();
         String password = loginDto.password();
         log.info("Called login; login={}, password={}", login, password);

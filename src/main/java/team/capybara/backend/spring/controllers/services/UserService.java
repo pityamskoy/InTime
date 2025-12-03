@@ -59,12 +59,6 @@ public final class UserService {
             user = userRepository.findUserByPhoneNumber(login);
         }
 
-        Cookie cookie = new Cookie();
-        cookie.setMaxAge(Duration.ofDays(7200));
-        cookie.setSecure(true);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-
         return new LoginResultDto(user.getPassword().equals(password), user.getId().toString());
     }
 
