@@ -17,7 +17,6 @@ import team.capybara.backend.spring.controllers.services.ProductService;
 
 import java.util.*;
 
-@CrossOrigin(value = {"https://image.bloodstone.boo:443"})
 @RestController
 @RequestMapping("/feed")
 @SuppressWarnings(value = {"unused"})

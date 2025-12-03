@@ -15,7 +15,6 @@ import team.capybara.backend.spring.controllers.services.ReviewService;
 import java.util.Optional;
 import java.util.UUID;
 
-@CrossOrigin(value = {"https://image.bloodstone.boo:443"})
 @RestController
 @RequestMapping("/reviews")
 @SuppressWarnings(value = {"unused"})
