@@ -19,9 +19,7 @@ services:
     cap_add:
       - NET_ADMIN
     ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
+      - "8082:8082"
     volumes:
       - caddy_data:/data
       - app-volume:/var/www/html
