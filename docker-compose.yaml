@@ -9,9 +9,9 @@ services:
       - "3000:3000"
 
   backend:
-    image: leoagf/devback:1.3
+    image: leoagf/devback:1.8
     depends_on:
-      - db_dev
+      - db
       - nginx
     restart: unless-stopped
     ports:
@@ -19,9 +19,10 @@ services:
     volumes:
       - app-volume:/static
 
-  db_dev:
-    image: leoagf/devbd:2.0
+  db:
+    image: leoagf/devbd:2.2
     restart: unless-stopped
+
     ports:
       - "1234:5432"
 

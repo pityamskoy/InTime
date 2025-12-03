@@ -8,6 +8,7 @@ import team.capybara.backend.spring.controllers.mappers.entitymappers.InterestMa
 import team.capybara.backend.spring.controllers.repositories.*;
 import team.capybara.backend.spring.entities.Interest;
 import team.capybara.backend.spring.entities.Product;
+import team.capybara.backend.spring.entities.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,14 +19,16 @@ public final class InterestService {
     private final InterestMapper interestMapper;
     private final InterestRepository interestRepository;
     private final ProductRepository productRepository ;
+    private final UserRepository userRepository;
 
     public InterestService(
             InterestMapper interestMapper,
-            InterestRepository interestRepository, ProductRepository productRepository
+            InterestRepository interestRepository, ProductRepository productRepository, UserRepository userRepository
     ) {
         this.interestMapper = interestMapper;
         this.interestRepository = interestRepository;
         this.productRepository = productRepository;
+        this.userRepository = userRepository;
     }
 
     public List<InterestWithIdDto> getAllInterests() {
@@ -37,6 +40,13 @@ public final class InterestService {
     public List<InterestWithIdDto> getAllInterestsByProduct(UUID id) {
         Optional<Product> product = productRepository.findById(id);
         List<Interest> interests = interestRepository.findByProduct(product.get());
+
+        return interests.stream().map(interestMapper::getEntity).toList();
+    }
+
+    public List<InterestWithIdDto> getAllInterestsByUser(UUID id) {
+        Optional<User> user = userRepository.findById(id);
+        List<Interest> interests = interestRepository.findByUser(user.get());
 
         return interests.stream().map(interestMapper::getEntity).toList();
     }
