@@ -16,7 +16,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/categories")
-@CrossOrigin(value = {"http://localhost:3000"})
 @SuppressWarnings(value = {"unused"})
 public final class CategoryController {
     private static final Logger log = LoggerFactory.getLogger(CategoryController.class);

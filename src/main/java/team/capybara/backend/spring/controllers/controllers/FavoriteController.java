@@ -16,7 +16,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/favorites")
-@CrossOrigin(value = {"http://localhost:3000"})
 @SuppressWarnings(value = {"unused"})
 public final class FavoriteController {
     private static final Logger log = LoggerFactory.getLogger(FavoriteController.class);

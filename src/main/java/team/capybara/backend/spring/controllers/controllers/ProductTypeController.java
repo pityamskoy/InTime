@@ -18,7 +18,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/product_types")
-@CrossOrigin(value = {"http://localhost:3000"})
 @SuppressWarnings(value = {"unused"})
 public final class ProductTypeController {
     private static final Logger log = LoggerFactory.getLogger(ProductTypeController.class);
