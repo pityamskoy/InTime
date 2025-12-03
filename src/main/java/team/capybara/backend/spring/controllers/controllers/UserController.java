@@ -1,6 +1,8 @@
 package team.capybara.backend.spring.controllers.controllers;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,7 @@ import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthWithId
 import team.capybara.backend.spring.controllers.dto.entities.user.UserDto;
 import team.capybara.backend.spring.controllers.services.UserService;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,7 +48,11 @@ public final class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResultDto> login(@CookieValue(value = "isLoggedIn", defaultValue = "False")  @RequestBody LoginDto loginDto) {
+    public ResponseEntity<LoginResultDto> login(@CookieValue(value = "isLoggedIn", required = false) String isLoggedIn,  @RequestBody LoginDto loginDto, HttpServletResponse response) {
+        if (isLoggedIn != null) {
+            return ResponseEntity.ok().build(); // I don't, what I should do in this situation
+        }
+
         String login = loginDto.login();
         String password = loginDto.password();
         log.info("Called login; login={}, password={}", login, password);
@@ -53,6 +60,13 @@ public final class UserController {
         if (login.isEmpty() || password.isEmpty()) {
             return ResponseEntity.status(HttpStatus.LENGTH_REQUIRED).build();
         }
+
+        Cookie cookie = new Cookie("isLoggedIn", "True");
+        cookie.setMaxAge(7200);
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        response.addCookie(cookie);
 
         return ResponseEntity.ok(userService.login(login, password));
     }
