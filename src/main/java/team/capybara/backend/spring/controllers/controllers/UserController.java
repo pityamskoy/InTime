@@ -15,7 +15,6 @@ import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthWithId
 import team.capybara.backend.spring.controllers.dto.entities.user.UserDto;
 import team.capybara.backend.spring.controllers.services.UserService;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
