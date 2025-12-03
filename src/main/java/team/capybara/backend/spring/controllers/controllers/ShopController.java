@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-@CrossOrigin(value = {"https://image.bloodstone.boo:443"})
 @RestController
 @RequestMapping("/shops")
 @SuppressWarnings(value = {"unused"})
