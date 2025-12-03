@@ -1,6 +1,7 @@
 package team.capybara.backend.spring.controllers.services;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.boot.web.server.Cookie;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.dto.other.login.LoginResultDto;
 import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthDto;
@@ -10,6 +11,7 @@ import team.capybara.backend.spring.controllers.mappers.entitymappers.UserMapper
 import team.capybara.backend.spring.controllers.repositories.UserRepository;
 import team.capybara.backend.spring.entities.User;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -56,6 +58,12 @@ public final class UserService {
         } else {
             user = userRepository.findUserByPhoneNumber(login);
         }
+
+        Cookie cookie = new Cookie();
+        cookie.setMaxAge(Duration.ofDays(7200));
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
 
         return new LoginResultDto(user.getPassword().equals(password), user.getId().toString());
     }
