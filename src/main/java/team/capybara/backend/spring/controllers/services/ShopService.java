@@ -37,7 +37,7 @@ public final class ShopService {
 
     public List<ShopWithIdDto> getAllShops(double lat, double lon) {
         List<Shop> shops = shopRepository.findAll();
-        shops.stream().forEach(shop -> shop.getDistanceTo(lat,lon));
+        shops.stream().forEach(shop -> shop.setDistance(lat,lon));
         List<ShopWithIdDto> shopWithIdDtos = shops.stream().map(shopMapper::getEntity).toList();
         return shopWithIdDtos;
     }
@@ -58,7 +58,7 @@ public final class ShopService {
 
         if  (shopOptional.isPresent()) {
             Shop shop = shopOptional.get();
-            shop.getDistanceTo(lat,lon);
+            shop.setDistance(lat,lon);
             ShopWithIdDto shopWithIdDto = shopMapper.getEntity(shop);
             return Optional.of(shopWithIdDto);
         }

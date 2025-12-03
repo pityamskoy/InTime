@@ -3,6 +3,7 @@ package team.capybara.backend.spring.controllers.services;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
+import team.capybara.backend.spring.controllers.PaginationHandler;
 import team.capybara.backend.spring.controllers.dto.entities.category.CategoryWithIdDto;
 import team.capybara.backend.spring.controllers.dto.entities.product.ProductWithIdDto;
 import team.capybara.backend.spring.controllers.dto.other.filters.FeedFilterEntity;
@@ -17,24 +18,24 @@ import java.util.stream.Stream;
 
 @Service
 public final class FilteredProductService {
-    private final ShopService shopService;
     private final CategoryService categoryService;
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
     private final ProductTypeRepository productTypeRepository;
+    private final PaginationHandler<Product> paginationHandler;
 
     public FilteredProductService(
-            ShopService shopService,
             CategoryService categoryService,
             ProductMapper productMapper,
             ProductRepository productRepository,
-            ProductTypeRepository productTypeRepository
+            ProductTypeRepository productTypeRepository,
+            PaginationHandler<Product> paginationHandler
     ) {
-        this.shopService = shopService;
         this.categoryService = categoryService;
         this.productMapper = productMapper;
         this.productRepository = productRepository;
         this.productTypeRepository = productTypeRepository;
+        this.paginationHandler = paginationHandler;
     }
 
     public Page<ProductWithIdDto> getAllSortedProducts(
@@ -72,30 +73,17 @@ public final class FilteredProductService {
             productsToSort = sortProductsByShops(productsToSort, filter.getShopsId().stream().map(UUID::fromString).toList());
         }
 
-        productsToSort = quickSortProductsByShopDistance(productsToSort);
-
         if (filter.getUserLat() != null && filter.getUserLon() != null) {
-            shopService.getAllShops(filter.getUserLat(), filter.getUserLon());
+            productsToSort.forEach(product -> product.getProductType().getShop().setDistance(filter.getUserLat(), filter.getUserLon()));
+
+            productsToSort = quickSortProductsByShopDistance(productsToSort, filter.getUserLat(), filter.getUserLon());
 
             if (filter.getDistance() != null) {
                 productsToSort = filterProductsByDistance(productsToSort, filter.getDistance());
             }
         }
 
-        List<Product> slice = new ArrayList<>();
-        //make separate method
-        if (!productsToSort.isEmpty()) {
-            try {
-                slice = productsToSort.subList(limit * (offset - 1), limit * (offset));
-            } catch (IndexOutOfBoundsException _) {
-                if (limit * (offset - 1) == productsToSort.size()) {
-                    slice.add(productsToSort.get(limit * (offset - 1)));
-                } else if (limit * (offset - 1) < productsToSort.size()) {
-                    slice = productsToSort.subList(limit * (offset - 1), productsToSort.size());
-                }
-            }
-        }
-        slice.forEach(product -> product.calculateScore(1, 5));
+        List<Product> slice = paginationHandler.makeSliceFromList(productsToSort, offset, limit);
 
         return new PageImpl<>(slice.stream().map(productMapper::getEntity).toList());
     }
@@ -107,8 +95,6 @@ public final class FilteredProductService {
         for (ProductType productType : productTypes) {
             products.addAll(productRepository.findByProductType(productType));
         }
-
-        products.forEach(product -> product.calculateScore(1, 5));
 
         return products;
     }
@@ -170,7 +156,7 @@ public final class FilteredProductService {
         return productsSorted;
     }
 
-    private List<Product> quickSortProductsByShopDistance(List<Product> productsToSort) {
+    private List<Product> quickSortProductsByShopDistance(List<Product> productsToSort, Double userLat, Double userLon) {
         if (productsToSort.size() <= 1) {
             return productsToSort;
         }
@@ -187,7 +173,7 @@ public final class FilteredProductService {
             }
         }
 
-        return Stream.of(quickSortProductsByShopDistance(left), List.of(productsToSort.getFirst()), quickSortProductsByShopDistance(right))
+        return Stream.of(quickSortProductsByShopDistance(left, userLat, userLon), List.of(productsToSort.getFirst()), quickSortProductsByShopDistance(right, userLat, userLon))
                 .flatMap(List::stream).collect(Collectors.toList());
     }
 }

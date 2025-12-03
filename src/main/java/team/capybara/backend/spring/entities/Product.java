@@ -35,8 +35,18 @@ public class Product implements EntityWithId {
     @Transient
     private double score;
 
-    public void calculateScore(double distance,int raiting){
-        this.score = 100*((price-discount*1.0)/(price*1.0)) + shelfLife.getTime() + (50/distance) + raiting*10;
+    /**
+     * This method is used to compare products and find the most relevant for customers.
+     * @param userLat is user's latitude.
+     * @param userLon is user's longitude.
+     * @return approximate score of a product.
+     */
+    public Double calculateScore(Double userLat, Double userLon) {
+        Shop shop = getProductType().getShop();
+        shop.setDistance(userLat, userLon);
+        //int rating =
+        score = 100*((price-discount*1.0)/(price*1.0)) + shelfLife.getTime() + (50/shop.getDistance());
+        return score;
     }
 
     @Override
