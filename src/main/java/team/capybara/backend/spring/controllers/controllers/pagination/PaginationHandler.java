@@ -1,4 +1,4 @@
-package team.capybara.backend.spring.controllers;
+package team.capybara.backend.spring.controllers.controllers.pagination;
 
 import org.springframework.stereotype.Component;
 
