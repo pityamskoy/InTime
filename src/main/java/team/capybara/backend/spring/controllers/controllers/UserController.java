@@ -49,8 +49,8 @@ public final class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResultDto> login(@CookieValue(value = "username") String username,  @RequestBody LoginDto loginDto, HttpServletResponse response) {
-        if (username != null) {
+    public ResponseEntity<LoginResultDto> login(@CookieValue(value = "username", defaultValue = "") String username,  @RequestBody LoginDto loginDto, HttpServletResponse response) {
+        if (!Objects.equals(username, "")) {
             return ResponseEntity.ok(new LoginResultDto(true, username));
         }
 
@@ -75,12 +75,12 @@ public final class UserController {
 
 
     @DeleteMapping("/logout")
-    public ResponseEntity<LoginResultDto> logout(@CookieValue(value = "username") String username, @RequestBody LoginDto loginDto, HttpServletResponse response) {
+    public ResponseEntity<LoginResultDto> logout(@CookieValue(value = "username", defaultValue = "") String username, @RequestBody LoginDto loginDto, HttpServletResponse response) {
         if (Objects.equals(username, "")) {
             return ResponseEntity.noContent().build();
         }
 
-        Cookie cookie = new Cookie("username", null);
+        Cookie cookie = new Cookie("username", "");
         cookie.setMaxAge(0);
         cookie.setPath("/");
         response.addCookie(cookie);
