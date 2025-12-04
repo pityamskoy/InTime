@@ -118,17 +118,4 @@ public final class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-
-    @GetMapping("/logout")
-    public String logout(@CookieValue(value = "isLoggedIn", required = false) String isLoggedIn, HttpServletResponse response) {
-        if (isLoggedIn == null) {
-            return "You are not logged in.";
-        }
-
-        Cookie cookie = new Cookie("token", "");
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-        return "Logout successful!";
-    }
 }
