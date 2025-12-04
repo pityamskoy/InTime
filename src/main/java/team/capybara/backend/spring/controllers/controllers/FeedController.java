@@ -75,7 +75,14 @@ public final class FeedController{
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(filteredProductService.getAllSortedProducts(offset, filter));
+        return ResponseEntity.ok(filteredProductService.getProducts(offset, filter));
+    }
+
+    @PostMapping("/pagination")
+    public ResponseEntity<Integer> getNumberOfPages(@RequestBody FeedFilterEntity filter) {
+        log.info("Called getNumberOfOffsets; filter={}", filter);
+
+        return ResponseEntity.ok(filteredProductService.getNumberOfPages(filter));
     }
 
     @GetMapping("/product/{id}")

@@ -56,6 +56,13 @@ public final class ReviewController {
         return ResponseEntity.ok(reviewService.getReviewsByShop(UUID.fromString(id), offset, limit.getLimit()));
     }
 
+    @PostMapping("/pagination/{id}")
+    public ResponseEntity<Integer> getNumberOfPages(@PathVariable String id, @RequestBody PaginationLimit limit) {
+        log.info("Called getNumberOfPages; id={}, limit={}", id, limit.getLimit());
+
+        return ResponseEntity.ok(reviewService.getNumberOfShopReviews(UUID.fromString(id), limit.getLimit()));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<ReviewWithIdDto> createReview(@RequestBody ReviewDto reviewToCreate) {
         log.info("Called createReview, reviewToCreate={}", reviewToCreate);
