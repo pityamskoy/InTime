@@ -17,7 +17,6 @@ import team.capybara.backend.spring.controllers.services.ProductService;
 
 import java.util.*;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/feed")
 @SuppressWarnings(value = {"unused"})
