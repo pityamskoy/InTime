@@ -91,8 +91,8 @@ public final class UserController {
         }
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteUser(@RequestBody String id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
         log.info("Called deleteUser; id={}", id);
 
         try {

@@ -101,8 +101,8 @@ public final class ShopController {
         }
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteProduct(@RequestBody String id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
         log.info("Called deleteShop; id={}", id);
 
         try {

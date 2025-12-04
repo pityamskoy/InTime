@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import team.capybara.backend.spring.entities.Favorite;
-import team.capybara.backend.spring.entities.ProductType;
 import team.capybara.backend.spring.entities.User;
 
 import java.util.List;

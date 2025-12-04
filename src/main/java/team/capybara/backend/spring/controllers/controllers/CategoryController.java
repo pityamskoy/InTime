@@ -68,8 +68,8 @@ public final class CategoryController {
         }
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteCategory(@RequestBody String id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable String id) {
         log.info("Called deleteCategory; id={}", id);
 
         try {

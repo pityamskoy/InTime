@@ -51,6 +51,16 @@ public final class InterestService {
         return interests.stream().map(interestMapper::getEntity).toList();
     }
 
+    public int getColOfInterestsByProduct(UUID id) {
+        int col = interestRepository.colProductInInterests(id);
+        return col;
+    }
+
+    public Optional<Boolean> isInterest(UUID id_product,UUID id_user) {
+        int isFavorite = interestRepository.isProductInInterests(id_user,id_product);
+        return Optional.of(isFavorite>0);
+    }
+
     public Optional<InterestWithIdDto> getInterestById(UUID id) {
         Optional<Interest> interestOptional = interestRepository.findById(id);
 

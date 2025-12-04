@@ -15,7 +15,7 @@ services:
     image: leoagf/bd:1.0
     restart: unless-stopped
     volumes:
-      - ./src/main/resources/bd:/var/lib/postgresql/18
+      - app-volume:/var/lib/postgresql/18
     ports:
       - "1234:5432"
 

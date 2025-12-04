@@ -18,7 +18,6 @@ public class ScheduledService {
     public ScheduledService(ProductRepository productRepository, InterestRepository interestRepository) {
         this.productRepository = productRepository;
         this.interestRepository = interestRepository;
-        //new Thread(this::clean).start();
     }
 
     private void clean() {

@@ -48,6 +48,22 @@ public final class InterestController {
         return ResponseEntity.ok(interestService.getAllInterestsByUser(UUID.fromString(id)));
     }
 
+    @GetMapping("/get_col_by_product/{id}")
+    public ResponseEntity<Integer> getColOfInterestsByProduct(@PathVariable String id) {
+        log.info("Called getColOfInterestsByProduct");
+        return ResponseEntity.ok(interestService.getColOfInterestsByProduct(UUID.fromString(id)));
+    }
+
+    @GetMapping("/{user_id}/{product_id}")
+    public ResponseEntity<Boolean> isFavorite(@PathVariable String user_id,@PathVariable String product_id) {
+
+        log.info("Called isFavorite; user_id={}, product_id={}", user_id,product_id);
+        Optional<Boolean> isFavorite = interestService.isInterest(UUID.fromString(product_id),UUID.fromString(user_id));
+
+        return isFavorite.map(ResponseEntity::ok).orElseGet
+                (() -> ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<InterestWithIdDto> getInterestById(@PathVariable String id) {
         log.info("Called getInterestById; id={}", id);
