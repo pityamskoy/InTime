@@ -54,7 +54,6 @@ public final class FilteredProductService {
                 filter.getUserLat(),
                 filter.getUserLon());
 
-        int limit = filter.getLimit();
         List<Product> productsToSort;
 
         if (filter.getName() != null) {
@@ -117,7 +116,7 @@ public final class FilteredProductService {
         List<Product> freeProducts = new ArrayList<>();
 
         for (Product product : productsToSort) {
-            if (product.getPrice() - product.getDiscount() == 0) {
+            if ((double) product.getPrice() - (double) (product.getPrice() * product.getDiscount()) / 100 == 0.0) {
                 freeProducts.add(product);
             }
         }
