@@ -20,15 +20,17 @@ public final class FavoriteService {
     private final FavoriteMapper favoriteMapper;
     private final UserConverter userConverter;
     private final FavoriteRepository favoriteRepository;
+    private final ProductTypeRepository productTypeRepository;
 
     public FavoriteService(
             FavoriteMapper favoriteMapper,
             UserConverter userConverter,
-            FavoriteRepository favoriteRepository
+            FavoriteRepository favoriteRepository, ProductTypeRepository productTypeRepository
     ) {
         this.favoriteMapper = favoriteMapper;
         this.userConverter = userConverter;
         this.favoriteRepository = favoriteRepository;
+        this.productTypeRepository = productTypeRepository;
     }
 
     public List<FavoriteWithIdDto> getAllFavorites() {
@@ -46,6 +48,11 @@ public final class FavoriteService {
         }
 
         return Optional.empty();
+    }
+
+    public Optional<Boolean> isFavorite(UUID id_product_type,UUID id_user) {
+        int isFavorite = favoriteRepository.isProductTypeInFavorites(id_user,id_product_type);
+        return Optional.of(isFavorite>0);
     }
 
     /**
@@ -68,7 +75,10 @@ public final class FavoriteService {
 
     public FavoriteWithIdDto createFavorite(FavoriteDto favoriteToCreate) {
         try {
-            return favoriteMapper.postEntity(favoriteToCreate);
+            int isExist = favoriteRepository.isProductTypeInFavorites(favoriteToCreate.userId(),favoriteToCreate.productTypeId());
+            if(isExist==0)
+                return favoriteMapper.postEntity(favoriteToCreate);
+            throw new EntityNotFoundException();
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());
         }

@@ -1,7 +1,7 @@
 name: vSrok
 services:
   backend:
-    image: leoagf/devback:1.778
+    image: leoagf/devback:1.782
     depends_on:
       - db
       - nginx
@@ -14,8 +14,6 @@ services:
   db:
     image: leoagf/bd:1.0
     restart: unless-stopped
-    volumes:
-      - ./src/main/resources/bd:/var/lib/postgresql/18
     ports:
       - "1234:5432"
 
