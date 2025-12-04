@@ -74,7 +74,9 @@ public final class InterestService {
 
     public InterestWithIdDto createInterest(InterestDto interestToCreate) {
         try {
-            return interestMapper.postEntity(interestToCreate);
+            if(!isInterest(interestToCreate.productId(),interestToCreate.userId()).get())
+                return interestMapper.postEntity(interestToCreate);
+            throw new EntityNotFoundException();
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());
         }
