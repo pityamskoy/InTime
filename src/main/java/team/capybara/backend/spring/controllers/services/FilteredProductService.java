@@ -106,7 +106,7 @@ public final class FilteredProductService {
         List<Product> freeProducts = new ArrayList<>();
 
         for (Product product : productsToSort) {
-            if (product.getPrice() - product.getDiscount() <= 0) {
+            if (product.getPrice() - product.getDiscount() == 0) {
                 freeProducts.add(product);
             }
         }
