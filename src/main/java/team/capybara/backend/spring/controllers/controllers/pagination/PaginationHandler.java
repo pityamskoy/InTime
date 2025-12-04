@@ -24,4 +24,12 @@ public final class PaginationHandler<Objects> {
 
         return slice;
     }
+
+    public Integer getNumberOfPages(List<Objects> allObjects, int limit) {
+        if (allObjects.isEmpty()) {
+            return 0;
+        }
+
+        return (int) Math.ceil((allObjects.size() * 1.0) / limit);
+    }
 }

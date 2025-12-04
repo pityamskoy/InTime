@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-
 @RestController
 @RequestMapping("/categories")
 @SuppressWarnings(value = {"unused"})
@@ -68,8 +67,8 @@ public final class CategoryController {
         }
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteCategory(@RequestBody String id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable String id) {
         log.info("Called deleteCategory; id={}", id);
 
         try {

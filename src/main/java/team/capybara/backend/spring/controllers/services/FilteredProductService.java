@@ -41,8 +41,7 @@ public final class FilteredProductService {
         this.entityHandler = entityHandler;
     }
 
-    public Page<ProductWithIdDto> getAllSortedProducts(
-            int offset,
+    private List<Product> getAllSortedProducts(
             FeedFilterEntity filter
     ) {
         filter.makeAllEmptyFieldsEquivalentToNull(
@@ -86,9 +85,21 @@ public final class FilteredProductService {
             productsToSort = recommendProductsByScore(productsToSort, filter.getUserLat(), filter.getUserLon());
         }
 
-        List<Product> slice = paginationHandler.makeSliceFromList(productsToSort, offset, limit);
+        return productsToSort;
+    }
+
+    public Integer getNumberOfPages(FeedFilterEntity filter) {
+        List<Product> productsSorted = getAllSortedProducts(filter);
+
+        return paginationHandler.getNumberOfPages(productsSorted, filter.getLimit());
+    }
+
+    public Page<ProductWithIdDto> getProducts(int offset, FeedFilterEntity filter) {
+        List<Product> productsSorted = getAllSortedProducts(filter);
+        List<Product> slice = paginationHandler.makeSliceFromList(productsSorted, offset, filter.getLimit());
 
         return new PageImpl<>(slice.stream().map(productMapper::getEntity).toList());
+
     }
 
     private List<Product> sortProductsByName(String name) {
@@ -106,7 +117,7 @@ public final class FilteredProductService {
         List<Product> freeProducts = new ArrayList<>();
 
         for (Product product : productsToSort) {
-            if (product.getPrice() - product.getDiscount() <= 0) {
+            if (product.getPrice() - product.getDiscount() == 0) {
                 freeProducts.add(product);
             }
         }

@@ -63,7 +63,27 @@ public final class UserService {
     }
 
     public UserAuthWithIdDto createUser(UserAuthDto userToCreate) {
-        return userAuthMapper.postEntity(userToCreate);
+        User userEmail=null;
+        User userPhone=null;
+
+        try{
+            userEmail = userRepository.findUserByEmail(userToCreate.email());
+        }
+        catch (Exception e){
+            userEmail=null;
+        }
+
+        try{
+            userPhone = userRepository.findUserByPhoneNumber(userToCreate.email());
+        }
+        catch (Exception e){
+            userPhone=null;
+        }
+
+        if(userPhone==null && userEmail==null)
+            return userAuthMapper.postEntity(userToCreate);
+        else
+            return null;
     }
 
     public UserAuthWithIdDto updateUser(UserAuthWithIdDto userToUpdate) {

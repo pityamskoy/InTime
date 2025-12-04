@@ -72,6 +72,15 @@ public final class ProductTypeController {
                 (() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/get_all_by_shop/{id}")
+    public ResponseEntity<List<ProductTypeWithIdDto>> getProductTypeByShop(@PathVariable("id") String id) {
+        log.info("Called getProductTypeById; id={}", id);
+        Optional<List<ProductTypeWithIdDto>> allProductTypesByShopId = productTypeService.getAllProductTypesByShopId(UUID.fromString(id));
+
+        return allProductTypesByShopId.map(ResponseEntity::ok).orElseGet
+                (() -> ResponseEntity.notFound().build());
+    }
+
     @PostMapping("/create")
     public ResponseEntity<ProductTypeWithIdDto> createProductType(@RequestBody ProductTypeDto productToCreate) {
         log.info("Called createProductType; productTypeToCreate={}", productToCreate);
@@ -96,8 +105,8 @@ public final class ProductTypeController {
         }
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteProductType(@RequestBody String id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteProductType(@PathVariable String id) {
         log.info("Called deleteProductType; id={}", id);
 
         try {

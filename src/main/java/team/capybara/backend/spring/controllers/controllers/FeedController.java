@@ -75,7 +75,14 @@ public final class FeedController{
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(filteredProductService.getAllSortedProducts(offset, filter));
+        return ResponseEntity.ok(filteredProductService.getProducts(offset, filter));
+    }
+
+    @PostMapping("/pagination")
+    public ResponseEntity<Integer> getNumberOfPages(@RequestBody FeedFilterEntity filter) {
+        log.info("Called getNumberOfOffsets; filter={}", filter);
+
+        return ResponseEntity.ok(filteredProductService.getNumberOfPages(filter));
     }
 
     @GetMapping("/product/{id}")
@@ -126,8 +133,8 @@ public final class FeedController{
         return null;
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteProduct(@RequestBody String id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
         log.info("Called deleteProduct; id={}", id);
 
         try {

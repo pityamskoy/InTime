@@ -42,6 +42,15 @@ public final class FavoriteController {
                 (() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/{user_id}/{product_type_id}")
+    public ResponseEntity<Boolean> isFavorite(@PathVariable String user_id,@PathVariable String product_type_id) {
+        log.info("Called isFavorite; user_id={}, product_type_id={}", user_id,product_type_id);
+        Optional<Boolean> isFavorite = favoriteService.isFavorite(UUID.fromString(product_type_id),UUID.fromString(user_id));
+
+        return isFavorite.map(ResponseEntity::ok).orElseGet
+                (() -> ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/user/{id}")
     public ResponseEntity<List<FavoriteWithIdDto>> getFavoriteByUserId(@PathVariable String id) {
         log.info("Called getFavoriteByUserId; id={}", id);
@@ -80,12 +89,12 @@ public final class FavoriteController {
         }
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteFavorite(@RequestBody UUID id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteFavorite(@PathVariable String id) {
         log.info("Called deleteFavorite; id={}", id);
 
         try {
-            favoriteService.deleteFavorite(id);
+            favoriteService.deleteFavorite(UUID.fromString(id));
             return ResponseEntity.notFound().build();
         } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
