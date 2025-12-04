@@ -111,11 +111,11 @@ public final class ProductMapper implements Mapper<Product, ProductWithIdDto, Pr
     private void throwExceptionIfFieldsAreIncorrect(Date shelfLife, int price, int discount) {
         boolean isFieldsCorrect = price >= 0;
 
-        if (discount < 0) {
+        if (discount < 0 || discount > 100) {
             isFieldsCorrect = false;
         }
 
-        if (price - discount < 0) {
+        if (price - price * discount / 100 < 0) {
             isFieldsCorrect = false;
         }
 

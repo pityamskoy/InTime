@@ -7,7 +7,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import team.capybara.backend.spring.controllers.controllers.pagination.PaginationHandler;
 import team.capybara.backend.spring.controllers.dto.entities.product.ProductDto;
+import team.capybara.backend.spring.controllers.repositories.FavoriteRepository;
+import team.capybara.backend.spring.controllers.repositories.InterestRepository;
 import team.capybara.backend.spring.controllers.repositories.ProductTypeRepository;
+import team.capybara.backend.spring.entities.Favorite;
+import team.capybara.backend.spring.entities.Interest;
 import team.capybara.backend.spring.entities.Product;
 import team.capybara.backend.spring.controllers.dto.entities.product.ProductWithIdDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.ProductMapper;
@@ -25,17 +29,21 @@ public final class ProductService {
     private final ProductMapper productMapper;
     private final ProductRepository productRepository;
     private final ProductTypeRepository productTypeRepository;
+    private final InterestRepository interestRepository;
+    private final FavoriteRepository favoriteRepository;
     private final PaginationHandler<Product> paginationHandler;
 
     public ProductService(
             ProductMapper productMapper,
             ProductRepository productRepository,
-            ProductTypeRepository productTypeRepository,
+            ProductTypeRepository productTypeRepository, InterestRepository interestRepository, FavoriteRepository favoriteRepository,
             PaginationHandler<Product> paginationHandler
     ) {
         this.productMapper = productMapper;
         this.productRepository = productRepository;
         this.productTypeRepository = productTypeRepository;
+        this.interestRepository = interestRepository;
+        this.favoriteRepository = favoriteRepository;
         this.paginationHandler = paginationHandler;
     }
 
@@ -98,6 +106,9 @@ public final class ProductService {
 
     public void deleteProduct(UUID id) {
         try {
+            List<Interest> interests = interestRepository.findByProduct(productRepository.findById(id).get());
+            for(Interest interest:interests)
+                interestRepository.delete(interest);
             productMapper.deleteEntity(id);
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(e.getMessage());
