@@ -16,6 +16,7 @@ import team.capybara.backend.spring.controllers.dto.entities.user.UserDto;
 import team.capybara.backend.spring.controllers.services.UserService;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -62,14 +63,28 @@ public final class UserController {
             return ResponseEntity.status(HttpStatus.LENGTH_REQUIRED).build();
         }
 
-        Cookie cookie = new Cookie("isLoggedIn", "True");
-        cookie.setMaxAge(7200);
-        cookie.setSecure(true);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        LoginResultDto loginResultDto = userService.login(login, password);
+
+        if (loginResultDto.success()) {
+            Cookie cookie = new Cookie("username", loginResultDto.userId());
+            cookie.setPath("/");
+            response.addCookie(cookie);
+        }
 
         return ResponseEntity.ok(userService.login(login, password));
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<LoginResultDto> logout(@CookieValue(value = "username") String username, @RequestBody LoginDto loginDto, HttpServletResponse response) {
+        if (Objects.equals(username, "")) {
+            return ResponseEntity.noContent().build();
+        }
+
+        Cookie cookie = new Cookie("username", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/create")
