@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/users")
 @SuppressWarnings(value = {"unused"})
@@ -48,6 +49,7 @@ public final class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResultDto> login(@CookieValue(value = "isLoggedIn", required = false) String isLoggedIn,  @RequestBody LoginDto loginDto, HttpServletResponse response) {
+
         if (isLoggedIn != null) {
             return ResponseEntity.ok().build(); // I don't, what I should do in this situation
         }

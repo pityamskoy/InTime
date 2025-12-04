@@ -1,7 +1,7 @@
 name: vSrok
 services:
   backend:
-    image: leoagf/devback:1.778
+    image: leoagf/devback:1.781
     depends_on:
       - db
       - nginx

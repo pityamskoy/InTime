@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/interests")
 @SuppressWarnings(value = {"unused"})
@@ -80,8 +81,8 @@ public final class InterestController {
         }
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteInterest(@RequestBody String id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteInterest(@PathVariable String id) {
         log.info("Called deleteInterest; id={}", id);
 
         try {
