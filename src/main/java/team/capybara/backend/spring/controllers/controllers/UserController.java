@@ -49,10 +49,9 @@ public final class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResultDto> login(@CookieValue(value = "isLoggedIn", required = false) String isLoggedIn,  @RequestBody LoginDto loginDto, HttpServletResponse response) {
-
-        if (isLoggedIn != null) {
-            return ResponseEntity.ok().build(); // I don't, what I should do in this situation
+    public ResponseEntity<LoginResultDto> login(@CookieValue(value = "username") String username,  @RequestBody LoginDto loginDto, HttpServletResponse response) {
+        if (username != null) {
+            return ResponseEntity.ok(new LoginResultDto(true, username));
         }
 
         String login = loginDto.login();
@@ -73,6 +72,7 @@ public final class UserController {
 
         return ResponseEntity.ok(userService.login(login, password));
     }
+
 
     @DeleteMapping("/logout")
     public ResponseEntity<LoginResultDto> logout(@CookieValue(value = "username") String username, @RequestBody LoginDto loginDto, HttpServletResponse response) {
