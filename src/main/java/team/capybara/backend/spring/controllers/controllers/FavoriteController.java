@@ -81,8 +81,8 @@ public final class FavoriteController {
         }
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteFavorite(@RequestBody String id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteFavorite(@PathVariable String id) {
         log.info("Called deleteFavorite; id={}", id);
 
         try {

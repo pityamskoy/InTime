@@ -61,8 +61,8 @@ public final class ImageController {
         }
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteImage(@RequestBody String id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteImage(@PathVariable String id) {
         log.info("Called deleteImage; id={}", id);
 
         try {

@@ -106,8 +106,8 @@ public final class ProductTypeController {
         }
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteProductType(@RequestBody String id) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteProductType(@PathVariable String id) {
         log.info("Called deleteProductType; id={}", id);
 
         try {
