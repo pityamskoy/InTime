@@ -15,8 +15,13 @@ public final class EntityHandler {
     }
 
     public Double calculateProductScore(Product product, Double userLat, Double userLon) {
-        Double rating = reviewRepository.calculateStoreRating(product.getProductType().getShop().getId());
-        product.calculateScore(userLat, userLon, rating);
+        try {
+            Double rating = reviewRepository.calculateStoreRating(product.getProductType().getShop().getId());
+            product.calculateScore(userLat, userLon, rating);
+        } catch (Exception e) {
+            Double rating = 5.0;
+            product.calculateScore(userLat, userLon, rating);
+        }
 
         return product.getScore();
     }
