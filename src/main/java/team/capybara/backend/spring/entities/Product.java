@@ -55,7 +55,7 @@ public class Product implements EntityWithId {
         if (price < 30) {
             this.score = 20 + ((shelfLife.getTime()) + (100 / shop.getDistance()) + (rating * 10));
         } else {
-            this.score = (20 * (discount * 1.0 / price)) + (shelfLife.getTime()) + (100 / shop.getDistance()) + (rating * 10);
+            this.score = (20 * ((price * 1.0 * discount / 100) / price)) + (shelfLife.getTime()) + (100 / shop.getDistance()) + (rating * 10);
         }
     }
 

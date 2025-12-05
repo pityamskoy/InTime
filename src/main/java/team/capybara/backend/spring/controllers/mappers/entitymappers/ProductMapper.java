@@ -115,7 +115,7 @@ public final class ProductMapper implements Mapper<Product, ProductWithIdDto, Pr
             isFieldsCorrect = false;
         }
 
-        if (price - price * discount / 100 < 0) {
+        if (price - ((price * 1.0) * (discount * 1.0) / 100) < 0) {
             isFieldsCorrect = false;
         }
 
