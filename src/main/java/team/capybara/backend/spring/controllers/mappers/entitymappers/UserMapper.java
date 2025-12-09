@@ -1,5 +1,6 @@
 package team.capybara.backend.spring.controllers.mappers.entitymappers;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
 import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthDto;
@@ -10,6 +11,7 @@ import team.capybara.backend.spring.controllers.mappers.converters.entityconvert
 import team.capybara.backend.spring.controllers.repositories.UserRepository;
 import team.capybara.backend.spring.entities.User;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -46,14 +48,21 @@ public final class UserMapper {
         }
 
         @Override
-        public UserAuthWithIdDto postEntity(UserAuthDto userAuthToCreate) {
+        public UserAuthWithIdDto postEntity(UserAuthDto userAuthToRegister) {
+            Optional<User> userFoundByEmail = userRepository.findUserByEmail(userAuthToRegister.email());
+            Optional<User> userFoundByPhoneNumber = userRepository.findUserByPhoneNumber(userAuthToRegister.phoneNumber());
+
+            if (userFoundByEmail.isPresent() || userFoundByPhoneNumber.isPresent()) {
+                throw new EntityExistsException("User with such email or phone number already exists");
+            }
+
             User userCreated = new User(
                     UUID.randomUUID(),
-                    userAuthToCreate.name(),
-                    userAuthToCreate.email(),
-                    userAuthToCreate.phoneNumber(),
-                    userAuthToCreate.password(),
-                    userAuthToCreate.isShopOwner()
+                    userAuthToRegister.name(),
+                    userAuthToRegister.email(),
+                    userAuthToRegister.phoneNumber(),
+                    userAuthToRegister.password(),
+                    userAuthToRegister.isShopOwner()
             );
 
             userRepository.save(userCreated);

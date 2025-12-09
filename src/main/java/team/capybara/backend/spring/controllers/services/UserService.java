@@ -1,8 +1,12 @@
 package team.capybara.backend.spring.controllers.services;
 
+import jakarta.annotation.Nullable;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.boot.web.server.Cookie;
+import jakarta.servlet.http.Cookie;
+import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.stereotype.Service;
+import team.capybara.backend.spring.controllers.dto.other.login.LoginDto;
 import team.capybara.backend.spring.controllers.dto.other.login.LoginResultDto;
 import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthDto;
 import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthWithIdDto;
@@ -10,8 +14,9 @@ import team.capybara.backend.spring.controllers.dto.entities.user.UserDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.UserMapper;
 import team.capybara.backend.spring.controllers.repositories.UserRepository;
 import team.capybara.backend.spring.entities.User;
+import team.capybara.backend.spring.controllers.controllers.UserController;
 
-import java.time.Duration;
+import javax.security.auth.login.CredentialException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -50,40 +55,66 @@ public final class UserService {
         return Optional.empty();
     }
 
-    public LoginResultDto login(String login, String password) {
-        User user;
+     /**
+     * @param username is a value of cookie, which {@link UserController} accepts as an argument.
+     * @param loginDto is login credentials.
+     * @return {@link Pair}<{@link Cookie}, {@link LoginResultDto}>, where {@link Cookie} is null if {@code String username} was provided.
+     * @throws CredentialException if cookie is null and login credentials are null.
+     */
+    public Pair<Cookie,LoginResultDto> login(
+            @Nullable String username,
+            @Nullable LoginDto loginDto
+    ) throws CredentialException {
+        if (loginDto == null && username == null) {
+            throw new CredentialException("Login credentials are missing.");
+        }
+
+        if (username != null) {
+            return new Pair<>(null, new LoginResultDto(true, username));
+        }
+
+        String login = loginDto.login();
+        Optional<User> userOptional;
 
         if (login.contains("@")) {
-            user = userRepository.findUserByEmail(login);
+            userOptional = userRepository.findUserByEmail(login);
         } else {
-            user = userRepository.findUserByPhoneNumber(login);
+            userOptional = userRepository.findUserByPhoneNumber(login);
         }
 
-        return new LoginResultDto(user.getPassword().equals(password), user.getId().toString());
+        if (userOptional.isEmpty()) {
+            throw new EntityNotFoundException("User not found");
+        }
+
+        User user = userOptional.get();
+        LoginResultDto loginResultDto = new LoginResultDto(user.getPassword().equals(loginDto.password()), user.getId().toString());
+
+        if (loginResultDto.success()) {
+            Cookie cookie = new Cookie("username", loginResultDto.userId());
+            cookie.setPath("/");
+            return new Pair<>(cookie, loginResultDto);
+        }
+
+        return new Pair<>(null, loginResultDto);
     }
 
-    public UserAuthWithIdDto createUser(UserAuthDto userToCreate) {
-        User userEmail=null;
-        User userPhone=null;
+    public Cookie logout(String username) {
+        Cookie cookie = new Cookie("username", username);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
 
-        try{
-            userEmail = userRepository.findUserByEmail(userToCreate.email());
-        }
-        catch (Exception e){
-            userEmail=null;
-        }
+        return cookie;
+    }
 
-        try{
-            userPhone = userRepository.findUserByPhoneNumber(userToCreate.email());
-        }
-        catch (Exception e){
-            userPhone=null;
-        }
+    public Pair<Cookie, UserAuthWithIdDto> register(UserAuthDto userToRegister) {
+        try {
+            UserAuthWithIdDto userRegistered = userAuthMapper.postEntity(userToRegister);
+            Cookie cookie = new Cookie("username", userRegistered.name());
 
-        if(userPhone==null && userEmail==null)
-            return userAuthMapper.postEntity(userToCreate);
-        else
-            return null;
+            return new Pair<>(cookie, userRegistered);
+        } catch (EntityExistsException e) {
+            throw new EntityExistsException(e.getMessage());
+        }
     }
 
     public UserAuthWithIdDto updateUser(UserAuthWithIdDto userToUpdate) {
