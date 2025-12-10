@@ -23,6 +23,7 @@ public class Category implements EntityWithId {
     private String description;
 
     @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "product_type_id")
     private List<ProductType> productTypes;
 
     @Override

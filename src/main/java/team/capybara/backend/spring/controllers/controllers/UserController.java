@@ -1,8 +1,10 @@
 package team.capybara.backend.spring.controllers.controllers;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.antlr.v4.runtime.misc.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,8 +17,8 @@ import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthWithId
 import team.capybara.backend.spring.controllers.dto.entities.user.UserDto;
 import team.capybara.backend.spring.controllers.services.UserService;
 
+import javax.security.auth.login.CredentialException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -49,49 +51,58 @@ public final class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResultDto> login(@CookieValue(value = "username", defaultValue = "") String username,  @RequestBody LoginDto loginDto, HttpServletResponse response) {
-        if (!Objects.equals(username, "")) {
-            return ResponseEntity.ok(new LoginResultDto(true, username));
+    public ResponseEntity<LoginResultDto> login(
+            @CookieValue(required = false, value = "username") String username,
+            @RequestBody LoginDto loginDto,
+            HttpServletResponse response
+    ) {
+        log.info("Called login; loginDto={}", loginDto);
+
+        try {
+            Pair<Cookie, LoginResultDto> result = userService.login(username, loginDto);
+
+            if (result.a != null) {
+                response.addCookie(result.a);
+            }
+
+            return ResponseEntity.ok(result.b);
+        } catch (CredentialException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().build();
+        } catch (EntityNotFoundException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
         }
-
-        String login = loginDto.login();
-        String password = loginDto.password();
-        log.info("Called login; login={}, password={}", login, password);
-
-        if (login.isEmpty() || password.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.LENGTH_REQUIRED).build();
-        }
-
-        LoginResultDto loginResultDto = userService.login(login, password);
-
-        if (loginResultDto.success()) {
-            Cookie cookie = new Cookie("username", loginResultDto.userId());
-            cookie.setPath("/");
-            response.addCookie(cookie);
-        }
-
-        return ResponseEntity.ok(userService.login(login, password));
     }
 
 
     @DeleteMapping("/logout")
-    public ResponseEntity<LoginResultDto> logout(@CookieValue(value = "username", defaultValue = "") String username, @RequestBody LoginDto loginDto, HttpServletResponse response) {
-        if (Objects.equals(username, "")) {
-            return ResponseEntity.noContent().build();
-        }
-
-        Cookie cookie = new Cookie("username", "");
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
+    public ResponseEntity<LoginResultDto> logout(
+            @CookieValue(value = "username") String username,
+            HttpServletResponse response
+    ) {
+        Cookie cookie = userService.logout(username);
         response.addCookie(cookie);
+
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<UserAuthWithIdDto> createUser(@RequestBody UserAuthDto userToCreate) {
-        log.info("Called createUser; userToCreate={}", userToCreate);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(userService.createUser(userToCreate));
+    @PostMapping("/register")
+    public ResponseEntity<UserAuthWithIdDto> register(
+            @RequestBody UserAuthDto userToRegister,
+            HttpServletResponse response
+    ) {
+        log.info("Called register; userToRegister={}", userToRegister);
+
+        try {
+            Pair<Cookie, UserAuthWithIdDto> result = userService.register(userToRegister);
+            response.addCookie(result.a);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(result.b);
+        } catch (EntityExistsException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/update")
