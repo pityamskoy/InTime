@@ -116,24 +116,4 @@ public final class ShopService {
         }
     }
 
-    private List<Shop> quickSortShopsByDistance(List<Shop> shopsToSort) {
-        if (shopsToSort.size() <= 1) {
-            return shopsToSort;
-        }
-
-        Shop pivot = shopsToSort.getFirst();
-        List<Shop> left = new ArrayList<>();
-        List<Shop> right = new ArrayList<>();
-
-        for (int i = 0; i <= shopsToSort.size(); i++) {
-            if (shopsToSort.get(i).getDistance() <= pivot.getDistance() && i != 0) {
-                left.add(shopsToSort.get(i));
-            } else if (shopsToSort.get(i).getDistance() > pivot.getDistance()) {
-                right.add(shopsToSort.get(i));
-            }
-        }
-
-        return Stream.of(quickSortShopsByDistance(left), List.of(pivot), quickSortShopsByDistance(right))
-                .flatMap(List::stream).collect(Collectors.toList());
-    }
 }

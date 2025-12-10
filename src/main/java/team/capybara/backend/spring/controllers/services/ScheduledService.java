@@ -20,7 +20,9 @@ public class ScheduledService {
         this.interestRepository = interestRepository;
     }
 
-    private void clean() {
+
+    @Scheduled(cron = "0 0 * * * ?")
+    public void delete_expired_products() {
         long nowTime = new Date().getTime();
         List<Product> products = productRepository.findAll();
         for (Product el : products) {
@@ -33,10 +35,5 @@ public class ScheduledService {
                 System.out.println("Delete product with id=" + el.getId().toString());
             }
         }
-    }
-
-    @Scheduled(cron = "0 0 * * * ?")
-    public void delete_expired_products() {
-        new Thread(this::clean).start();
     }
 }
