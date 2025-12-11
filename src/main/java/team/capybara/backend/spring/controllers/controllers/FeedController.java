@@ -17,9 +17,9 @@ import team.capybara.backend.spring.controllers.services.ProductService;
 
 import java.util.*;
 
-//@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/feed")
+// @CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @SuppressWarnings(value = {"unused"})
 public final class FeedController{
     private static final Logger log = LoggerFactory.getLogger(FeedController.class);

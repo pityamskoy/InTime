@@ -12,7 +12,7 @@ import java.util.concurrent.Executor;
  */
 @Configuration
 @EnableAsync
-public class AsyncConfiguration {
+public final class AsyncConfiguration {
 
     @Bean
     public Executor asyncExecutor() {

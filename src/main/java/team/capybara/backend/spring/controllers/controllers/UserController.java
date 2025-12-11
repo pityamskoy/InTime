@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-//@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/users")
+// @CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @SuppressWarnings(value = {"unused"})
 public final class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -41,12 +41,12 @@ public final class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserAuthWithIdDto> getUserById(@PathVariable String id) {
+    @GetMapping("/user")
+    public ResponseEntity<UserDto> getUserById(@CookieValue(value = "username") String id) {
         log.info("Called getUserById; id={}", id);
-        Optional<UserAuthWithIdDto> userAuthDtoOptional = userService.getUserById(UUID.fromString(id));
+        Optional<UserDto> userDtoOptional = userService.getUserById(UUID.fromString(id));
 
-        return userAuthDtoOptional.map(ResponseEntity::ok).orElseGet
+        return userDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
     }
 
