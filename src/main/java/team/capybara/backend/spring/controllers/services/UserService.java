@@ -44,18 +44,18 @@ public final class UserService {
         return users.stream().map(userMapper::getEntity).toList();
     }
 
-    public Optional<UserAuthWithIdDto> getUserById(UUID id) {
+    public Optional<UserDto> getUserById(UUID id) {
         Optional<User> userOptional = userRepository.findById(id);
 
         if (userOptional.isPresent()) {
-            UserAuthWithIdDto userAuthWithIdDto = userAuthMapper.getEntity(userOptional.get());
-            return Optional.of(userAuthWithIdDto);
+            UserDto userDto = userMapper.getEntity(userOptional.get());
+            return Optional.of(userDto);
         }
 
         return Optional.empty();
     }
 
-     /**
+    /**
      * @param username is a value of cookie, which {@link UserController} accepts as an argument.
      * @param loginDto is login credentials.
      * @return {@link Pair}<{@link Cookie}, {@link LoginResultDto}>, where {@link Cookie} is null if {@code String username} was provided.
@@ -63,14 +63,16 @@ public final class UserService {
      */
     public Pair<Cookie,LoginResultDto> login(
             @Nullable String username,
-            @Nullable LoginDto loginDto
+            LoginDto loginDto
     ) throws CredentialException {
-        if (loginDto == null && username == null) {
+        if (username == null && (loginDto.login() == null || loginDto.password() == null)) {
             throw new CredentialException("Login credentials are missing.");
         }
 
         if (username != null) {
-            return new Pair<>(null, new LoginResultDto(true, username));
+            if (loginDto.login() == null || loginDto.password() == null) {
+                return new Pair<>(null, new LoginResultDto(true, username));
+            }
         }
 
         String login = loginDto.login();
@@ -89,9 +91,21 @@ public final class UserService {
         User user = userOptional.get();
         LoginResultDto loginResultDto = new LoginResultDto(user.getPassword().equals(loginDto.password()), user.getId().toString());
 
+        if (username != null) {
+            if (username.equals(user.getId().toString())) {
+                return new Pair<>(null, new LoginResultDto(true, username));
+            } else {
+                return new Pair<>(null, new LoginResultDto(false, username));
+            }
+        }
+
         if (loginResultDto.success()) {
             Cookie cookie = new Cookie("username", loginResultDto.userId());
-            cookie.setPath("/");
+            cookie.setPath("/users");
+            cookie.setMaxAge(14400);
+            cookie.setHttpOnly(false);
+            cookie.setSecure(false);
+
             return new Pair<>(cookie, loginResultDto);
         }
 
@@ -100,8 +114,10 @@ public final class UserService {
 
     public Cookie logout(String username) {
         Cookie cookie = new Cookie("username", username);
+        cookie.setPath("/users");
         cookie.setMaxAge(0);
-        cookie.setPath("/");
+        cookie.setHttpOnly(false);
+        cookie.setSecure(false);
 
         return cookie;
     }
@@ -109,7 +125,11 @@ public final class UserService {
     public Pair<Cookie, UserAuthWithIdDto> register(UserAuthDto userToRegister) {
         try {
             UserAuthWithIdDto userRegistered = userAuthMapper.postEntity(userToRegister);
-            Cookie cookie = new Cookie("username", userRegistered.name());
+            Cookie cookie = new Cookie("username", userRegistered.id().toString());
+            cookie.setPath("/users");
+            cookie.setMaxAge(14400);
+            cookie.setHttpOnly(false);
+            cookie.setSecure(false);
 
             return new Pair<>(cookie, userRegistered);
         } catch (EntityExistsException e) {

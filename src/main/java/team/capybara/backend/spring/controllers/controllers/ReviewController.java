@@ -15,9 +15,9 @@ import team.capybara.backend.spring.controllers.services.ReviewService;
 import java.util.Optional;
 import java.util.UUID;
 
-//@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/reviews")
+// @CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @SuppressWarnings(value = {"unused"})
 public final class ReviewController {
     private static final Logger log = LoggerFactory.getLogger(ReviewController.class);

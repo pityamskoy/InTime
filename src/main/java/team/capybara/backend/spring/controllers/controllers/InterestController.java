@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-//@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/interests")
+// @CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @SuppressWarnings(value = {"unused"})
 public final class InterestController {
     private static final Logger log = LoggerFactory.getLogger(InterestController.class);
