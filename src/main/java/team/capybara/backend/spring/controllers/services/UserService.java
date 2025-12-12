@@ -6,13 +6,16 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.stereotype.Service;
+import team.capybara.backend.spring.controllers.dto.entities.user.Username;
 import team.capybara.backend.spring.controllers.dto.other.login.LoginDto;
 import team.capybara.backend.spring.controllers.dto.other.login.LoginResultDto;
 import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthDto;
 import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthWithIdDto;
 import team.capybara.backend.spring.controllers.dto.entities.user.UserDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.UserMapper;
+import team.capybara.backend.spring.controllers.repositories.ReviewRepository;
 import team.capybara.backend.spring.controllers.repositories.UserRepository;
+import team.capybara.backend.spring.entities.Review;
 import team.capybara.backend.spring.entities.User;
 import team.capybara.backend.spring.controllers.controllers.UserController;
 
@@ -24,15 +27,18 @@ import java.util.UUID;
 
 @Service
 public final class UserService {
+    private final ReviewRepository reviewRepository;
     private final UserMapper userMapper;
     private final UserMapper.UserAuthMapper userAuthMapper;
     private final UserRepository userRepository;
 
     public UserService(
+            ReviewRepository reviewRepository,
             UserMapper userMapper,
             UserMapper.UserAuthMapper userAuthMapper,
             UserRepository userRepository
     ) {
+        this.reviewRepository = reviewRepository;
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.userAuthMapper = userAuthMapper;
@@ -42,6 +48,16 @@ public final class UserService {
         List<User> users = userRepository.findAll();
 
         return users.stream().map(userMapper::getEntity).toList();
+    }
+
+    public Username getUsernameByReviewId(UUID reviewId) {
+        Optional<Review> reviewOptional = reviewRepository.findById(reviewId);
+
+        if (reviewOptional.isEmpty()) {
+            throw new EntityNotFoundException("Review not found; id=" + reviewId);
+        }
+
+        return new Username(reviewOptional.get().getUser().getName());
     }
 
     public Optional<UserDto> getUserById(UUID id) {

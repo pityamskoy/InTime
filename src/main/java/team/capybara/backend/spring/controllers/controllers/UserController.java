@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import team.capybara.backend.spring.controllers.dto.entities.user.Username;
 import team.capybara.backend.spring.controllers.dto.other.login.LoginDto;
 import team.capybara.backend.spring.controllers.dto.other.login.LoginResultDto;
 import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthDto;
@@ -48,6 +49,18 @@ public final class UserController {
 
         return userDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/get_name_by_review_id/{id}")
+    public ResponseEntity<Username> getUsernameByReviewId(@PathVariable String id) {
+        log.info("Called getUserNameByReviewId; id={}", id);
+
+        try {
+            return ResponseEntity.ok(userService.getUsernameByReviewId(UUID.fromString(id)));
+        } catch (EntityNotFoundException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("/login")
