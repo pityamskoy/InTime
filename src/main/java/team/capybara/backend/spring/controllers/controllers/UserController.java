@@ -10,12 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.capybara.backend.spring.controllers.dto.entities.user.Username;
+import team.capybara.backend.spring.controllers.dto.entities.user.*;
 import team.capybara.backend.spring.controllers.dto.other.login.LoginDto;
 import team.capybara.backend.spring.controllers.dto.other.login.LoginResultDto;
-import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthDto;
-import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthWithIdDto;
-import team.capybara.backend.spring.controllers.dto.entities.user.UserDto;
 import team.capybara.backend.spring.controllers.services.UserService;
 
 import javax.security.auth.login.CredentialException;
@@ -57,6 +54,22 @@ public final class UserController {
 
         try {
             return ResponseEntity.ok(userService.getUsernameByReviewId(UUID.fromString(id)));
+        } catch (EntityNotFoundException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/get_shop")
+    public ResponseEntity<OwnershipDto> getShopByUserId(@CookieValue(value = "username") String id) {
+        log.info("Called getShops; id={}", id);
+
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            return ResponseEntity.ok(userService.getShopByUserId(UUID.fromString(id)));
         } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();

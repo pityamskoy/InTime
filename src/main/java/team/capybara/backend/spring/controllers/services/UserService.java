@@ -6,16 +6,16 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.controllers.dto.entities.user.Username;
+import team.capybara.backend.spring.controllers.dto.entities.shop.ShopWithIdDto;
+import team.capybara.backend.spring.controllers.dto.entities.user.*;
 import team.capybara.backend.spring.controllers.dto.other.login.LoginDto;
 import team.capybara.backend.spring.controllers.dto.other.login.LoginResultDto;
-import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthDto;
-import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthWithIdDto;
-import team.capybara.backend.spring.controllers.dto.entities.user.UserDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.UserMapper;
 import team.capybara.backend.spring.controllers.repositories.ReviewRepository;
+import team.capybara.backend.spring.controllers.repositories.ShopRepository;
 import team.capybara.backend.spring.controllers.repositories.UserRepository;
 import team.capybara.backend.spring.entities.Review;
+import team.capybara.backend.spring.entities.Shop;
 import team.capybara.backend.spring.entities.User;
 import team.capybara.backend.spring.controllers.controllers.UserController;
 
@@ -31,17 +31,20 @@ public final class UserService {
     private final UserMapper userMapper;
     private final UserMapper.UserAuthMapper userAuthMapper;
     private final UserRepository userRepository;
+    private final ShopRepository shopRepository;
 
     public UserService(
             ReviewRepository reviewRepository,
             UserMapper userMapper,
             UserMapper.UserAuthMapper userAuthMapper,
-            UserRepository userRepository
+            UserRepository userRepository,
+            ShopRepository shopRepository
     ) {
         this.reviewRepository = reviewRepository;
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.userAuthMapper = userAuthMapper;
+        this.shopRepository = shopRepository;
     }
 
     public List<UserDto> getAllUsers() {
@@ -58,6 +61,24 @@ public final class UserService {
         }
 
         return new Username(reviewOptional.get().getUser().getName());
+    }
+
+    public OwnershipDto getShopByUserId(UUID id) {
+        Optional<User> userOptional = userRepository.findById(id);
+
+        if (userOptional.isEmpty()) {
+            throw new EntityNotFoundException("User not found; id=" + id);
+        }
+
+        User user = userOptional.get();
+        if (user.getIsShopOwner()) {
+            Optional<Shop> shop = shopRepository.findShopByUser(user);
+            if (shop.isPresent()) {
+                return new OwnershipDto(true, shop.get().getId());
+            }
+        }
+
+        return new OwnershipDto(false, null);
     }
 
     public Optional<UserDto> getUserById(UUID id) {
