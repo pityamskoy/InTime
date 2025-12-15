@@ -55,13 +55,11 @@ public final class InterestController {
     }
 
     @GetMapping("/{user_id}/{product_id}")
-    public ResponseEntity<Boolean> isFavorite(@PathVariable String user_id,@PathVariable String product_id) {
+    public ResponseEntity<Boolean> isReserved(@PathVariable String user_id, @PathVariable String product_id) {
+        log.info("Called isFavorite; user_id={}, product_id={}", user_id, product_id);
+        Boolean isReserved = interestService.isReserved(UUID.fromString(product_id),UUID.fromString(user_id));
 
-        log.info("Called isFavorite; user_id={}, product_id={}", user_id,product_id);
-        Optional<Boolean> isFavorite = interestService.isInterest(UUID.fromString(product_id),UUID.fromString(user_id));
-
-        return isFavorite.map(ResponseEntity::ok).orElseGet
-                (() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(isReserved);
     }
 
     @GetMapping("/{id}")

@@ -44,12 +44,11 @@ public final class FavoriteController {
     }
 
     @GetMapping("/{user_id}/{product_type_id}")
-    public ResponseEntity<String> isFavorite(@PathVariable String user_id,@PathVariable String product_type_id) {
+    public ResponseEntity<Boolean> isFavorite(@PathVariable String user_id, @PathVariable String product_type_id) {
         log.info("Called isFavorite; user_id={}, product_type_id={}", user_id,product_type_id);
-        Optional<String> isFavorite = favoriteService.isFavorite(UUID.fromString(product_type_id),UUID.fromString(user_id));
+        Boolean isFavorite = favoriteService.isFavorite(UUID.fromString(product_type_id),UUID.fromString(user_id));
 
-        return isFavorite.map(ResponseEntity::ok).orElseGet
-                (() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(isFavorite);
     }
 
     @GetMapping("/user/{id}")
