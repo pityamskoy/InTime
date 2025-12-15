@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/favorites")
-@CrossOrigin
+@CrossOrigin(origins = {"https://vsrok.bloodstone.boo:443/"}, allowCredentials = "true")
 // @CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @SuppressWarnings(value = {"unused"})
 public final class FavoriteController {

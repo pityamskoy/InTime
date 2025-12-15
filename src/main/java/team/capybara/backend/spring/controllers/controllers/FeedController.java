@@ -18,7 +18,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/feed")
-@CrossOrigin
+@CrossOrigin(origins = {"https://vsrok.bloodstone.boo:443/"}, allowCredentials = "true")
 // @CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @SuppressWarnings(value = {"unused"})
 public final class FeedController{
