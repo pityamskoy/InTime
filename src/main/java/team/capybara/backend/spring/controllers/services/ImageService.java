@@ -20,7 +20,7 @@ public final class ImageService {
     private final ImageMapper imageMapper;
     private final ImageRepository imageRepository;
     private static final String imageStorePath = "./static/";
-    private static final String imagePath = "https://image.bloodstone.boo/";
+    private static final String imagePath = "https://image1.bloodstone.boo/";
     private final FileFromStorageStore fileFromStorageStore;
 
     public ImageService(
