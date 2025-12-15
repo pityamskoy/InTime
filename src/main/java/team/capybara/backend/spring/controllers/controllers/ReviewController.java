@@ -17,7 +17,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/reviews")
-@CrossOrigin(origins = {"https://vsrok.bloodstone.boo:443/"}, allowCredentials = "true")
+@CrossOrigin(origins = {"https://vsrok.bloodstone.boo"}, allowCredentials = "true")
 // @CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @SuppressWarnings(value = {"unused"})
 public final class ReviewController {
