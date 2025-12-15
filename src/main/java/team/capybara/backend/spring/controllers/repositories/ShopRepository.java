@@ -20,5 +20,5 @@ public interface ShopRepository extends JpaRepository<Shop, UUID> {
     @Override
     Optional<Shop> findById(UUID id);
 
-    Optional<Shop> findShopByUser(User user);
+    Optional<Shop> findShopByOwner(User user);
 }

@@ -6,7 +6,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.stereotype.Service;
-import team.capybara.backend.spring.controllers.dto.entities.shop.ShopWithIdDto;
 import team.capybara.backend.spring.controllers.dto.entities.user.*;
 import team.capybara.backend.spring.controllers.dto.other.login.LoginDto;
 import team.capybara.backend.spring.controllers.dto.other.login.LoginResultDto;
@@ -72,7 +71,7 @@ public final class UserService {
 
         User user = userOptional.get();
         if (user.getIsShopOwner()) {
-            Optional<Shop> shop = shopRepository.findShopByUser(user);
+            Optional<Shop> shop = shopRepository.findShopByOwner(user);
             if (shop.isPresent()) {
                 return new OwnershipDto(true, shop.get().getId());
             }
@@ -106,10 +105,14 @@ public final class UserService {
             throw new CredentialException("Login credentials are missing.");
         }
 
-        if (username != null) {
-            if (loginDto.login() == null || loginDto.password() == null) {
-                return new Pair<>(null, new LoginResultDto(true, username));
+        if (username != null && (loginDto.login() == null || loginDto.password() == null))  {
+            Optional<User> user = userRepository.findById(UUID.fromString(username));
+
+            if (user.isEmpty()) {
+                throw new EntityNotFoundException("User not found; id=" + username);
             }
+
+            return new Pair<>(null, new LoginResultDto(true, username));
         }
 
         String login = loginDto.login();
@@ -122,7 +125,7 @@ public final class UserService {
         }
 
         if (userOptional.isEmpty()) {
-            throw new EntityNotFoundException("User not found");
+            throw new EntityNotFoundException("User not found; login=" + login);
         }
 
         User user = userOptional.get();
