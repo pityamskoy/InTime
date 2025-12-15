@@ -18,7 +18,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/feed")
-@CrossOrigin(allowCredentials = "true")
+@CrossOrigin
 // @CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @SuppressWarnings(value = {"unused"})
 public final class FeedController{
