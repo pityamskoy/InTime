@@ -50,10 +50,20 @@ public final class FavoriteService {
         return Optional.empty();
     }
 
-    public Boolean isFavorite(UUID id_product_type, UUID id_user) {
+    public String isFavorite(UUID id_product_type, UUID id_user) {
         int isFavorite = favoriteRepository.isProductTypeInFavorites(id_user,id_product_type);
+        String res = "";
+        if (isFavorite > 0) {
+            List<Favorite>favorites = favoriteRepository.findFavoritesByUser(userConverter.toEntity(id_user));
+            for (Favorite el : favorites) {
+                if (el.getProductType().getId().equals(id_product_type)) {
+                    res = el.getId().toString();
+                    break;
+                }
+            }
+        }
 
-        return isFavorite > 0;
+        return res;
     }
 
     /**
