@@ -22,7 +22,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
+// @CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @SuppressWarnings(value = {"unused"})
 public final class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
