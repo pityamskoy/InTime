@@ -30,11 +30,9 @@ public interface InterestRepository extends JpaRepository<Interest, UUID> {
     @EntityGraph(attributePaths = {"product","user"})
     List<Interest> findByProduct(Product product );
 
-    @EntityGraph(attributePaths = {"product","user"})
     @Query(value = "SELECT COUNT(*) FROM Interests WHERE Interests.product_id=:product AND Interests.user_id=:user",nativeQuery = true)
     int isProductInInterests(@Param("user") UUID user, @Param("product") UUID product);
 
-    @EntityGraph(attributePaths = {"product","user"})
     @Query(value = "SELECT COUNT(*) FROM Interests WHERE Interests.product_id=:product",nativeQuery = true)
     int colProductInInterests( @Param("product") UUID product);
 }
