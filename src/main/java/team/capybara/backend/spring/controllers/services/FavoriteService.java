@@ -20,17 +20,15 @@ public final class FavoriteService {
     private final FavoriteMapper favoriteMapper;
     private final UserConverter userConverter;
     private final FavoriteRepository favoriteRepository;
-    private final ProductTypeRepository productTypeRepository;
 
     public FavoriteService(
             FavoriteMapper favoriteMapper,
             UserConverter userConverter,
-            FavoriteRepository favoriteRepository, ProductTypeRepository productTypeRepository
+            FavoriteRepository favoriteRepository
     ) {
         this.favoriteMapper = favoriteMapper;
         this.userConverter = userConverter;
         this.favoriteRepository = favoriteRepository;
-        this.productTypeRepository = productTypeRepository;
     }
 
     public List<FavoriteWithIdDto> getAllFavorites() {
