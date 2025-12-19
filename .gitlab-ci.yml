@@ -22,13 +22,13 @@ build-job:
 
 deploy-job:
   stage: deploy
-  image: docker:24.0.2
+  image: docker/compose:2.20.2
   services:
-    - docker:dind
+    - name: docker:24.0.2-dind
+      alias: docker
   variables:
     DOCKER_HOST: tcp://docker:2375/
     DOCKER_TLS_CERTDIR: ""
   script:
+    - docker info
     - docker compose up -d
-  #only:
-  #  - main
