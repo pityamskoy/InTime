@@ -3,7 +3,7 @@ LABEL authors="ASKekishev and LAGuryanov"
 WORKDIR /app
 COPY . .
 
-RUN mvn clean install -DskipTests -B
+RUN mvn clean install
 
 FROM amazoncorretto:25-headless
 WORKDIR /app

@@ -8,13 +8,21 @@ test-job:
   image: maven:4.0.0-rc-5-amazoncorretto-25
   script:
     - mvn test
+  #only:
+  #  - main
+  #  - develop
+  #  - merge requests
 
 build-job:
   stage: build
   script:
-  - docker build --network=host -t my-backend .
+    - docker build --network=host -t my-backend .
+  #only:
+  #  - main
 
 deploy-job:
   stage: deploy
   script:
     - docker compose up -d
+  #only:
+  #  - main
