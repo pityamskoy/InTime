@@ -1,8 +1,8 @@
 FROM maven:4.0.0-rc-5-amazoncorretto-25 as build
 LABEL authors="ASKekishev and LAGuryanov"
 WORKDIR /app
+COPY . .
 
-COPY pom.xml .
 RUN mvn clean install -DskipTests -B
 
 COPY src ./src
