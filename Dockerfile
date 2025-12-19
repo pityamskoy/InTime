@@ -3,7 +3,6 @@ LABEL authors="ASKekishev and LAGuryanov"
 WORKDIR /app
 
 COPY pom.xml .
-COPY .mvn .mvn
 RUN mvn clean install -DskipTests -B
 
 COPY src ./src
