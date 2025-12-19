@@ -22,6 +22,7 @@ build-job:
 
 deploy-job:
   stage: deploy
+  image: docker:24.0.2
   script:
     - docker compose up -d
   #only:
