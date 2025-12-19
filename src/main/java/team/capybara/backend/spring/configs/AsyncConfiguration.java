@@ -12,6 +12,7 @@ import java.util.concurrent.Executor;
  */
 @Configuration
 @EnableAsync
+@SuppressWarnings(value = {"unused"})
 public class AsyncConfiguration {
 
     @Bean

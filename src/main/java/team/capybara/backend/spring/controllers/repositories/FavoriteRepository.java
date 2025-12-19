@@ -30,7 +30,6 @@ public interface FavoriteRepository extends JpaRepository<Favorite, UUID> {
     @EntityGraph(attributePaths = {"productType","user"})
     List<Favorite> findFavoritesByProductType(ProductType productType);
 
-    @EntityGraph(attributePaths = {"productType","user"})
     @Query(value = "SELECT COUNT(*) FROM Favorite WHERE Favorite.product_type_id=:productType AND Favorite.user_id=:user",nativeQuery = true)
     int isProductTypeInFavorites(@Param("user") UUID user,@Param("productType") UUID productType);
 }

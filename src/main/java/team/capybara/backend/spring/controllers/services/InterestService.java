@@ -56,9 +56,9 @@ public final class InterestService {
         return col;
     }
 
-    public Optional<Boolean> isInterest(UUID id_product,UUID id_user) {
-        int isFavorite = interestRepository.isProductInInterests(id_user,id_product);
-        return Optional.of(isFavorite>0);
+    public Boolean isReserved(UUID id_product, UUID id_user) {
+        int isReserved = interestRepository.isProductInInterests(id_user,id_product);
+        return isReserved > 0;
     }
 
     public Optional<InterestWithIdDto> getInterestById(UUID id) {
@@ -74,7 +74,7 @@ public final class InterestService {
 
     public InterestWithIdDto createInterest(InterestDto interestToCreate) {
         try {
-            if(!isInterest(interestToCreate.productId(),interestToCreate.userId()).get())
+            if(!isReserved(interestToCreate.productId(),interestToCreate.userId()))
                 return interestMapper.postEntity(interestToCreate);
             throw new EntityNotFoundException();
         } catch (EntityNotFoundException e) {

@@ -14,9 +14,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-//@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/interests")
+@CrossOrigin(origins = {"https://vsrok1.bloodstone.boo"}, allowCredentials = "true")
+// @CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @SuppressWarnings(value = {"unused"})
 public final class InterestController {
     private static final Logger log = LoggerFactory.getLogger(InterestController.class);
@@ -55,13 +56,11 @@ public final class InterestController {
     }
 
     @GetMapping("/{user_id}/{product_id}")
-    public ResponseEntity<Boolean> isFavorite(@PathVariable String user_id,@PathVariable String product_id) {
+    public ResponseEntity<Boolean> isReserved(@PathVariable String user_id, @PathVariable String product_id) {
+        log.info("Called isFavorite; user_id={}, product_id={}", user_id, product_id);
+        Boolean isReserved = interestService.isReserved(UUID.fromString(product_id),UUID.fromString(user_id));
 
-        log.info("Called isFavorite; user_id={}, product_id={}", user_id,product_id);
-        Optional<Boolean> isFavorite = interestService.isInterest(UUID.fromString(product_id),UUID.fromString(user_id));
-
-        return isFavorite.map(ResponseEntity::ok).orElseGet
-                (() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(isReserved);
     }
 
     @GetMapping("/{id}")

@@ -6,13 +6,15 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.stereotype.Service;
+import team.capybara.backend.spring.controllers.dto.entities.user.*;
 import team.capybara.backend.spring.controllers.dto.other.login.LoginDto;
 import team.capybara.backend.spring.controllers.dto.other.login.LoginResultDto;
-import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthDto;
-import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthWithIdDto;
-import team.capybara.backend.spring.controllers.dto.entities.user.UserDto;
 import team.capybara.backend.spring.controllers.mappers.entitymappers.UserMapper;
+import team.capybara.backend.spring.controllers.repositories.ReviewRepository;
+import team.capybara.backend.spring.controllers.repositories.ShopRepository;
 import team.capybara.backend.spring.controllers.repositories.UserRepository;
+import team.capybara.backend.spring.entities.Review;
+import team.capybara.backend.spring.entities.Shop;
 import team.capybara.backend.spring.entities.User;
 import team.capybara.backend.spring.controllers.controllers.UserController;
 
@@ -24,18 +26,24 @@ import java.util.UUID;
 
 @Service
 public final class UserService {
+    private final ReviewRepository reviewRepository;
     private final UserMapper userMapper;
     private final UserMapper.UserAuthMapper userAuthMapper;
     private final UserRepository userRepository;
+    private final ShopRepository shopRepository;
 
     public UserService(
+            ReviewRepository reviewRepository,
             UserMapper userMapper,
             UserMapper.UserAuthMapper userAuthMapper,
-            UserRepository userRepository
+            UserRepository userRepository,
+            ShopRepository shopRepository
     ) {
+        this.reviewRepository = reviewRepository;
         this.userMapper = userMapper;
         this.userRepository = userRepository;
         this.userAuthMapper = userAuthMapper;
+        this.shopRepository = shopRepository;
     }
 
     public List<UserDto> getAllUsers() {
@@ -44,18 +52,46 @@ public final class UserService {
         return users.stream().map(userMapper::getEntity).toList();
     }
 
-    public Optional<UserAuthWithIdDto> getUserById(UUID id) {
+    public Username getUsernameByReviewId(UUID reviewId) {
+        Optional<Review> reviewOptional = reviewRepository.findById(reviewId);
+
+        if (reviewOptional.isEmpty()) {
+            throw new EntityNotFoundException("Review not found; id=" + reviewId);
+        }
+
+        return new Username(reviewOptional.get().getUser().getName());
+    }
+
+    public OwnershipDto getShopByUserId(UUID id) {
+        Optional<User> userOptional = userRepository.findById(id);
+
+        if (userOptional.isEmpty()) {
+            throw new EntityNotFoundException("User not found; id=" + id);
+        }
+
+        User user = userOptional.get();
+        if (user.getIsShopOwner()) {
+            Optional<Shop> shop = shopRepository.findShopByOwner(user);
+            if (shop.isPresent()) {
+                return new OwnershipDto(true, shop.get().getId());
+            }
+        }
+
+        return new OwnershipDto(false, null);
+    }
+
+    public Optional<UserDto> getUserById(UUID id) {
         Optional<User> userOptional = userRepository.findById(id);
 
         if (userOptional.isPresent()) {
-            UserAuthWithIdDto userAuthWithIdDto = userAuthMapper.getEntity(userOptional.get());
-            return Optional.of(userAuthWithIdDto);
+            UserDto userDto = userMapper.getEntity(userOptional.get());
+            return Optional.of(userDto);
         }
 
         return Optional.empty();
     }
 
-     /**
+    /**
      * @param username is a value of cookie, which {@link UserController} accepts as an argument.
      * @param loginDto is login credentials.
      * @return {@link Pair}<{@link Cookie}, {@link LoginResultDto}>, where {@link Cookie} is null if {@code String username} was provided.
@@ -63,13 +99,19 @@ public final class UserService {
      */
     public Pair<Cookie,LoginResultDto> login(
             @Nullable String username,
-            @Nullable LoginDto loginDto
+            LoginDto loginDto
     ) throws CredentialException {
-        if (loginDto == null && username == null) {
+        if (username == null && (loginDto.login() == null || loginDto.password() == null)) {
             throw new CredentialException("Login credentials are missing.");
         }
 
-        if (username != null) {
+        if (username != null && (loginDto.login() == null || loginDto.password() == null))  {
+            Optional<User> user = userRepository.findById(UUID.fromString(username));
+
+            if (user.isEmpty()) {
+                throw new EntityNotFoundException("User not found; id=" + username);
+            }
+
             return new Pair<>(null, new LoginResultDto(true, username));
         }
 
@@ -83,15 +125,27 @@ public final class UserService {
         }
 
         if (userOptional.isEmpty()) {
-            throw new EntityNotFoundException("User not found");
+            throw new EntityNotFoundException("User not found; login=" + login);
         }
 
         User user = userOptional.get();
         LoginResultDto loginResultDto = new LoginResultDto(user.getPassword().equals(loginDto.password()), user.getId().toString());
 
+        if (username != null) {
+            if (username.equals(user.getId().toString())) {
+                return new Pair<>(null, new LoginResultDto(true, username));
+            } else {
+                return new Pair<>(null, new LoginResultDto(false, username));
+            }
+        }
+
         if (loginResultDto.success()) {
             Cookie cookie = new Cookie("username", loginResultDto.userId());
-            cookie.setPath("/");
+            cookie.setPath("/users");
+            cookie.setMaxAge(14400);
+            cookie.setHttpOnly(false);
+            cookie.setSecure(false);
+
             return new Pair<>(cookie, loginResultDto);
         }
 
@@ -100,8 +154,10 @@ public final class UserService {
 
     public Cookie logout(String username) {
         Cookie cookie = new Cookie("username", username);
+        cookie.setPath("/users");
         cookie.setMaxAge(0);
-        cookie.setPath("/");
+        cookie.setHttpOnly(false);
+        cookie.setSecure(false);
 
         return cookie;
     }
@@ -109,7 +165,11 @@ public final class UserService {
     public Pair<Cookie, UserAuthWithIdDto> register(UserAuthDto userToRegister) {
         try {
             UserAuthWithIdDto userRegistered = userAuthMapper.postEntity(userToRegister);
-            Cookie cookie = new Cookie("username", userRegistered.name());
+            Cookie cookie = new Cookie("username", userRegistered.id().toString());
+            cookie.setPath("/users");
+            cookie.setMaxAge(14400);
+            cookie.setHttpOnly(false);
+            cookie.setSecure(false);
 
             return new Pair<>(cookie, userRegistered);
         } catch (EntityExistsException e) {

@@ -14,9 +14,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-//@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/favorites")
+@CrossOrigin(origins = {"https://vsrok1.bloodstone.boo"}, allowCredentials = "true")
+// @CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @SuppressWarnings(value = {"unused"})
 public final class FavoriteController {
     private static final Logger log = LoggerFactory.getLogger(FavoriteController.class);
@@ -44,12 +45,11 @@ public final class FavoriteController {
     }
 
     @GetMapping("/{user_id}/{product_type_id}")
-    public ResponseEntity<String> isFavorite(@PathVariable String user_id,@PathVariable String product_type_id) {
+    public ResponseEntity<String> isFavorite(@PathVariable String user_id, @PathVariable String product_type_id) {
         log.info("Called isFavorite; user_id={}, product_type_id={}", user_id,product_type_id);
-        Optional<String> isFavorite = favoriteService.isFavorite(UUID.fromString(product_type_id),UUID.fromString(user_id));
+        String isFavorite = favoriteService.isFavorite(UUID.fromString(product_type_id),UUID.fromString(user_id));
 
-        return isFavorite.map(ResponseEntity::ok).orElseGet
-                (() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(isFavorite);
     }
 
     @GetMapping("/user/{id}")

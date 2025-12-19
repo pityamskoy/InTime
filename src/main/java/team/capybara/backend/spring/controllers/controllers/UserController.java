@@ -10,11 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import team.capybara.backend.spring.controllers.dto.entities.user.*;
 import team.capybara.backend.spring.controllers.dto.other.login.LoginDto;
 import team.capybara.backend.spring.controllers.dto.other.login.LoginResultDto;
-import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthDto;
-import team.capybara.backend.spring.controllers.dto.entities.user.UserAuthWithIdDto;
-import team.capybara.backend.spring.controllers.dto.entities.user.UserDto;
 import team.capybara.backend.spring.controllers.services.UserService;
 
 import javax.security.auth.login.CredentialException;
@@ -22,9 +20,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-//@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/users")
+@CrossOrigin(origins = {"https://vsrok1.bloodstone.boo"}, allowCredentials = "true")
+// @CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @SuppressWarnings(value = {"unused"})
 public final class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -41,13 +40,41 @@ public final class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserAuthWithIdDto> getUserById(@PathVariable String id) {
+    @GetMapping("/user")
+    public ResponseEntity<UserDto> getUserById(@CookieValue(value = "username") String id) {
         log.info("Called getUserById; id={}", id);
-        Optional<UserAuthWithIdDto> userAuthDtoOptional = userService.getUserById(UUID.fromString(id));
+        Optional<UserDto> userDtoOptional = userService.getUserById(UUID.fromString(id));
 
-        return userAuthDtoOptional.map(ResponseEntity::ok).orElseGet
+        return userDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/get_name_by_review_id/{id}")
+    public ResponseEntity<Username> getUsernameByReviewId(@PathVariable String id) {
+        log.info("Called getUserNameByReviewId; id={}", id);
+
+        try {
+            return ResponseEntity.ok(userService.getUsernameByReviewId(UUID.fromString(id)));
+        } catch (EntityNotFoundException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/get_shop")
+    public ResponseEntity<OwnershipDto> getShopByUserId(@CookieValue(value = "username") String id) {
+        log.info("Called getShops; id={}", id);
+
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            return ResponseEntity.ok(userService.getShopByUserId(UUID.fromString(id)));
+        } catch (EntityNotFoundException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping("/login")
@@ -61,7 +88,7 @@ public final class UserController {
         try {
             Pair<Cookie, LoginResultDto> result = userService.login(username, loginDto);
 
-            if (result.a != null) {
+            if (result.a != null && result.b.success()) {
                 response.addCookie(result.a);
             }
 

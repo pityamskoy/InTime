@@ -10,44 +10,38 @@ import org.springframework.web.bind.annotation.*;
 import team.capybara.backend.spring.controllers.dto.entities.product.ProductDto;
 import team.capybara.backend.spring.controllers.dto.other.filters.FeedFilterEntity;
 import team.capybara.backend.spring.controllers.dto.other.pagination.PaginationLimit;
-import team.capybara.backend.spring.controllers.services.FilteredProductService;
+import team.capybara.backend.spring.controllers.services.FeedService;
 import team.capybara.backend.spring.entities.*;
 import team.capybara.backend.spring.controllers.dto.entities.product.ProductWithIdDto;
-import team.capybara.backend.spring.controllers.services.ProductService;
 
 import java.util.*;
 
-//@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/feed")
+@CrossOrigin(origins = {"https://vsrok1.bloodstone.boo"}, allowCredentials = "true")
+// @CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @SuppressWarnings(value = {"unused"})
 public final class FeedController{
     private static final Logger log = LoggerFactory.getLogger(FeedController.class);
 
-    private final ProductService productService;
-    private final FilteredProductService filteredProductService;
+    private final FeedService feedService;
 
-    public FeedController(
-            ProductService productService,
-            FilteredProductService filteredProductService
-    ) {
-        this.productService = productService;
-        this.filteredProductService = filteredProductService;
+    public FeedController(FeedService feedService) {
+        this.feedService = feedService;
     }
 
-    @Deprecated(forRemoval = true)
     @PostMapping("/{offset}")
     public ResponseEntity<Page<ProductWithIdDto>> getAllProducts(
             @PathVariable int offset,
-            @RequestBody PaginationLimit limit
+            @RequestBody FeedFilterEntity filter
     ) {
-        log.info("Called getAllProducts; offset={}, limit={}", offset, limit.getLimit());
+        log.info("Called getAllSortedProducts; offset={}; filter={}", offset, filter);
 
         if (offset < 1) {
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(productService.getAllProducts(offset, limit.getLimit()));
+        return ResponseEntity.ok(feedService.getProducts(offset, filter));
     }
 
     @PostMapping("/products_by_shop/{id}/{offset}")
@@ -62,34 +56,20 @@ public final class FeedController{
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(productService.getProductsByShop(offset, limit.getLimit(), id));
-    }
-
-    @PostMapping("/filtered/{offset}")
-    public ResponseEntity<Page<ProductWithIdDto>> getAllSortedProducts(
-            @PathVariable int offset,
-            @RequestBody FeedFilterEntity filter
-    ) {
-        log.info("Called getAllSortedProducts; offset={}; filter={}", offset, filter);
-
-        if (offset < 1) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        return ResponseEntity.ok(filteredProductService.getProducts(offset, filter));
+        return ResponseEntity.ok(feedService.getProductsByShop(offset, limit.getLimit(), id));
     }
 
     @PostMapping("/pagination")
     public ResponseEntity<Integer> getNumberOfPages(@RequestBody FeedFilterEntity filter) {
         log.info("Called getNumberOfOffsets; filter={}", filter);
 
-        return ResponseEntity.ok(filteredProductService.getNumberOfPages(filter));
+        return ResponseEntity.ok(feedService.getNumberOfPages(filter));
     }
 
     @GetMapping("/product/{id}")
     public ResponseEntity<ProductWithIdDto> getProductById(@PathVariable String id) {
         log.info("Called getProduct; id={}", id);
-        Optional<ProductWithIdDto> productDtoOptional = productService.getProductById(UUID.fromString(id));
+        Optional<ProductWithIdDto> productDtoOptional = feedService.getProductById(UUID.fromString(id));
 
         return productDtoOptional.map(ResponseEntity::ok).orElseGet
                 (() -> ResponseEntity.notFound().build());
@@ -101,7 +81,7 @@ public final class FeedController{
 
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(productService.createProduct(productToCreate));
+                    .body(feedService.createProduct(productToCreate));
         } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
@@ -116,7 +96,7 @@ public final class FeedController{
         log.info("Called updateProduct; productToUpdate={}", productToUpdate);
 
         try {
-            return ResponseEntity.ok(productService.updateProduct(productToUpdate));
+            return ResponseEntity.ok(feedService.updateProduct(productToUpdate));
         } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
             return ResponseEntity.notFound().build();
@@ -126,20 +106,12 @@ public final class FeedController{
         }
     }
 
-    //Apparently, we aren't going to need it
-    @Deprecated
-    @PatchMapping("/{id}")
-    public ResponseEntity<Product> partiallyUpdateProduct() {
-        log.info("Called partiallyUpdateProduct");
-        return null;
-    }
-
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
         log.info("Called deleteProduct; id={}", id);
 
         try {
-            productService.deleteProduct(UUID.fromString(id));
+            feedService.deleteProduct(UUID.fromString(id));
             return ResponseEntity.ok().build();
         } catch (EntityNotFoundException e) {
             log.error(e.getMessage());
