@@ -1,14 +1,17 @@
 FROM maven:4.0.0-rc-5-amazoncorretto-25 as build
 LABEL authors="ASKekishev and LAGuryanov"
+WORKDIR /app
 
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
+COPY .mvn .mvn
+RUN mvn clean install -DskipTests -B
 
 COPY src ./src
 
 RUN mvn clean package -Dskiptests
 
 FROM amazoncorretto:25-headless
+WORKDIR /app
 
 COPY --from=build target/*.jar app.jar
 
