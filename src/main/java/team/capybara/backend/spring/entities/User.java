@@ -8,6 +8,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 @Entity
 @Table(name = "Users")
 public class User implements EntityWithId {
