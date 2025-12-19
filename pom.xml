@@ -8,7 +8,7 @@
         <relativePath/>
     </parent>
     <groupId>team.capybara</groupId>
-    <artifactId>vSrok</artifactId>
+    <artifactId>vsrok</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>vSrok</name>
     <description>Food saving app</description>
