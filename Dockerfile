@@ -1,11 +1,17 @@
-FROM amazoncorretto:25-headless
+FROM maven:4.0.0-rc-5-amazoncorretto-25 as build
 LABEL authors="ASKekishev and LAGuryanov"
 
-COPY out/artifacts/vSrok_jar2 .
-COPY run.sh .
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-RUN chmod +x run.sh
+COPY src ./src
+
+RUN mvn clean package -Dskiptests
+
+FROM amazoncorretto:25-headless
+
+COPY --from=build target/*.jar app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["./run.sh"]
+ENTRYPOINT ["java", "-jar", "/app.jar"]
