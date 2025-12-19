@@ -11,7 +11,7 @@ test-job:
 build-job:
   stage: build
   script:
-  - docker --network=host -t my-backend .
+  - docker -t my-backend .
 
 deploy-job:
   stage: deploy
