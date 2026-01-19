@@ -1,0 +1,19 @@
+name: vsrok
+services:
+
+  db:
+    image: leoagf/bd:1.0
+    restart: unless-stopped
+    ports:
+      - "1234:5432"
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "1235:80"
+    volumes:
+      - app-volume:/usr/share/nginx/html:ro
+    restart: unless-stopped
+
+volumes:
+  app-volume:

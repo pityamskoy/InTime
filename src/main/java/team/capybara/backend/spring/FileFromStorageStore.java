@@ -1,0 +1,23 @@
+package team.capybara.backend.spring;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
+public class FileFromStorageStore {
+
+    public void saveFile(String path, String fileName, byte[] values) throws IOException {
+        Path directoryPath = Paths.get(path);
+        Path filePath = directoryPath.resolve(fileName);
+        Files.write(filePath, values, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+    }
+
+    public byte[] readFile(String path) throws IOException {
+        Path filePath = Paths.get(path);
+        return Files.readAllBytes(filePath);
+
+    }
+
+}

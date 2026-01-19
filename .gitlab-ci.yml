@@ -1,0 +1,32 @@
+stages:
+  - test
+  - build
+  - deploy
+
+test-job:
+  stage: test
+  image: maven:4.0.0-rc-5-amazoncorretto-25
+  script:
+    - mvn test
+  only:
+    - main
+    - develop
+    - merge requests
+
+build-job:
+  stage: build
+  script:
+    - docker build --network=host -t my-backend .
+  only:
+    - main
+
+deploy-job:
+  stage: deploy
+  image: docker:24.0.2
+  variables:
+    DOCKER_HOST: unix:///var/run/docker.sock
+  script:
+    - docker info
+    - docker compose up -d
+  only:
+    - main
